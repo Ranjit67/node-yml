@@ -5,7 +5,9 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon ./src/server.ts",
-    "start": "tsc && node dist/server"
+    "build":"tsc",
+    "heroku-postbuild": "npm run build",
+    "start": "node dist/server"
   },
   "author": "",
   "license": "ISC",
