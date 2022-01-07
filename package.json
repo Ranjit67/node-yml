@@ -2,12 +2,12 @@
   "name": "sky-rise-celebrity-api",
   "version": "1.0.0",
   "description": "skyrise start on 04-01-22",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
     "dev": "nodemon ./src/server.ts",
     "build":"tsc",
     "heroku-postbuild": "npm run build",
-    "start": "node dist/server"
+    "start": "node dist/server.js"
   },
   "author": "",
   "license": "ISC",
