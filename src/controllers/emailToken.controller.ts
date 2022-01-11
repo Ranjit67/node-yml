@@ -1,8 +1,11 @@
 import { Request, Response, NextFunction } from "express";
-import { EmailToken, UserSchema } from "../models";
+import { EmailToken, UserSchema, userModel } from "../models";
 import { InternalServerError, NotFound } from "http-errors";
 import { JwtService, PasswordHasServices } from "../services";
-
+import { userRole } from "../types";
+interface userData extends userModel {
+  role: userRole;
+}
 class EmailTokenController {
   private jwtServices = new JwtService();
   public async getAll(req: Request, res: Response, next: NextFunction) {
@@ -22,16 +25,29 @@ class EmailTokenController {
       const userId = data?.aud?.[0];
       if (!userId) throw new NotFound("User is not found.");
       const hashedPassword = await new PasswordHasServices().hash(password);
-      const updatePassword = await UserSchema.findByIdAndUpdate(userId, {
-        password: hashedPassword,
-        isEmailVerify: true,
-      });
-      if (!updatePassword)
-        throw new InternalServerError("Password is not updated.");
+      const findUser: any = await UserSchema.findById(userId);
       await EmailToken.findOneAndDelete({
         userRef: userId,
       });
-      res.json({ data: "Email is verify successfully." });
+      if (findUser.role === "user") {
+        const updatePassword = await UserSchema.findByIdAndUpdate(userId, {
+          password: hashedPassword,
+          status: "active",
+        });
+        if (!updatePassword)
+          throw new InternalServerError("Password is not updated.");
+        return res.json({ data: "Password is updated successfully." });
+      } else {
+        const updatePassword = await UserSchema.findByIdAndUpdate(userId, {
+          password: hashedPassword,
+          status: "pending",
+        });
+        if (!updatePassword)
+          throw new InternalServerError("Password is not updated.");
+        return res.json({
+          data: "Password is updated successfully. Wait for admin approval.",
+        });
+      }
     } catch (error) {
       next(error);
     }

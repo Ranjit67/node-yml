@@ -1,4 +1,4 @@
-const email = "no.replskyrise@gmail.com";
-const password = "gkorbjkcisxfansr";
+const email = "noreply.skyrisecelebrity@gmail.com";
+const password = "emdfftacmdreknoz";
 
 export { email, password };

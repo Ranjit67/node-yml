@@ -7,6 +7,7 @@ import {
   AwsS3Services,
   PasswordHasServices,
 } from "../services";
+import EmailContent from "../emailContent";
 
 class UserController {
   //   private jwtServices = new JwtService();
@@ -16,13 +17,15 @@ class UserController {
       const {
         email,
         countryCode,
-        mobileNumber,
-        displayName,
+        phoneNumber,
+        firstName,
+        lastName,
         role,
         gender,
-        countryName,
-        yearOfExperience,
+        location,
+        yearsOfExperience,
         languagesId,
+        Dob,
       } = req.body;
       const profilePicture = req?.files?.profilePicture;
       if (profilePicture) {
@@ -33,16 +36,17 @@ class UserController {
 
         const user = new UserSchema({
           email,
-          profileImageFileName: profileImage.key,
+          profileImageRef: profileImage.key,
           profileImageUrl: profileImage.Location,
           countryCode,
-          mobileNumber,
-          displayName,
+          phoneNumber,
+          firstName,
+          lastName,
           role,
           gender,
-          countryName,
-          yearOfExperience,
-          languageArray: languagesId,
+          location,
+          yearsOfExperience,
+          languages: languagesId,
         });
         const userSave = await user.save();
         if (!userSave) throw new InternalServerError("User is not created.");
@@ -53,14 +57,10 @@ class UserController {
         });
         if (!saveEmailToken)
           throw new InternalServerError("Email token is not created.");
-        const emailCredentials = {
-          from: "noreply.skyrisecelebrity@gmail.com",
-          to: userSave?.email,
-          subject: `Forget password.`,
-          text: `Your reset password url is ${token}/forgetPassword `,
-        };
 
-        const SendEmail = await new EmailService().emailSend(emailCredentials);
+        const SendEmail = await new EmailService().emailSend(
+          new EmailContent().emailOnSelfVerification(userSave?.email, token)
+        );
         res.json({
           data: "User is created successfully. Email send to user mail for verification.",
         });
@@ -68,15 +68,15 @@ class UserController {
       } else {
         const user = new UserSchema({
           email,
-
           countryCode,
-          mobileNumber,
-          displayName,
+          phoneNumber,
+          firstName,
+          lastName,
           role,
           gender,
-          countryName,
-          yearOfExperience,
-          languageArray: languagesId,
+          location,
+          yearsOfExperience,
+          languages: languagesId,
         });
         const userSave = await user.save();
         if (!userSave) throw new InternalServerError("User is not created.");
@@ -88,14 +88,10 @@ class UserController {
         });
         if (!saveEmailToken)
           throw new InternalServerError("Email token is not created.");
-        const emailCredentials = {
-          from: "noreply.skyrisecelebrity@gmail.com",
-          to: userSave?.email,
-          subject: `Forget password.`,
-          text: `Your reset password url is ${token}/forgetPassword `,
-        };
 
-        const SendEmail = await new EmailService().emailSend(emailCredentials);
+        const SendEmail = await new EmailService().emailSend(
+          new EmailContent().emailOnSelfVerification(userSave?.email, token)
+        );
         res.json({
           data: "User is created successfully. Email send to user mail for verification.",
         });
@@ -107,8 +103,6 @@ class UserController {
 
   public async getAll(req: any, res: Response, next: NextFunction) {
     try {
-      const { aud } = req.payload;
-      console.log(aud);
       const findAllUser = await UserSchema.find({ isDeleted: false });
       res.json({ data: findAllUser });
     } catch (error) {
@@ -130,12 +124,15 @@ class UserController {
     try {
       const {
         countryCode,
-        mobileNumber,
-        displayName,
-
+        phoneNumber,
+        firstName,
+        lastName,
+        fcmToken,
+        Dob,
+        status,
         gender,
-        countryName,
-        yearOfExperience,
+        location,
+        yearsOfExperience,
         languagesId,
       } = req.body;
       const { id } = req.params;
@@ -153,19 +150,25 @@ class UserController {
       }
 
       const updateUser = await UserSchema.findByIdAndUpdate(id, {
-        profileImageFileName:
-          profileImage?.key || findUser.profileImageFileName || "",
+        profileImageRef: profileImage?.key || findUser.profileImageRef || "",
         profileImageUrl:
           profileImage?.Location || findUser.profileImageUrl || "",
         countryCode: countryCode || findUser.countryCode || "",
-        mobileNumber: mobileNumber || findUser.mobileNumber || "",
-        displayName: displayName || findUser.displayName || "",
+        phoneNumber: phoneNumber || findUser.phoneNumber || "",
+        firstName: firstName || findUser.firstName || "",
+        lastName: lastName || findUser.lastName || "",
+
         gender: gender || findUser?.gender || "",
-        countryName: countryName || findUser?.countryName || "",
-        yearOfExperience: yearOfExperience || findUser?.yearOfExperience || "",
-        languageArray: Array.isArray(languagesId)
+        location: location || findUser?.location || "",
+        yearsOfExperience:
+          yearsOfExperience || findUser?.yearsOfExperience || "",
+        languages: Array.isArray(languagesId)
           ? languagesId
-          : findUser?.languageArray || [],
+          : findUser?.languages || [],
+        // other tags credentials
+        fcmToken: fcmToken || findUser.fcmToken || "",
+        status: status || findUser.status || "",
+        Dob: Dob || findUser.Dob || "",
       });
       if (!updateUser) throw new GatewayTimeout("User is not updated.");
       res.json({ data: "User is updated successfully." });
@@ -173,6 +176,7 @@ class UserController {
       next(error);
     }
   }
+
   // signIn process
   public async signIn(req: Request, res: Response, next: NextFunction) {
     try {
@@ -184,21 +188,10 @@ class UserController {
         findUser.password
       );
       if (!isMatch) throw new BadRequest("Password is not match.");
-      if (findUser.role === "user" || findUser.role === "super-admin") {
-        const token = await new JwtService().accessTokenGenerator(
-          findUser?._id
-        );
-        if (!token) throw new InternalServerError("Token is not generated.");
-        return res.json({ data: token, user: findUser });
-      }
-      if (findUser.isBlocked)
-        throw new BadRequest("You are blocked by super admin.");
-      if (!findUser?.isRequestAccepted)
-        throw new BadRequest("Your request is not accepted by super admin.");
       const token = await new JwtService().accessTokenGenerator(findUser?._id);
       if (!token) throw new InternalServerError("Token is not generated.");
-      return res.json({ data: token, user: findUser });
-      // res.json({ data: "Log in successfully." });
+
+      res.json({ data: token, user: findUser });
     } catch (error) {
       next(error);
     }
@@ -210,6 +203,40 @@ class UserController {
       const deleteUser = await UserSchema.findOneAndDelete({ email: id });
       if (!deleteUser) throw new GatewayTimeout("User is not deleted.");
       res.json({ data: "User is deleted successfully." });
+    } catch (error) {
+      next(error);
+    }
+  }
+  //
+  public async setPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { stringData } = req.params;
+      const { email } = req.body;
+      if (!email || !stringData)
+        throw new BadRequest("All fields are required.");
+      const findUser = await UserSchema.findOne({ email });
+      if (!findUser) throw new BadRequest("Your email is not found.");
+      const token = await new JwtService().emailTokenGenerator(findUser?._id);
+      const updateEmailToken = await EmailToken.update(
+        { userRef: findUser?._id },
+        { emailTokenString: token },
+        { multi: false }
+      );
+
+      if (updateEmailToken?.matchedCount === 0) {
+        const saveEmailToken = await EmailToken.create({
+          userRef: findUser?._id,
+          emailTokenString: token,
+        });
+      }
+
+      const emailContent =
+        stringData === "changePassword"
+          ? new EmailContent().emailResetPassword(email, token)
+          : new EmailContent().emailForgetPassword(email, token);
+
+      const SendEmail = await new EmailService().emailSend(emailContent);
+      res.json({ data: "Check your Email." });
     } catch (error) {
       next(error);
     }

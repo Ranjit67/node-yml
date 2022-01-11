@@ -24,7 +24,6 @@ class AwsS3Services {
         ContentType: file.mimetype,
       };
       const data = await this.s3.upload(params).promise();
-      console.log(data);
 
       return data;
     } catch (error) {
@@ -51,7 +50,6 @@ class AwsS3Services {
       const data = await this.s3.deleteObject(params).promise();
       return data;
     } catch (error) {
-      console.log("er", error);
       new Error();
       return false;
     }

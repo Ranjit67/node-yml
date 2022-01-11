@@ -11,7 +11,7 @@ class EmailTokenRoutes {
   }
   public routes() {
     this.router.get("/list-of-email-token", this.emailTokenController.getAll);
-    this.router.post("/email-verify", this.emailTokenController.emailVerify);
+    // this.router.post("/send-reset-link", this.emailTokenController.emailVerify);
   }
 }
 export default EmailTokenRoutes;

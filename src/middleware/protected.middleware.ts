@@ -15,6 +15,7 @@ class ProtectedMiddleware {
           return next(new Unauthorized("You need to logIn"));
         }
       }
+
       req.payload = payload;
       next();
     });

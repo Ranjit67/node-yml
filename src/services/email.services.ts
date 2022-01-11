@@ -6,20 +6,16 @@ class EmailService {
       const transport = nodemailer.createTransport({
         service: "gmail",
         auth: {
-          //   user: email,
-          //   pass: password,
-          user: "noreply.skyrisecelebrity@gmail.com",
-          pass: "jbkxjjqjoavslcaf",
+          user: email,
+          pass: password,
         },
       });
       transport
         .sendMail(emailCredentials)
         .then((info) => {
-          console.log("success", info);
           return resolve(info);
         })
         .catch((err) => {
-          console.log("fail");
           return reject(err);
         });
     });
