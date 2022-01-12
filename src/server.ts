@@ -5,6 +5,7 @@ import {
   UserRoutes,
   EmailTokenRoutes,
   AuthRoutes,
+  ServiceRoutes,
 } from "./routes";
 import { BottomMiddleware, TopMiddleware } from "./middleware";
 
@@ -15,6 +16,7 @@ const object = {
     new UserRoutes(),
     new EmailTokenRoutes(),
     new AuthRoutes(),
+    new ServiceRoutes(),
   ],
   topMiddleware: [new TopMiddleware().allowCrossDomain],
   bottomMiddleware: [

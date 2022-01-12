@@ -16,3 +16,4 @@ class ServiceRoute {
     this.router.delete("/delete", this.serviceController.delete);
   }
 }
+export default ServiceRoute;
