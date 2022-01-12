@@ -4,3 +4,4 @@ export { default as EventRoutes } from "./event.routes";
 export { default as ServiceRoutes } from "./service.routes";
 export { default as LanguageRoute } from "./language.routes";
 export { default as EmailTokenRoutes } from "./emailToken.routes";
+export { default as AssignArtistRoutes } from "./assignArtist.routes";
