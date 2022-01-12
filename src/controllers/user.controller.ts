@@ -103,7 +103,9 @@ class UserController {
 
   public async getAll(req: any, res: Response, next: NextFunction) {
     try {
-      const findAllUser = await UserSchema.find({ isDeleted: false });
+      const findAllUser = await UserSchema.find({ isDeleted: false }).select(
+        "-password"
+      );
       res.json({ data: findAllUser });
     } catch (error) {
       next(error);
@@ -113,7 +115,7 @@ class UserController {
   public async getOne(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const findOneUser = await UserSchema.findById(id);
+      const findOneUser = await UserSchema.findById(id).select("-password");
       res.json({ data: findOneUser });
     } catch (error) {
       next(error);
