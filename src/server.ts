@@ -8,6 +8,7 @@ import {
   ServiceRoutes,
   AssignArtistRoutes,
   PromoCodeRoutes,
+  FavoriteRoutes,
 } from "./routes";
 import { BottomMiddleware, TopMiddleware } from "./middleware";
 
@@ -21,6 +22,7 @@ const object = {
     new ServiceRoutes(),
     new AssignArtistRoutes(),
     new PromoCodeRoutes(),
+    new FavoriteRoutes(),
   ],
   topMiddleware: [new TopMiddleware().allowCrossDomain],
   bottomMiddleware: [

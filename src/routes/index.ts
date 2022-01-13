@@ -3,6 +3,7 @@ export { default as AuthRoutes } from "./auth.routes";
 export { default as EventRoutes } from "./event.routes";
 export { default as ServiceRoutes } from "./service.routes";
 export { default as LanguageRoute } from "./language.routes";
+export { default as FavoriteRoutes } from "./favorite.routes";
 export { default as PromoCodeRoutes } from "./promoCode.routes";
 export { default as EmailTokenRoutes } from "./emailToken.routes";
 export { default as AssignArtistRoutes } from "./assignArtist.routes";
