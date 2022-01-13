@@ -7,3 +7,4 @@ export {
   default as AssignArtistSchema,
   assignArtistModel,
 } from "./assignArtist.models";
+export { default as PromoCodeSchema, PromoCodeModel } from "./promoCode.models";
