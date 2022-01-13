@@ -14,13 +14,14 @@ const assignArtistSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
     required: true,
+    unique: true,
   },
   artistRefs: [
     {
       artistRef: {
         type: Schema.Types.ObjectId,
         ref: "User",
-        required: true,
+        // required: true,
       },
       timestamp: {
         type: Date,
@@ -29,6 +30,7 @@ const assignArtistSchema = new Schema({
     },
   ],
 });
+
 const AssignArtistSchema = model<assignArtistModel>(
   "AssignArtist",
   assignArtistSchema

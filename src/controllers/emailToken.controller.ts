@@ -3,9 +3,10 @@ import { EmailToken, UserSchema, userModel } from "../models";
 import { InternalServerError, NotFound } from "http-errors";
 import { JwtService, PasswordHasServices } from "../services";
 import { userRole } from "../types";
-interface userData extends userModel {
+type test = {
   role: userRole;
-}
+};
+type userData = userModel | test;
 class EmailTokenController {
   private jwtServices = new JwtService();
   public async getAll(req: Request, res: Response, next: NextFunction) {
