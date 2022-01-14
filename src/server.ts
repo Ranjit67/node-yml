@@ -1,4 +1,5 @@
 import App from "./app";
+import { BottomMiddleware, TopMiddleware } from "./middleware";
 import {
   LanguageRoute,
   EventRoutes,
@@ -9,8 +10,8 @@ import {
   AssignArtistRoutes,
   PromoCodeRoutes,
   FavoriteRoutes,
+  VisitorRoutes,
 } from "./routes";
-import { BottomMiddleware, TopMiddleware } from "./middleware";
 
 const object = {
   controllers: [
@@ -23,6 +24,7 @@ const object = {
     new AssignArtistRoutes(),
     new PromoCodeRoutes(),
     new FavoriteRoutes(),
+    new VisitorRoutes(),
   ],
   topMiddleware: [new TopMiddleware().allowCrossDomain],
   bottomMiddleware: [

@@ -10,7 +10,6 @@ import {
 import EmailContent from "../emailContent";
 
 class UserController {
-  //   private jwtServices = new JwtService();
   public async create(req: any, res: Response, next: NextFunction) {
     try {
       //   languagesId = is the array of languages id

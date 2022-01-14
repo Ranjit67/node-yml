@@ -82,10 +82,10 @@ class FavoriteController {
         match: { status: { $eq: "active" } },
         select: "-password",
       });
-      const t = findArtistsUserMakeFavorite.filter(
+      const removeNullField = findArtistsUserMakeFavorite.filter(
         (item: any) => item.artistRef !== null
       );
-      res.json({ data: t });
+      res.json({ data: removeNullField });
     } catch (error) {
       next(error);
     }
