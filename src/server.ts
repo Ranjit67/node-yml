@@ -11,6 +11,7 @@ import {
   PromoCodeRoutes,
   FavoriteRoutes,
   VisitorRoutes,
+  SupportRouter,
 } from "./routes";
 
 const object = {
@@ -25,6 +26,7 @@ const object = {
     new PromoCodeRoutes(),
     new FavoriteRoutes(),
     new VisitorRoutes(),
+    new SupportRouter(),
   ],
   topMiddleware: [new TopMiddleware().allowCrossDomain],
   bottomMiddleware: [

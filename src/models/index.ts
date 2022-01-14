@@ -8,5 +8,6 @@ export {
   assignArtistModel,
 } from "./assignArtist.models";
 export { default as PromoCodeSchema, PromoCodeModel } from "./promoCode.models";
+export { default as SupportSchema, SupportModel } from "./support.models";
 export { default as FavoriteSchema, FavoritesModel } from "./favorite.models";
 export { default as VisitorSchema, VisitorModel } from "./visitor.models";

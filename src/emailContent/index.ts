@@ -38,5 +38,20 @@ class EmailContent {
       text: `Go to the dome url http://localhost:3000/verifyEmail/${token}`,
     };
   }
+
+  public supportEmailContent(
+    email: string,
+    user: any,
+    message: string
+  ): emailStructureObject {
+    return {
+      from: "noreply.skyrisecelebrity@gmail.com",
+      to: email,
+      subject: `Email from Sky-rise Team.`,
+      text: `Hi  ${user.firstName}.
+
+        ${message}`,
+    };
+  }
 }
 export default EmailContent;
