@@ -75,7 +75,7 @@ class SupportController {
       const findUser = await UserSchema.findOne({ userRef: userId });
       if (!findUser?.email)
         throw new NotAcceptable(supportMessage.error.supportEmail);
-      const emailContent = await new EmailContent().supportEmailContent(
+      const emailContent =  new EmailContent().supportEmailContent(
         findUser?.email,
         findUser,
         message
