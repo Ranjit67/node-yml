@@ -107,10 +107,17 @@ class UserRoutes {
     this.router.get("/accounts", this.userController.getAll);
     this.router.get(
       "/accounts/:id",
-      new ProtectedMiddleware().protected,
+      // new ProtectedMiddleware().protected,
       this.userController.getOne
     );
     this.router.put("/account-update/:id", this.userController.update);
+    //
+    this.router.put(
+      "/account-update-category",
+      this.userController.categoryUpdate
+    );
+
+    //
 
     this.router.delete("/accounts-delete/:id", this.userController.delete); // delete for temporary
   }

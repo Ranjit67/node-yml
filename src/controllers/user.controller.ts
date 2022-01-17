@@ -116,7 +116,15 @@ class UserController {
   public async getOne(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const findOneUser = await UserSchema.findById(id).select("-password");
+      const findOneUser = await UserSchema.findById(id)
+        .populate({
+          path: "subcategories",
+          model: "SubCategory",
+        })
+        .populate("category")
+        .populate("genres")
+        .select("-password")
+        .select("-__v");
       res.json({ data: findOneUser });
     } catch (error) {
       next(error);
@@ -240,6 +248,25 @@ class UserController {
 
       const SendEmail = await new EmailService().emailSend(emailContent);
       res.json({ data: "Check your Email." });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // category update in profile
+  public async categoryUpdate(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { userId, categoryId, subcategories, genres } = req.body;
+      const findUser: any = await UserSchema.findById(userId);
+      const updateProfile = await UserSchema.findByIdAndUpdate(userId, {
+        category: categoryId ? categoryId : findUser.category,
+        subcategories: subcategories.length
+          ? subcategories
+          : findUser.subcategories,
+        genres: genres.length ? genres : findUser.genres,
+      });
+      if (!updateProfile) throw new GatewayTimeout("User is not updated.");
+      res.json({ data: "User is updated successfully." });
     } catch (error) {
       next(error);
     }

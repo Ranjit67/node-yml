@@ -5,8 +5,12 @@ export interface userModel extends Document {
   profileImageRef: string;
   artistPastEventRef: ObjectId;
   eventTypes: ObjectId[];
+  //
   category: ObjectId;
   genres: ObjectId[];
+  subcategories: ObjectId[];
+  //
+
   languages: ObjectId[];
   countryCode: string;
   phoneNumber: string;
@@ -20,7 +24,7 @@ export interface userModel extends Document {
   location: string;
   profileImageUrl: string;
   yearsOfExperience: string;
-  subcategories: ObjectId[];
+
   fcmToken: string;
   Dob: Date;
   timestamp: Date;
@@ -30,9 +34,23 @@ const userSchema = new Schema({
   profileImageRef: String,
   // artistPastEventRef: ObjectId;
   // eventTypes: ObjectId[];
-  // category:ObjectId;
-  // genres: ObjectId[];
-  // subcategories:ObjectId[];
+
+  subcategories: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "SubCategory",
+    },
+  ],
+  genres: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Genres",
+    },
+  ],
+  category: {
+    type: Schema.Types.ObjectId,
+    ref: "Category",
+  },
 
   languages: {
     type: [
