@@ -6,3 +6,6 @@ export type userStatus =
   | "not-verify";
 export type userRole = "admin" | "user" | "artist" | "manager";
 export type gender = "Male" | "Female";
+
+export { default as SubCategoryModels } from "./subCategory.types";
+export { default as GenresModels } from "./genres.types";

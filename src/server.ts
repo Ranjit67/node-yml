@@ -12,6 +12,9 @@ import {
   FavoriteRoutes,
   VisitorRoutes,
   SupportRouter,
+  CategoryRoutes,
+  SubCategoryRoutes,
+  GenresRoutes,
 } from "./routes";
 
 const object = {
@@ -27,6 +30,9 @@ const object = {
     new FavoriteRoutes(),
     new VisitorRoutes(),
     new SupportRouter(),
+    new CategoryRoutes(),
+    new SubCategoryRoutes(),
+    new GenresRoutes(),
   ],
   topMiddleware: [new TopMiddleware().allowCrossDomain],
   bottomMiddleware: [

@@ -46,6 +46,7 @@ class UserController {
           location,
           yearsOfExperience,
           languages: languagesId,
+          Dob,
         });
         const userSave = await user.save();
         if (!userSave) throw new InternalServerError("User is not created.");
@@ -76,6 +77,7 @@ class UserController {
           location,
           yearsOfExperience,
           languages: languagesId,
+          Dob,
         });
         const userSave = await user.save();
         if (!userSave) throw new InternalServerError("User is not created.");
