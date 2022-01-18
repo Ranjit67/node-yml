@@ -10,3 +10,4 @@ export type gender = "Male" | "Female";
 export { default as SubCategoryModels } from "./subCategory.types";
 export { default as GenresModels } from "./genres.types";
 export { default as PricingModel } from "./pricing.types";
+export { default as ReviewModel } from "./review.types";

@@ -16,6 +16,7 @@ import {
   SubCategoryRoutes,
   GenresRoutes,
   PricingRoutes,
+  ReviewRoutes,
 } from "./routes";
 
 const object = {
@@ -23,6 +24,7 @@ const object = {
     new UserRoutes(),
     new AuthRoutes(),
     new EventRoutes(),
+    new ReviewRoutes(),
     new GenresRoutes(),
     new ServiceRoutes(),
     new PricingRoutes(),

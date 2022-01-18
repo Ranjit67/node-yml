@@ -29,7 +29,6 @@ class PricingController {
           },
         }
       );
-      console.log(updateFirst);
       if (updateFirst.matchedCount)
         return res.json({ data: pricingMessage.success.newPricingAdded });
       const artistPricing = new PricingSchema({

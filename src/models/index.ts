@@ -15,3 +15,4 @@ export { default as CategorySchema, CategoryModels } from "./category.models";
 export { default as SubCategorySchema } from "./subCategory.models";
 export { default as GenresSchema } from "./genres.models";
 export { default as PricingSchema } from "./pricing.models";
+export { default as ReviewSchema } from "./review.models";
