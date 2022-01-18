@@ -17,7 +17,13 @@ class CategoryController {
   }
   public async getAllCategory(req: Request, res: Response, next: NextFunction) {
     try {
-      const categoryList = await CategorySchema.find();
+      const categoryList = await CategorySchema.find().populate({
+        path: "subCategoryRefs",
+        populate: {
+          path: "genresRefs",
+          model: "Genres",
+        },
+      });
       res.json({ data: categoryList });
     } catch (error) {
       next(error);
@@ -27,7 +33,13 @@ class CategoryController {
     try {
       const { categoryId } = req.params;
       if (!categoryId) throw new BadRequest(categoryMessage.error.allField);
-      const category = await CategorySchema.findById(categoryId);
+      const category = await CategorySchema.findById(categoryId).populate({
+        path: "subCategoryRefs",
+        populate: {
+          path: "genresRefs",
+          model: "Genres",
+        },
+      });
       if (!category)
         throw new NotAcceptable(categoryMessage.error.dataNotFound);
       res.json({ data: category });

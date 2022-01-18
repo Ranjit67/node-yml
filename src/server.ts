@@ -15,24 +15,26 @@ import {
   CategoryRoutes,
   SubCategoryRoutes,
   GenresRoutes,
+  PricingRoutes,
 } from "./routes";
 
 const object = {
   controllers: [
-    new LanguageRoute(),
-    new EventRoutes(),
     new UserRoutes(),
-    new EmailTokenRoutes(),
     new AuthRoutes(),
+    new EventRoutes(),
+    new GenresRoutes(),
     new ServiceRoutes(),
-    new AssignArtistRoutes(),
-    new PromoCodeRoutes(),
-    new FavoriteRoutes(),
+    new PricingRoutes(),
+    new LanguageRoute(),
     new VisitorRoutes(),
     new SupportRouter(),
+    new FavoriteRoutes(),
     new CategoryRoutes(),
+    new PromoCodeRoutes(),
+    new EmailTokenRoutes(),
     new SubCategoryRoutes(),
-    new GenresRoutes(),
+    new AssignArtistRoutes(),
   ],
   topMiddleware: [new TopMiddleware().allowCrossDomain],
   bottomMiddleware: [
