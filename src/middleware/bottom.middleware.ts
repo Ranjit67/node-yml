@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { NotFound } from "http-errors";
-import { AssignArtistErrorHandler } from "../errorHandler";
+import {
+  AssignArtistErrorHandler,
+  ServiceErrorHandler,
+  EventErrorHandler,
+} from "../errorHandler";
 
 class BottomMiddleware {
   public routeNotFoundErrorHandler(
@@ -20,6 +24,11 @@ class BottomMiddleware {
 
     if (err?.keyPattern?.["managerRef"] === 1)
       return new AssignArtistErrorHandler().allAlreadyAssign(res);
+    if (err?.keyPattern?.["serviceName"] === 1)
+      return new ServiceErrorHandler().allAlreadyExists(res);
+    if (err?.keyPattern?.["eventName"] === 1)
+      return new EventErrorHandler().alreadyExistsName(res);
+    // console.log(err);
     res.json({
       error: {
         message: err.message,

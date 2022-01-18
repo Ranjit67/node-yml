@@ -1,13 +1,33 @@
 import { Request, Response, NextFunction } from "express";
-import { BadRequest, InternalServerError } from "http-errors";
+import { BadRequest, InternalServerError, NotAcceptable } from "http-errors";
 import { EventSchema } from "../models";
+import { AwsS3Services } from "../services";
+import { eventMessage } from "../resultMessage";
 
 class EventController {
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
       const { eventName } = req.body;
-      if (!eventName) throw new BadRequest("Event name is required.");
-      const saveEvent = await EventSchema.create({ eventName });
+      const iconPicture = req?.files?.icon;
+      const imagePicture = req?.files?.image;
+      if (!eventName || !iconPicture || !imagePicture)
+        throw new BadRequest("Event name is required.");
+      const awsS3 = new AwsS3Services();
+      const iconImage = await awsS3.upload(iconPicture);
+      if (!iconImage)
+        throw new NotAcceptable(eventMessage.error.iconImageUploadFail);
+      const imageImage = await awsS3.upload(imagePicture);
+      if (!imageImage)
+        throw new NotAcceptable(eventMessage.error.imageImageUploadFail);
+      //
+
+      const saveEvent = await EventSchema.create({
+        eventName,
+        iconUrl: iconImage.Location,
+        iconFile: iconImage.Key,
+        imageUrl: imageImage.Location,
+        imageFile: imageImage.Key,
+      });
       if (!saveEvent) throw new InternalServerError("Event is not created.");
       res.json({ data: "Event is created successfully." });
     } catch (error) {
@@ -34,10 +54,38 @@ class EventController {
   public async update(req: Request, res: Response, next: NextFunction) {
     try {
       const { eventId, eventName } = req.body;
-
+      const iconPicture = req?.files?.icon;
+      const imagePicture = req?.files?.image;
+      let iconImage: any;
+      let imageImage: any;
+      const findOneEvent: any = await EventSchema.findById(eventId);
+      if (iconPicture) {
+        const awsS3 = new AwsS3Services();
+        const deleteOlder = findOneEvent?.iconFile
+          ? await awsS3.delete(findOneEvent?.iconFile)
+          : "";
+        iconImage = await awsS3.upload(iconPicture);
+        if (!iconImage)
+          throw new NotAcceptable(eventMessage.error.iconImageUploadFail);
+      }
+      if (imagePicture) {
+        const awsS3 = new AwsS3Services();
+        const deleteOlder = findOneEvent?.imageFile
+          ? await awsS3.delete(findOneEvent?.imageFile)
+          : "";
+        imageImage = await awsS3.upload(imagePicture);
+        if (!imageImage)
+          throw new NotAcceptable(eventMessage.error.iconImageUploadFail);
+      }
       const findOneAndUpdateEvent = await EventSchema.findByIdAndUpdate(
         eventId,
-        { eventName }
+        {
+          eventName: eventName ?? findOneEvent.eventName,
+          iconUrl: iconImage?.Location ?? findOneEvent.iconUrl,
+          iconFile: iconImage?.Key ?? findOneEvent.iconFile,
+          imageUrl: imageImage?.Location ?? findOneEvent.imageUrl,
+          imageFile: imageImage?.Key ?? findOneEvent.imageFile,
+        }
       );
       if (!findOneAndUpdateEvent)
         throw new InternalServerError("Event is not updated.");

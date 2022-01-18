@@ -5,6 +5,8 @@ export interface CategoryModels extends Document {
   subCategoryRefs: ObjectId[];
   genresRefs: ObjectId[];
   timestamp: Date;
+  iconUrl: string;
+  iconFile: string;
 }
 
 const categorySchema = new Schema({
@@ -12,6 +14,12 @@ const categorySchema = new Schema({
     type: String,
     required: true,
     unique: true,
+  },
+  iconUrl: {
+    type: String,
+  },
+  iconFile: {
+    type: String,
   },
   subCategoryRefs: [
     {

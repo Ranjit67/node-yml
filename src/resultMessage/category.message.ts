@@ -4,6 +4,7 @@ const categoryMessage = {
     allField: "All field are required.",
     dataNotFound: "Category not found.",
     notUpdated: "Something went wrong, Data not updated.",
+    iconImageUploadFail: "Icon image upload fail.",
   },
   success: {
     categoryCreates: "Category created Successfully.",

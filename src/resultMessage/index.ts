@@ -6,3 +6,5 @@ export { default as categoryMessage } from "./category.message";
 export { default as subCategoryMessage } from "./subCategory.message";
 export { default as genresMessage } from "./genres.message";
 export { default as pricingMessage } from "./pricing.message";
+export { default as eventMessage } from "./event.message";
+export { default as serviceMessage } from "./service.message";
