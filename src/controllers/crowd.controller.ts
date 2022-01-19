@@ -28,6 +28,7 @@ class CrowdController {
         throw new BadRequest(crowdMessage.error.allField);
       if (typeof min !== "number" || typeof max !== "number")
         throw new BadRequest(crowdMessage.error.bothNumber);
+      if (min >= max) throw new BadRequest(crowdMessage.error.numberGrater);
       const updateData = await CrowdSchema.findOneAndUpdate(
         { _id: crowdId },
         {
@@ -41,6 +42,7 @@ class CrowdController {
       next(error);
     }
   }
+
   public async getAllCrowd(req: Request, res: Response, next: NextFunction) {
     try {
       const crowd = await CrowdSchema.find().select("-__v");

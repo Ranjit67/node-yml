@@ -2,7 +2,7 @@ const crowdMessage = {
   error: {
     bothValue: "Min and max are required.",
     bothNumber: "Min and max must be number.",
-    numberGrater: "Minimum value must be greater than maximum value.",
+    numberGrater: "Minimum value must be lesser than maximum value.",
     notSave: "Data are not save.",
     allField: "All field are required.",
     notUpdated: "Data are not updated.",

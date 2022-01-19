@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 import { CrowdModel } from "../types";
 import { NextFunction } from "express";
 
-const crowdSchema = new Schema<CrowdModel>({
+const crowdSchema: any = new Schema<CrowdModel>({
   max: {
     type: Number,
     required: true,
@@ -15,10 +15,6 @@ const crowdSchema = new Schema<CrowdModel>({
   },
 });
 
-// crowdSchema.pre("findOneAndUpdate", function (next: NextFunction): void {
-//   console.log(this.min);
-//   next();
-// });
 const CrowdSchema = model<CrowdModel>("Crowd", crowdSchema);
 
 export default CrowdSchema;
