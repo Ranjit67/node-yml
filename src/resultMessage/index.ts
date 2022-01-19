@@ -10,3 +10,4 @@ export { default as eventMessage } from "./event.message";
 export { default as serviceMessage } from "./service.message";
 export { default as reviewMessage } from "./review.message";
 export { default as walletMessage } from "./wallet.message";
+export { default as crowdMessage } from "./crowd.message";

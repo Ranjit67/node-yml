@@ -16,3 +16,4 @@ export {
   default as WalletHistoryModel,
   transaction,
 } from "./walletHistory.types";
+export { default as CrowdModel } from "./crowd.types";

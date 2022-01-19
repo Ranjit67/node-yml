@@ -15,4 +15,5 @@ export { default as GenresController } from "./genres.controller";
 export { default as WalletController } from "./wallet.controller";
 export { default as ReviewController } from "./review.controller";
 export { default as EventController } from "./event.controller";
+export { default as CrowdController } from "./crowd.controller";
 export { default as UserController } from "./user.controller";

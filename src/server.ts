@@ -19,6 +19,7 @@ import {
   PricingRoutes,
   ReviewRoutes,
   WalletRoute,
+  CrowdRoutes,
 } from "./routes";
 
 const object = {
@@ -26,6 +27,7 @@ const object = {
     new UserRoutes(),
     new AuthRoutes(),
     new EventRoutes(),
+    new CrowdRoutes(),
     new WalletRoute(),
     new ReviewRoutes(),
     new GenresRoutes(),
@@ -37,9 +39,9 @@ const object = {
     new FavoriteRoutes(),
     new CategoryRoutes(),
     new PromoCodeRoutes(),
-    new WalletHistoryRoute(),
     new EmailTokenRoutes(),
     new SubCategoryRoutes(),
+    new WalletHistoryRoute(),
     new AssignArtistRoutes(),
   ],
   topMiddleware: [new TopMiddleware().allowCrossDomain],

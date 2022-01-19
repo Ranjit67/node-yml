@@ -1,6 +1,7 @@
 export { default as UserRoutes } from "./user.routes";
 export { default as AuthRoutes } from "./auth.routes";
 export { default as EventRoutes } from "./event.routes";
+export { default as CrowdRoutes } from "./crowd.routes";
 export { default as WalletRoute } from "./wallet.routes";
 export { default as ReviewRoutes } from "./review.routes";
 export { default as GenresRoutes } from "./genres.routes";
