@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { BadRequest, NotAcceptable } from "http-errors";
 import { walletMessage } from "../resultMessage";
-import { WalletSchema } from "../models";
+import { WalletSchema, WalletHistorySchema } from "../models";
 
 class WalletController {
   public async create(req: Request, res: Response, next: NextFunction) {
@@ -14,6 +14,20 @@ class WalletController {
         spent: spent ?? 0,
       });
       if (!walletSave) throw new NotAcceptable(walletMessage.error.notCreated);
+      const walletHistory = new WalletHistorySchema({
+        userRef: userId,
+      });
+      walletHistory.transactionHistory.push({
+        type: "CR",
+        amount: balance ?? 0,
+        title: "Add money",
+        description: "Add money in wallet.",
+        timestamp: new Date(),
+      });
+      const walletHistorySave = await walletHistory.save();
+      if (!walletHistorySave)
+        throw new NotAcceptable(walletMessage.error.notAddedHistory);
+
       res.json({ data: walletMessage.success.created });
     } catch (error) {
       next(error);

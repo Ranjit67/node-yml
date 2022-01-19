@@ -17,3 +17,4 @@ export { default as GenresSchema } from "./genres.models";
 export { default as PricingSchema } from "./pricing.models";
 export { default as ReviewSchema } from "./review.models";
 export { default as WalletSchema } from "./wallet.models";
+export { default as WalletHistorySchema } from "./walletHistory.models";

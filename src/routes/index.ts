@@ -15,3 +15,4 @@ export { default as PromoCodeRoutes } from "./promoCode.routes";
 export { default as EmailTokenRoutes } from "./emailToken.routes";
 export { default as SubCategoryRoutes } from "./subCategory.routes";
 export { default as AssignArtistRoutes } from "./assignArtist.routes";
+export { default as WalletHistoryRoute } from "./walletHistory.routes";
