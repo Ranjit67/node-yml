@@ -11,6 +11,7 @@ export { default as RequestController } from "./request.controller";
 export { default as ServiceController } from "./service.controller";
 export { default as VisitorController } from "./visitor.controller";
 export { default as GenresController } from "./genres.controller";
+export { default as WalletController } from "./wallet.controller";
 export { default as ReviewController } from "./review.controller";
 export { default as EventController } from "./event.controller";
 export { default as UserController } from "./user.controller";

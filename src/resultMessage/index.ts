@@ -9,3 +9,4 @@ export { default as pricingMessage } from "./pricing.message";
 export { default as eventMessage } from "./event.message";
 export { default as serviceMessage } from "./service.message";
 export { default as reviewMessage } from "./review.message";
+export { default as walletMessage } from "./wallet.message";

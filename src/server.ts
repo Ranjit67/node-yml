@@ -17,6 +17,7 @@ import {
   GenresRoutes,
   PricingRoutes,
   ReviewRoutes,
+  WalletRoute,
 } from "./routes";
 
 const object = {
@@ -24,6 +25,7 @@ const object = {
     new UserRoutes(),
     new AuthRoutes(),
     new EventRoutes(),
+    new WalletRoute(),
     new ReviewRoutes(),
     new GenresRoutes(),
     new ServiceRoutes(),
