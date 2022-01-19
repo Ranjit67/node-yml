@@ -11,6 +11,7 @@ export default interface WalletHistoryModel extends Document {
       timestamp: Date;
       title: string;
       description: string;
+      // transactionId: string;
     }
   ];
 }

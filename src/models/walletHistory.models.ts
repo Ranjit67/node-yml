@@ -22,6 +22,9 @@ const walletHistorySchema = new Schema({
       description: {
         type: String,
       },
+      // transactionId: {
+      //   type: String,
+      // },
       timestamp: {
         type: Date,
         default: new Date().toString(),

@@ -6,7 +6,6 @@ const walletMessage = {
   },
   success: {
     created: "Wallet created successfully.",
-    //   visitorAdded: "Visitor is added successfully.",
   },
 };
 export default walletMessage;

@@ -13,6 +13,10 @@ class WalletHistoryRoute {
       "/all-wallet-history/:userId",
       this.walletHistory.getWalletHistory
     );
+    this.router.post(
+      "/transaction-details",
+      this.walletHistory.transactionDetails
+    );
   }
 }
 
