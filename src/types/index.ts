@@ -17,3 +17,4 @@ export {
   transaction,
 } from "./walletHistory.types";
 export { default as CrowdModel } from "./crowd.types";
+export { default as DayModel } from "./day.types";

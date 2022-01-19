@@ -1,8 +1,7 @@
 import { Schema, model } from "mongoose";
 import { CrowdModel } from "../types";
-import { NextFunction } from "express";
 
-const crowdSchema: any = new Schema<CrowdModel>({
+const crowdSchema = new Schema<CrowdModel>({
   max: {
     type: Number,
     required: true,

@@ -1,3 +1,4 @@
+export { default as DayRoutes } from "./day.routes";
 export { default as UserRoutes } from "./user.routes";
 export { default as AuthRoutes } from "./auth.routes";
 export { default as EventRoutes } from "./event.routes";

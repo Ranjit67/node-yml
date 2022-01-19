@@ -3,6 +3,7 @@ import { BottomMiddleware, TopMiddleware } from "./middleware";
 import {
   LanguageRoute,
   EventRoutes,
+  DayRoutes,
   UserRoutes,
   EmailTokenRoutes,
   AuthRoutes,
@@ -24,6 +25,7 @@ import {
 
 const object = {
   controllers: [
+    new DayRoutes(),
     new UserRoutes(),
     new AuthRoutes(),
     new EventRoutes(),
