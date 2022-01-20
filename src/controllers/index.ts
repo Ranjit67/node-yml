@@ -2,6 +2,7 @@ export { default as ArtistBlockDateController } from "./artistBlockDate.controll
 export { default as AssignArtistController } from "./assignArtist.controller";
 export { default as SubCategoryController } from "./subCategory.controller";
 export { default as EmailTokenController } from "./emailToken.controller";
+export { default as ArtistMediaController } from "./artistMedia.controller";
 export { default as PromoCodeController } from "./promoCode.controller";
 export { default as WalletHistory } from "./walletHistory.controller";
 export { default as CategoryController } from "./category.controller";

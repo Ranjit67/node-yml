@@ -42,12 +42,13 @@ class EmailContent {
   public supportEmailContent(
     email: string,
     user: any,
-    message: string
+    message: string,
+    subject: string
   ): emailStructureObject {
     return {
       from: "noreply.skyrisecelebrity@gmail.com",
       to: email,
-      subject: `Email from Sky-rise Team.`,
+      subject: subject,
       text: `Hi  ${user.firstName}.
 
         ${message}`,

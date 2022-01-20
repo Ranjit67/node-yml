@@ -15,6 +15,7 @@ export { default as CategoryRoutes } from "./category.routes";
 export { default as FavoriteRoutes } from "./favorite.routes";
 export { default as PromoCodeRoutes } from "./promoCode.routes";
 export { default as EmailTokenRoutes } from "./emailToken.routes";
+export { default as ArtistMediaRoute } from "./artistMedia.routes";
 export { default as SubCategoryRoutes } from "./subCategory.routes";
 export { default as AssignArtistRoutes } from "./assignArtist.routes";
 export { default as WalletHistoryRoute } from "./walletHistory.routes";

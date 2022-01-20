@@ -69,19 +69,24 @@ class SupportController {
   public async supportEmail(req: Request, res: Response, next: NextFunction) {
     try {
       const { userId } = req.params;
-      const { message } = req.body;
+      const { message, subject } = req.body;
       if (!userId || !message)
         throw new BadRequest(supportMessage.error.allField);
-      const findUser = await UserSchema.findOne({ userRef: userId });
+      const findUser = await UserSchema.findById(userId);
       if (!findUser?.email)
         throw new NotAcceptable(supportMessage.error.supportEmail);
-      const emailContent =  new EmailContent().supportEmailContent(
+      const emailContent = new EmailContent().supportEmailContent(
         findUser?.email,
         findUser,
-        message
+        message,
+        subject
       );
       const SendEmail = await new EmailService().emailSend(emailContent);
-      res.json({ data: supportMessage.success.supportMessageSendToUser });
+
+      res.json({
+        data: supportMessage.success.supportMessageSendToUser,
+        SendEmail,
+      });
     } catch (error) {
       next(error);
     }
