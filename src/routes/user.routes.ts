@@ -111,6 +111,7 @@ class UserRoutes {
       this.userController.getOne
     );
     this.router.put("/account-update/:id", this.userController.update);
+    this.router.post("/account-status", this.userController.blockUnblockUser);
     //
     this.router.put(
       "/account-update-category",

@@ -3,7 +3,7 @@ import { EmailTokenController } from "../controllers";
 
 class EmailTokenRoutes {
   public router: Router;
-  public path = "/api/v1/email-token";
+  public path = "/email-token";
   private emailTokenController = new EmailTokenController();
   constructor() {
     this.router = Router();

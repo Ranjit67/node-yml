@@ -1,3 +1,4 @@
+export { default as ArtistAvailabilitiesController } from "./artistAvailabilities.controller";
 export { default as AssignArtistController } from "./assignArtist.controller";
 export { default as SubCategoryController } from "./subCategory.controller";
 export { default as EmailTokenController } from "./emailToken.controller";

@@ -1,5 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { BadRequest, GatewayTimeout, InternalServerError } from "http-errors";
+import {
+  BadRequest,
+  GatewayTimeout,
+  InternalServerError,
+  NotAcceptable,
+} from "http-errors";
 import { UserSchema, EmailToken } from "../models";
 import {
   EmailService,
@@ -8,6 +13,7 @@ import {
   PasswordHasServices,
 } from "../services";
 import EmailContent from "../emailContent";
+import { userMessage } from "../resultMessage";
 
 class UserController {
   public async create(req: any, res: Response, next: NextFunction) {
@@ -203,6 +209,43 @@ class UserController {
       if (!token) throw new InternalServerError("Token is not generated.");
 
       res.json({ data: token, user: findUser });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // super admin block user
+  public async blockUnblockUser(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { id } = req.body;
+      const findUser: any = await UserSchema.findById(id);
+      const updateUser = await UserSchema.updateOne(
+        { _id: id },
+        {
+          status:
+            findUser.status === "active"
+              ? "blocked"
+              : findUser.status === "blocked"
+              ? "active"
+              : findUser.status === "pending"
+              ? "active"
+              : findUser.status,
+        }
+      );
+      if (updateUser.modifiedCount === 0)
+        throw new NotAcceptable(userMessage.error.notUpdatedBlockOrUnblock);
+      return res.json({
+        data:
+          findUser.status === "active"
+            ? userMessage.success.userBlocked
+            : findUser.status === "blocked"
+            ? userMessage.success.userUnblocked
+            : userMessage.success.userPendingToActive,
+      });
     } catch (error) {
       next(error);
     }

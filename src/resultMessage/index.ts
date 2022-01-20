@@ -13,3 +13,4 @@ export { default as reviewMessage } from "./review.message";
 export { default as walletMessage } from "./wallet.message";
 export { default as crowdMessage } from "./crowd.message";
 export { default as dayMessage } from "./day.message";
+export { default as userMessage } from "./user.message";
