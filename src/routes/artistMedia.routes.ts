@@ -3,7 +3,7 @@ import { ArtistMediaController } from "../controllers";
 
 class ArtistMediaRoute {
   public router = Router();
-  public path = "/past-event";
+  public path = "/artist-media";
   private artistMediaController = new ArtistMediaController();
   constructor() {
     this.routes();
