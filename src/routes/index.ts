@@ -18,4 +18,4 @@ export { default as EmailTokenRoutes } from "./emailToken.routes";
 export { default as SubCategoryRoutes } from "./subCategory.routes";
 export { default as AssignArtistRoutes } from "./assignArtist.routes";
 export { default as WalletHistoryRoute } from "./walletHistory.routes";
-export { default as ArtistAvailabilitiesRoutes } from "./artistAvailabilities.routes";
+export { default as ArtistBlockDateRoutes } from "./artistBlockDate.routes";

@@ -11,7 +11,7 @@ class EventController {
       const iconPicture = req?.files?.icon;
       const imagePicture = req?.files?.image;
       if (!eventName || !iconPicture || !imagePicture)
-        throw new BadRequest("Event name is required.");
+        throw new BadRequest(eventMessage.error.allFieldsRequired);
       const awsS3 = new AwsS3Services();
       const iconImage = await awsS3.upload(iconPicture);
       if (!iconImage)
@@ -27,6 +27,7 @@ class EventController {
         iconFile: iconImage.Key,
         imageUrl: imageImage.Location,
         imageFile: imageImage.Key,
+        timestamp: new Date(),
       });
       if (!saveEvent) throw new InternalServerError("Event is not created.");
       res.json({ data: "Event is created successfully." });

@@ -20,3 +20,4 @@ export { default as WalletSchema } from "./wallet.models";
 export { default as WalletHistorySchema } from "./walletHistory.models";
 export { default as CrowdSchema } from "./crowd.models";
 export { default as DaySchema } from "./day.models";
+export { default as ArtistBlockDateSchema } from "./artistBlockDate.models";

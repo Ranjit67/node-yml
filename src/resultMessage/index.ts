@@ -14,3 +14,5 @@ export { default as walletMessage } from "./wallet.message";
 export { default as crowdMessage } from "./crowd.message";
 export { default as dayMessage } from "./day.message";
 export { default as userMessage } from "./user.message";
+export { default as languageMessage } from "./language.message";
+export { default as artistBlockDateMessage } from "./artistBlockDate.message";

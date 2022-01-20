@@ -11,7 +11,7 @@ class ServiceController {
       const iconPicture = req?.files?.icon;
       const imagePicture = req?.files?.image;
       if (!serviceName || !iconPicture || !imagePicture)
-        throw new BadRequest("Service name is required.");
+        throw new BadRequest(serviceMessage.error.allFieldsRequired);
       const awsS3 = new AwsS3Services();
       const iconImage = await awsS3.upload(iconPicture);
       if (!iconImage)

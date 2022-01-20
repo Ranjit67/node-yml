@@ -1,7 +1,7 @@
 import App from "./app";
 import { BottomMiddleware, TopMiddleware } from "./middleware";
 import {
-  ArtistAvailabilitiesRoutes,
+  ArtistBlockDateRoutes,
   LanguageRoute,
   EventRoutes,
   DayRoutes,
@@ -46,7 +46,7 @@ const object = {
     new SubCategoryRoutes(),
     new WalletHistoryRoute(),
     new AssignArtistRoutes(),
-    new ArtistAvailabilitiesRoutes(),
+    new ArtistBlockDateRoutes(),
   ],
   topMiddleware: [new TopMiddleware().allowCrossDomain],
   bottomMiddleware: [
