@@ -113,7 +113,7 @@ class UserRoutes {
     this.router.put("/account-update/:id", this.userController.update);
     this.router.post("/account-status", this.userController.blockUnblockUser);
     //
-    this.router.put(
+    this.router.patch(
       "/account-update-category",
       this.userController.categoryUpdate
     );

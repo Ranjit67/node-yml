@@ -1,14 +1,6 @@
-import { Document, Schema, model, ObjectId } from "mongoose";
+import { Schema, model } from "mongoose";
+import { ArtistAvailabilityModel } from "../types";
 
-export interface ArtistAvailabilityModel extends Document {
-  artistRef: ObjectId;
-  availabilities: [
-    {
-      isBlocked: boolean;
-      date: Date;
-    }
-  ];
-}
 const artistAvailabilitySchema = new Schema({
   artistRef: {
     type: Schema.Types.ObjectId,

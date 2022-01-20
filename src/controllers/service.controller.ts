@@ -27,6 +27,7 @@ class ServiceController {
         iconFile: iconImage.Key,
         imageUrl: imageImage.Location,
         imageFile: imageImage.Key,
+        timestamp: new Date().toString(),
       });
       if (!saveService)
         throw new InternalServerError("Service is not created.");
