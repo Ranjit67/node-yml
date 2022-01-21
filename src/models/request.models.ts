@@ -1,6 +1,6 @@
 import { Document, Schema, model, ObjectId } from "mongoose";
 import { requestType, requestStatus } from "../types";
-export interface Request extends Document {
+export interface RequestModel extends Document {
   // rescheduleRef:ObjectId;
   requestType: requestType;
   senderUserRef: ObjectId;
@@ -19,11 +19,12 @@ const requestSchema = new Schema({
   //     ref: "Reschedule",
   // },
   requestType: {
+    type: String,
     enum: [
       "manager",
       "pricing",
-      "reschduled-customer",
-      "reschudel-artist",
+      "rescheduledCustomer",
+      "rescheduledArtist",
       "personalize",
     ],
   },
@@ -44,12 +45,14 @@ const requestSchema = new Schema({
     type: Object,
   },
   status: {
+    type: String,
     enum: ["pending", "accept", "reject"],
+    default: "pending",
   },
   reason: {
     type: String,
   },
 });
 
-const RequestSchema = model<Request>("Request", requestSchema);
+const RequestSchema = model<RequestModel>("Request", requestSchema);
 export default RequestSchema;

@@ -4,6 +4,7 @@ import {
   AssignArtistErrorHandler,
   ServiceErrorHandler,
   EventErrorHandler,
+  UserErrorHandler,
 } from "../errorHandler";
 
 class BottomMiddleware {
@@ -28,7 +29,10 @@ class BottomMiddleware {
       return new ServiceErrorHandler().allAlreadyExists(res);
     if (err?.keyPattern?.["eventName"] === 1)
       return new EventErrorHandler().alreadyExistsName(res);
-    // console.log(err);
+    if (err?.keyPattern?.["email"] === 1)
+      return new UserErrorHandler().emailAlreadyExists(res);
+    if (err?.keyPattern?.["phoneNumber"] === 1)
+      return new UserErrorHandler().phoneAlreadyExists(res);
     res.json({
       error: {
         message: err.message,

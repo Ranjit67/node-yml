@@ -2,6 +2,8 @@ const userMessage = {
   error: {
     notUpdatedBlockOrUnblock:
       "User is verified so you can't block or active the users.",
+    duplicateEmail: "This email is already registered.",
+    duplicatePhone: "This phone number is already registered.",
   },
   success: {
     userBlocked: "User is blocked successfully.",

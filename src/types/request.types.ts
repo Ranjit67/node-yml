@@ -1,8 +1,8 @@
 export type requestType =
   | "manager"
   | "pricing"
-  | "reschduled-customer"
-  | "reschudel-artist"
+  | "rescheduledCustomer"
+  | "rescheduledArtist"
   | "personalize";
 
 export type requestStatus = "pending" | "accept" | "reject";

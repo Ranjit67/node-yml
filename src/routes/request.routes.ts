@@ -9,7 +9,7 @@ class RequestRouter {
     this.routes();
   }
   private routes() {
-    this.router.post("/create", this.requestController.requestList);
+    this.router.post("/create", this.requestController.create);
     // this.router.get("/all",this.getAll);
     // this.router.get("/:requestId",this.getRequest);
     // this.router.put("/update",this.update);
