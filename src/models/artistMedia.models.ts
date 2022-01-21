@@ -29,6 +29,7 @@ const artistMediaSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
     unique: true,
+    required: true,
   },
   artistVideos: [
     {
