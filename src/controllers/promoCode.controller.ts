@@ -11,20 +11,17 @@ class PromoCodeController {
         secretString,
         percentage,
         maxCashBack,
-        minimumOrder,
         startingDate,
         endingDate,
-        dedicatedSomeOne,
       } = req.body;
       const promoCodeSave = await PromoCodeSchema.create({
         numberOfTimeUsed: numberOfTimeUsed || "",
         secretString,
         percentage: percentage,
         maxCashBack: maxCashBack || "",
-        minimumOrder: minimumOrder || "",
         startingDate,
         endingDate,
-        dedicatedSomeOne: dedicatedSomeOne || null,
+        timeStamp: new Date(),
       });
       if (!promoCodeSave)
         throw new NotAcceptable(promoCodeMessage.error.notCreated);
@@ -110,10 +107,8 @@ class PromoCodeController {
         secretString,
         percentage,
         maxCashBack,
-        minimumOrder,
         startingDate,
         endingDate,
-        dedicatedSomeOne,
         promoCodeId,
       } = req.body;
       if (!promoCodeId)
@@ -128,10 +123,8 @@ class PromoCodeController {
           secretString: secretString || findPromoCode.secretString,
           percentage: percentage || findPromoCode.percentage,
           maxCashBack: maxCashBack || findPromoCode.maxCashBack,
-          minimumOrder: minimumOrder || findPromoCode.minimumOrder,
           startingDate: startingDate || findPromoCode.startingDate,
           endingDate: endingDate || findPromoCode.endingDate,
-          dedicatedSomeOne: dedicatedSomeOne || findPromoCode.dedicatedSomeOne,
         }
       );
       if (!updatePromoCode)

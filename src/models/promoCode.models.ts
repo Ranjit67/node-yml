@@ -10,6 +10,7 @@ export interface PromoCodeModel extends Document {
   startingDate: Date;
   endingDate: Date;
   dedicatedSomeOne: ObjectId;
+  timeStamp: Date;
   appliedUser: [
     {
       userRef: ObjectId;
@@ -24,10 +25,6 @@ export interface PromoCodeModel extends Document {
 }
 
 const promoCodeSchema = new Schema({
-  isExpired: {
-    type: Boolean,
-    default: false,
-  },
   numberOfTimeUsed: {
     type: String,
   },
@@ -43,20 +40,19 @@ const promoCodeSchema = new Schema({
   maxCashBack: {
     type: String,
   },
-  minimumOrder: {
-    type: String,
-  },
+
   startingDate: {
     type: Date,
-    default: new Date().toString(),
+    default: new Date(),
   },
   endingDate: {
     type: Date,
-    default: new Date(new Date().getTime() + 86400000 * 2).toString(),
+    default: new Date(new Date().getTime() + 86400000 * 2),
   },
-  dedicatedSomeOne: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
+
+  timeStamp: {
+    type: Date,
+    default: new Date(),
   },
   appliedUser: [
     {
