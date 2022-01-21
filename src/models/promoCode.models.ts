@@ -1,7 +1,7 @@
 import { Document, Schema, model, ObjectId } from "mongoose";
 
 export interface PromoCodeModel extends Document {
-  isExpired: boolean;
+  // isExpired: boolean;
   numberOfTimeUsed: string;
   secretString: string;
   percentage: string;

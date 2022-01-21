@@ -118,6 +118,24 @@ class UserController {
       next(error);
     }
   }
+  public async getSelf(req: any, res: Response, next: NextFunction) {
+    try {
+      const { aud } = req.payload;
+      const findOneUser = await UserSchema.findById(aud[0])
+        .populate({
+          path: "subcategories",
+          model: "SubCategory",
+        })
+        .populate("category")
+        .populate("genres")
+        .select("-password")
+        .select("-__v");
+
+      res.json({ data: findOneUser });
+    } catch (error) {
+      next(error);
+    }
+  }
 
   public async getOne(req: Request, res: Response, next: NextFunction) {
     try {

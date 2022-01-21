@@ -106,10 +106,16 @@ class UserRoutes {
   private routes() {
     this.router.get("/accounts", this.userController.getAll);
     this.router.get(
+      "/accounts-self",
+      new ProtectedMiddleware().protected,
+      this.userController.getSelf
+    );
+    this.router.get(
       "/accounts/:id",
-      // new ProtectedMiddleware().protected,
+      new ProtectedMiddleware().protected,
       this.userController.getOne
     );
+
     this.router.put("/account-update/:id", this.userController.update);
     this.router.post("/account-status", this.userController.blockUnblockUser);
     //

@@ -1,148 +1,55 @@
-// const request =  [
-//     {
-//       id: 1,
-//       eventType: "Birthday",
-//       serviceType: "Live Performance",
-//       eventDate: {
-//         start: "12/25/2021",
-//         end: "12/27/2021",
-//       },
-//       rescheduleDate: {
-//         start: "12/28/2021 ",
-//         end: "01/03/2022 ",
-//       },
-//       eventLocation: "Los Angeles",
-//       eventTime: "11:30 AM",
-//       eventDuration: "3",
-//       otherDetails:
-//         "lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-//       status: "ACCEPTED",
-//       type: "reschedule",
-//     },
+import { Document, Schema, model, ObjectId } from "mongoose";
+import { requestType, requestStatus } from "../types";
+export interface Request extends Document {
+  // rescheduleRef:ObjectId;
+  requestType: requestType;
+  senderUserRef: ObjectId;
+  receiverUserRef: ObjectId;
+  bookingRef: ObjectId;
+  details: object;
+  timestamp: Date;
+  status: requestStatus;
+  reason: string;
+}
 
-//     {
-//       id: 2,
-//       eventType: "Birthday",
-//       serviceType: "Live Performance",
-//       eventDate: {
-//         start: "12/25/2021 10:30 AM",
-//         end: "12/27/2021 10:30 AM",
-//       },
-//       rescheduleDate: {
-//         start: "12/28/2021 10:30 AM",
-//         end: "01/03/2022 10:30 AM",
-//       },
-//       status: "REJECTED",
-//       type: "reschedule",
-//     },
-//     {
-//       id: 3,
-//       eventType: "Birthday",
-//       serviceType: "Live Performance",
-//       eventDate: {
-//         start: "12/25/2021 10:30 AM",
-//         end: "12/27/2021 10:30 AM",
-//       },
-//       rescheduleDate: {
-//         start: "12/28/2021 10:30 AM",
-//         end: "01/03/2022 10:30 AM",
-//       },
-//       status: "PENDING",
-//       type: "reschedule",
-//     },
-//     {
-//       id: 4,
-//       eventType: "Birthday",
-//       serviceType: "Live Performance",
-//       eventDate: {
-//         start: "12/25/2021 10:30 AM",
-//         end: "12/27/2021 10:30 AM",
-//       },
-//       rescheduleDate: {
-//         start: "12/28/2021 10:30 AM",
-//         end: "01/03/2022 10:30 AM",
-//       },
-//       type: "reschedule",
-//     },
-//     {
-//       id: 5,
-//       eventType: "Birthday",
-//       serviceType: "Live Performance",
-//       eventDate: {
-//         start: "12/25/2021 10:30 AM",
-//         end: "12/27/2021 10:30 AM",
-//       },
-//       rescheduleDate: {
-//         start: "12/28/2021 10:30 AM",
-//         end: "01/03/2022 10:30 AM",
-//       },
-//       type: "reschedule",
-//     },
-//     {
-//       id: 6,
-//       eventType: "Birthday",
-//       serviceType: "Personalized Message",
-//       personalizedMsgDate: "12/25/2021 10:30 AM",
-//       reschedulePersonalizedDate: "01/03/2022 10:30 AM",
-//       personalizedMessage: "Hi, I am going to be late for the party",
-//       type: "personalized",
-//     },
-//     {
-//       id: 7,
-//       eventType: "Birthday",
-//       serviceType: "Virtual Event",
-//       eventDate: {
-//         start: "12/25/2021 10:30 AM",
-//         end: "12/27/2021 10:30 AM",
-//       },
-//       cityName: "Bangalore",
-//       status: "",
-//       type: "location",
-//     },
-//     {
-//       id: 8,
-//       eventType: "Birthday",
-//       serviceType: "Personalized Message",
-//       personalizedMsgDate: "12/25/2021 10:30 AM",
-//       reschedulePersonalizedDate: "01/03/2022 10:30 AM",
-//       personalizedMessage: "Hi, I am going to be late for the party",
-//       status: "ACCEPTED",
-//       type: "personalized",
-//     },
-//     {
-//       id: 9,
-//       eventType: "Birthday",
-//       serviceType: "Virtual Event",
-//       eventDate: {
-//         start: "12/25/2021 10:30 AM",
-//         end: "12/27/2021 10:30 AM",
-//       },
-//       rescheduleDate: {
-//         start: "12/28/2021 10:30 AM",
-//         end: "01/03/2022 10:30 AM",
-//       },
-//       status: "ACCEPTED",
-//       type: "reschedule",
-//     },
-//     {
-//       id: 10,
-//       managerName: "Manager Name",
-//       managerEmail: "manager123@gmail.com",
-//       managerLocation: "Bangalore",
-//       yearsOfExperience: 5,
-//       phoneNumber: "+19876543210",
-//       gender: "Male",
-//       type: "manager",
-//     },
-//     {
-//       id: 11,
-//       managerName: "Accepted Manager Name",
-//       managerEmail: "acceptedmanager123@gmail.commm",
-//       managerLocation: "Bangalore",
-//       yearsOfExperience: 5,
-//       phoneNumber: "+1234567890",
-//       gender: "Female",
-//       type: "manager",
-//       status: "ACCEPTED",
-//     },
-//   ]
+const requestSchema = new Schema({
+  // rescheduleRef: {
+  //     type: Schema.Types.ObjectId,
+  //     required: true,
+  //     ref: "Reschedule",
+  // },
+  requestType: {
+    enum: [
+      "manager",
+      "pricing",
+      "reschduled-customer",
+      "reschudel-artist",
+      "personalize",
+    ],
+  },
+  senderUserRef: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  receiverUserRef: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
+  bookingRef: {
+    type: Schema.Types.ObjectId,
+    ref: "Booking",
+  },
+  details: {
+    type: Object,
+  },
+  status: {
+    enum: ["pending", "accept", "reject"],
+  },
+  reason: {
+    type: String,
+  },
+});
+
+const RequestSchema = model<Request>("Request", requestSchema);
+export default RequestSchema;

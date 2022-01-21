@@ -22,3 +22,4 @@ export { default as CrowdSchema } from "./crowd.models";
 export { default as DaySchema } from "./day.models";
 export { default as ArtistBlockDateSchema } from "./artistBlockDate.models";
 export { default as ArtistMediaSchema } from "./artistMedia.models";
+export { default as RequestSchema } from "./request.models";

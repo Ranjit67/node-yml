@@ -6,6 +6,7 @@ export { default as CrowdRoutes } from "./crowd.routes";
 export { default as WalletRoute } from "./wallet.routes";
 export { default as ReviewRoutes } from "./review.routes";
 export { default as GenresRoutes } from "./genres.routes";
+export { default as RequestRouter } from "./request.routes";
 export { default as SupportRouter } from "./support.routes";
 export { default as PricingRoutes } from "./pricing.routes";
 export { default as ServiceRoutes } from "./service.routes";
