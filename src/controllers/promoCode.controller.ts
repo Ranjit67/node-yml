@@ -21,7 +21,7 @@ class PromoCodeController {
         maxCashBack: maxCashBack || "",
         startingDate,
         endingDate,
-        timeStamp: new Date(),
+        timestamp: new Date(),
       });
       if (!promoCodeSave)
         throw new NotAcceptable(promoCodeMessage.error.notCreated);

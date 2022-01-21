@@ -9,7 +9,7 @@ class ArtistMediaRoute {
     this.routes();
   }
   private routes() {
-    this.router.post("/create", this.artistMediaController.create);
+    this.router.post("/create-video", this.artistMediaController.videoCreate);
     // this.router.get("/all-pastEvent", this.pastEventController.getAll);
     // this.router.put("/update", this.pastEventController.update);
     // this.router.delete("/delete", this.pastEventController.delete);

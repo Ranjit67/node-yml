@@ -5,17 +5,17 @@ import { AwsS3Services } from "../services";
 import { ArtistMediaSchema } from "../models";
 
 class ArtistMediaController {
-  public async create(req: any, res: Response, next: NextFunction) {
+  public async videoCreate(req: any, res: Response, next: NextFunction) {
     try {
       const { artistId, links } = req.body;
 
-      const linksUrl = links ? JSON.parse(links) : [];
+      // const linksUrl = links.length ? JSON.parse(links) : [];
 
       const videoObject = req.files;
       const timestamp = new Date();
 
-      const linkArray = linksUrl.length
-        ? linksUrl.map((element: string) => ({
+      const linkArray = links.length
+        ? links.map((element: string) => ({
             youtubeUrl: element,
             timestamp,
           }))
@@ -85,6 +85,13 @@ class ArtistMediaController {
         });
         // no media file
       }
+    } catch (error) {
+      next(error);
+    }
+  }
+  public async photoCreate(req: any, res: Response, next: NextFunction) {
+    try {
+      //  const {} = req.body
     } catch (error) {
       next(error);
     }

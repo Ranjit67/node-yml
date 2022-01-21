@@ -10,7 +10,7 @@ export interface PromoCodeModel extends Document {
   startingDate: Date;
   endingDate: Date;
   dedicatedSomeOne: ObjectId;
-  timeStamp: Date;
+  timestamp: Date;
   appliedUser: [
     {
       userRef: ObjectId;
@@ -50,7 +50,7 @@ const promoCodeSchema = new Schema({
     default: new Date(new Date().getTime() + 86400000 * 2),
   },
 
-  timeStamp: {
+  timestamp: {
     type: Date,
     default: new Date(),
   },
