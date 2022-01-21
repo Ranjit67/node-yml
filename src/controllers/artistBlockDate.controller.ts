@@ -23,7 +23,19 @@ class ArtistBlockDateController {
 
       const firstUpdate = await ArtistBlockDateSchema.updateOne(
         { artistRef: artistId },
-        { $push: { blockedDates: { $each: structDates } } }
+        {
+          $push: { blockedDates: { $each: structDates } },
+        }
+      );
+      const removeOlderDates = await ArtistBlockDateSchema.updateOne(
+        { artistRef: artistId },
+        {
+          $pull: {
+            blockedDates: {
+              date: { $lt: new Date().getTime() },
+            },
+          },
+        }
       );
       if (firstUpdate.matchedCount === 1)
         return res.json({

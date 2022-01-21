@@ -1,4 +1,5 @@
 import App from "./app";
+import schedule from "node-schedule";
 import { BottomMiddleware, TopMiddleware } from "./middleware";
 import {
   ArtistBlockDateRoutes,
