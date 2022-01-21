@@ -32,6 +32,8 @@ class UserController {
         languagesId,
         Dob,
       } = req.body;
+      const check = await UserSchema.findOne({ email });
+      if (check) throw new BadRequest(userMessage.error.duplicateEmail);
       const profilePicture = req?.files?.profilePicture;
       if (profilePicture) {
         const awsS3 = new AwsS3Services();

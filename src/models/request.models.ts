@@ -52,6 +52,9 @@ const requestSchema = new Schema({
   reason: {
     type: String,
   },
+  timestamp: {
+    type: Date,
+  },
 });
 
 const RequestSchema = model<RequestModel>("Request", requestSchema);

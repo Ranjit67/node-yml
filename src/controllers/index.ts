@@ -9,6 +9,7 @@ export { default as CategoryController } from "./category.controller";
 export { default as LanguageController } from "./language.controller";
 export { default as FavoriteController } from "./favorite.controller";
 export { default as PricingController } from "./pricing.controller";
+export { default as BookingController } from "./booking.controller";
 export { default as SupportController } from "./support.controller";
 export { default as RequestController } from "./request.controller";
 export { default as ServiceController } from "./service.controller";

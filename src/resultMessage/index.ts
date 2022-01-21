@@ -17,3 +17,4 @@ export { default as userMessage } from "./user.message";
 export { default as languageMessage } from "./language.message";
 export { default as artistMediaMessage } from "./artistMedia.message";
 export { default as artistBlockDateMessage } from "./artistBlockDate.message";
+export { default as requestMessage } from "./request.message";
