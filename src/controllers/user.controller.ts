@@ -4,6 +4,7 @@ import {
   GatewayTimeout,
   InternalServerError,
   NotAcceptable,
+  Conflict,
 } from "http-errors";
 import { UserSchema, EmailToken } from "../models";
 import {
@@ -33,7 +34,7 @@ class UserController {
         Dob,
       } = req.body;
       const check = await UserSchema.findOne({ email });
-      if (check) throw new BadRequest(userMessage.error.duplicateEmail);
+      if (check) throw new Conflict(userMessage.error.duplicateEmail);
       const profilePicture = req?.files?.profilePicture;
       if (profilePicture) {
         const awsS3 = new AwsS3Services();
