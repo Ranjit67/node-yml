@@ -5,7 +5,7 @@ import {
   Conflict,
   NotFound,
 } from "http-errors";
-import { AssignArtistSchema, UserSchema } from "../models";
+import { AssignArtistSchema, UserSchema, RequestSchema } from "../models";
 class AssignArtistController {
   public async assignArtist(req: Request, res: Response, next: NextFunction) {
     try {

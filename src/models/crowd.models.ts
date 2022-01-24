@@ -12,6 +12,9 @@ const crowdSchema = new Schema<CrowdModel>({
     required: true,
     unique: true,
   },
+  timestamp: {
+    type: Date,
+  },
 });
 
 const CrowdSchema = model<CrowdModel>("Crowd", crowdSchema);

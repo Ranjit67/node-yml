@@ -14,9 +14,14 @@ class CrowdController {
       const crowd = await CrowdSchema.create({
         min,
         max,
+        timestamp: new Date(),
       });
       if (!crowd) throw new BadRequest(crowdMessage.error.notSave);
-      res.json({ data: crowdMessage.success.save });
+      res.json({
+        success: {
+          message: crowdMessage.success.save,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -37,7 +42,11 @@ class CrowdController {
         }
       );
       if (!updateData) throw new NotAcceptable(crowdMessage.error.notUpdated);
-      res.json({ data: crowdMessage.success.updated });
+      res.json({
+        success: {
+          message: crowdMessage.success.updated,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -46,7 +55,11 @@ class CrowdController {
   public async getAllCrowd(req: Request, res: Response, next: NextFunction) {
     try {
       const crowd = await CrowdSchema.find().select("-__v");
-      res.json({ data: crowd });
+      res.json({
+        success: {
+          data: crowd,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -58,7 +71,11 @@ class CrowdController {
         _id: { $in: crowdIds },
       });
       if (!deleteCrowds) throw new NotAcceptable(crowdMessage.error.notDelete);
-      res.json({ data: crowdMessage.success.delete });
+      res.json({
+        success: {
+          message: crowdMessage.success.delete,
+        },
+      });
     } catch (error) {
       next(error);
     }

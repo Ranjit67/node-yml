@@ -14,9 +14,10 @@ class RequestRouter {
       "/all-request-receiver/:receiverUserId",
       this.requestController.getRequestReceiver
     );
-    // this.router.get("/:requestId",this.getRequest);
-    // this.router.put("/update",this.update);
-    // this.router.delete("/delete",this.delete);
+    this.router.get(
+      "/all-request-sender/:senderUserId",
+      this.requestController.getRequestSender
+    );
   }
 }
 export default RequestRouter;
