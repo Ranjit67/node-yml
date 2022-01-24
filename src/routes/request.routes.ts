@@ -10,7 +10,10 @@ class RequestRouter {
   }
   private routes() {
     this.router.post("/create", this.requestController.create);
-    // this.router.get("/all",this.getAll);
+    this.router.get(
+      "/all-request-receiver/:receiverUserId",
+      this.requestController.getRequestReceiver
+    );
     // this.router.get("/:requestId",this.getRequest);
     // this.router.put("/update",this.update);
     // this.router.delete("/delete",this.delete);

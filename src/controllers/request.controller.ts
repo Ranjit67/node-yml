@@ -22,5 +22,27 @@ class RequestController {
       next(error);
     }
   }
+  public async getRequestReceiver(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { receiverUserId } = req.body;
+      if (!receiverUserId) throw new BadRequest(requestMessage.error.allField);
+      const requestReceiver = await RequestSchema.find({
+        receiverUserRef: receiverUserId,
+      })
+        .populate("senderUserRef")
+        .populate("bookingRef");
+      res.json({
+        success: {
+          data: requestReceiver,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 export default RequestController;

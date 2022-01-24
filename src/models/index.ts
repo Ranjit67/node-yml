@@ -24,3 +24,4 @@ export { default as ArtistBlockDateSchema } from "./artistBlockDate.models";
 export { default as ArtistMediaSchema } from "./artistMedia.models";
 export { default as RequestSchema } from "./request.models";
 export { default as BookingSchema } from "./booking.models";
+export { default as NotificationSchema } from "./notification.models";

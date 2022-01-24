@@ -5,7 +5,7 @@ import {
   Conflict,
   NotFound,
 } from "http-errors";
-import { BookingSchema, RequestSchema } from "../models";
+import { BookingSchema, RequestSchema, NotificationSchema } from "../models";
 import { bookingMessage } from "../resultMessage";
 
 class BookingController {
@@ -13,7 +13,7 @@ class BookingController {
     try {
       const {
         eventStartDate,
-        EventEndDate,
+        eventEndDate,
         cityName,
         eventLocation,
         crowdSize,
@@ -33,7 +33,7 @@ class BookingController {
       const createBooking = await BookingSchema.create({
         eventDate: {
           start: eventStartDate,
-          end: EventEndDate,
+          end: eventEndDate,
         },
         cityName,
         eventLocation,
@@ -55,7 +55,7 @@ class BookingController {
         throw new InternalServerError(bookingMessage.error.notCreated);
       if (isRequestSend) {
         const requestCreate = await RequestSchema.create({
-          requestType: "pricing",
+          requestType: personalizedMessage ? "personalize" : "pricing",
           receiverUserRef: artistId,
           senderUserRef: userId,
           details: requestDetails,
@@ -64,13 +64,70 @@ class BookingController {
         });
         if (!requestCreate)
           throw new InternalServerError(bookingMessage.error.requestNotCreated);
-        res.json({ data: bookingMessage.success.bookingCreated });
+        // notification send
+        res.json({
+          success: {
+            message: bookingMessage.success.bookingCreated,
+          },
+        });
       } else {
-        res.json({ data: bookingMessage.success.bookingCreated });
+        //notification send
+        res.json({
+          success: {
+            message: bookingMessage.success.bookingCreated,
+          },
+        });
       }
     } catch (error) {
       next(error);
     }
   }
+  public async getAllBookingArtist(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { artistId } = req.params;
+      const bookingListArtist = await BookingSchema.find({
+        artistRef: artistId,
+      })
+        .populate("userRef")
+        .populate("eventType")
+        .populate("serviceType");
+      res.json({
+        success: {
+          message: bookingMessage.success.artistBookingList,
+          data: bookingListArtist,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  public async getAllBookingUser(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { userId } = req.params;
+      const bookingListUser = await BookingSchema.find({
+        userRef: userId,
+      })
+        .populate("artistRef")
+        .populate("eventType")
+        .populate("serviceType");
+      res.json({
+        success: {
+          message: bookingMessage.success.userBookingList,
+          data: bookingListUser,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
+
 export default BookingController;

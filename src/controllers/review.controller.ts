@@ -37,7 +37,11 @@ class ReviewController {
       const saveReview = newReview.save();
       if (!saveReview) throw new NotAcceptable(reviewMessage.error.notSave);
 
-      return res.json({ data: reviewMessage.success.created });
+      return res.json({
+        success: {
+          message: reviewMessage.success.created,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -53,7 +57,11 @@ class ReviewController {
         artistRef: artistId,
       }).populate("userReview.userRef");
       if (!findReview) return res.json({ data: [] });
-      return res.json({ data: findReview.userReview });
+      return res.json({
+        success: {
+          data: findReview.userReview,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -73,7 +81,11 @@ class ReviewController {
         (element: any) => element._id.toString() === reviewId.toString()
       );
       if (!reviewDetails) throw new NotFound(reviewMessage.error.notFound);
-      return res.json({ data: reviewDetails });
+      return res.json({
+        success: {
+          data: reviewDetails,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -95,7 +107,11 @@ class ReviewController {
         }
       );
       if (!deleteReview) throw new NotAcceptable(reviewMessage.error.notDelete);
-      return res.json({ data: reviewMessage.success.deleted });
+      return res.json({
+        success: {
+          message: reviewMessage.success.deleted,
+        },
+      });
     } catch (error) {
       next(error);
     }
