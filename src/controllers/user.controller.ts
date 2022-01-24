@@ -71,7 +71,11 @@ class UserController {
           new EmailContent().emailOnSelfVerification(userSave?.email, token)
         );
         res.json({
-          data: "User is created successfully. Email send to user mail for verification.",
+          success: {
+            message:
+              "User is created successfully. Email send to user mail for verification.",
+            data: "",
+          },
         });
         // have an profile picture
       } else {
@@ -103,7 +107,10 @@ class UserController {
           new EmailContent().emailOnSelfVerification(userSave?.email, token)
         );
         res.json({
-          data: "User is created successfully. Email send to user mail for verification.",
+          success: {
+            message:
+              "User is created successfully. Email send to user mail for verification.",
+          },
         });
       }
     } catch (error) {
@@ -116,7 +123,11 @@ class UserController {
       const findAllUser = await UserSchema.find({ isDeleted: false }).select(
         "-password"
       );
-      res.json({ data: findAllUser });
+      res.json({
+        success: {
+          data: findAllUser,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -134,7 +145,7 @@ class UserController {
         .select("-password")
         .select("-__v");
 
-      res.json({ data: findOneUser });
+      res.json({ success: { data: findOneUser } });
     } catch (error) {
       next(error);
     }
@@ -152,7 +163,11 @@ class UserController {
         .populate("genres")
         .select("-password")
         .select("-__v");
-      res.json({ data: findOneUser });
+      res.json({
+        success: {
+          data: findOneUser,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -209,7 +224,11 @@ class UserController {
         Dob: Dob || findUser.Dob || "",
       });
       if (!updateUser) throw new GatewayTimeout("User is not updated.");
-      res.json({ data: "User is updated successfully." });
+      res.json({
+        success: {
+          message: "User is updated successfully.",
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -229,7 +248,12 @@ class UserController {
       const token = await new JwtService().accessTokenGenerator(findUser?._id);
       if (!token) throw new InternalServerError("Token is not generated.");
 
-      res.json({ data: token, user: findUser });
+      res.json({
+        success: {
+          data: token,
+          user: findUser,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -260,12 +284,14 @@ class UserController {
       if (updateUser.modifiedCount === 0)
         throw new NotAcceptable(userMessage.error.notUpdatedBlockOrUnblock);
       return res.json({
-        data:
-          findUser.status === "active"
-            ? userMessage.success.userBlocked
-            : findUser.status === "blocked"
-            ? userMessage.success.userUnblocked
-            : userMessage.success.userPendingToActive,
+        success: {
+          message:
+            findUser.status === "active"
+              ? userMessage.success.userBlocked
+              : findUser.status === "blocked"
+              ? userMessage.success.userUnblocked
+              : userMessage.success.userPendingToActive,
+        },
       });
     } catch (error) {
       next(error);
@@ -311,7 +337,11 @@ class UserController {
           : new EmailContent().emailForgetPassword(email, token);
 
       const SendEmail = await new EmailService().emailSend(emailContent);
-      res.json({ data: "Check your Email." });
+      res.json({
+        success: {
+          message: "Check your Email.",
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -330,7 +360,11 @@ class UserController {
         genres: genres.length ? genres : findUser.genres,
       });
       if (!updateProfile) throw new GatewayTimeout("User is not updated.");
-      res.json({ data: "User is updated successfully." });
+      res.json({
+        success: {
+          message: "User is updated successfully.",
+        },
+      });
     } catch (error) {
       next(error);
     }
