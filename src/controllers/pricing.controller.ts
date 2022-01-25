@@ -16,7 +16,7 @@ class PricingController {
       } = req.body;
       if (!artistId) throw new BadRequest(pricingMessage.error.allField);
       const updateFirst = await PricingSchema.updateOne(
-        { artistRef: artistId },
+        { artist: artistId },
         {
           $push: {
             prices: {
@@ -30,9 +30,11 @@ class PricingController {
         }
       );
       if (updateFirst.matchedCount)
-        return res.json({ data: pricingMessage.success.newPricingAdded });
+        return res.json({
+          success: { message: pricingMessage.success.newPricingAdded },
+        });
       const artistPricing = new PricingSchema({
-        artistRef: artistId,
+        artist: artistId,
       });
       artistPricing.prices.push({
         numberOfDays,
@@ -45,7 +47,7 @@ class PricingController {
       const artistPriceSave = artistPricing.save();
       if (!artistPriceSave)
         throw new NotAcceptable(pricingMessage.error.notSave);
-      res.json({ data: pricingMessage.success.create });
+      res.json({ success: { message: pricingMessage.success.create } });
     } catch (error) {
       next(error);
     }
@@ -54,10 +56,10 @@ class PricingController {
     try {
       const { artistId } = req.params;
       const findPricing: any = await PricingSchema.findOne({
-        artistRef: artistId,
+        artist: artistId,
       });
-      if (!findPricing) return res.json({ data: [] });
-      return res.json({ data: findPricing.prices });
+      if (!findPricing) return res.json({ success: { data: [] } });
+      return res.json({ success: { data: findPricing.prices } });
     } catch (error) {
       next(error);
     }
@@ -74,7 +76,7 @@ class PricingController {
         location,
       } = req.body;
       const findPricing: any = await PricingSchema.findOne({
-        artistRef: artistId,
+        artist: artistId,
       });
       const dataUpdate = findPricing.prices.find(
         (item: any) => item._id.toString() === pricingId.toString()
@@ -83,7 +85,7 @@ class PricingController {
         throw new BadRequest(pricingMessage.error.notFoundPricingId);
       const updatePricing = await PricingSchema.updateOne(
         {
-          artistRef: artistId,
+          artist: artistId,
           "prices._id": pricingId,
         },
         {
@@ -95,9 +97,11 @@ class PricingController {
         }
       );
       if (updatePricing.modifiedCount)
-        return res.json({ data: pricingMessage.success.update });
+        return res.json({
+          success: { message: pricingMessage.success.update },
+        });
 
-      res.json({ data: pricingMessage.success.noChanges });
+      res.json({ success: { message: pricingMessage.success.noChanges } });
     } catch (error) {
       next(error);
     }
@@ -109,12 +113,12 @@ class PricingController {
       if (!artistId || !pricingIds.length)
         throw new BadRequest(pricingMessage.error.allField);
       const removeOnePricing = await PricingSchema.findOneAndUpdate(
-        { artistRef: artistId },
+        { artist: artistId },
         { $pull: { prices: { _id: { $in: pricingIds } } } }
       );
       if (!removeOnePricing)
         throw new NotAcceptable(pricingMessage.error.notRemove);
-      res.json({ data: pricingMessage.success.deletePrices });
+      res.json({ success: { message: pricingMessage.success.deletePrices } });
     } catch (error) {
       next(error);
     }

@@ -12,7 +12,7 @@ class WalletHistory {
     try {
       const { userId } = req.params;
       const findWalletHistory = await WalletHistorySchema.findOne({
-        userRef: userId,
+        user: userId,
       }).select("-__v");
       if (!findWalletHistory) return res.json({ data: [] });
       return res.json({
@@ -32,7 +32,7 @@ class WalletHistory {
       if (!userId || !transactionHistoryId)
         throw new BadRequest(walletHistoryMessage.error.allField);
       const findWalletHistory = await WalletHistorySchema.findOne({
-        userRef: userId,
+        user: userId,
       }).select({
         transactionHistory: { $elemMatch: { _id: transactionHistoryId } },
       });

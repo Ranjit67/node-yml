@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 import { WalletModel } from "../types";
 
 const walletSchema = new Schema({
-  userRef: {
+  user: {
     type: Schema.Types.ObjectId,
     ref: "User",
     unique: true,

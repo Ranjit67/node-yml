@@ -1,24 +1,24 @@
 import { Document, Schema, model, ObjectId } from "mongoose";
 
 export interface assignArtistModel extends Document {
-  managerRef: ObjectId;
-  artistRefs: [
+  manager: ObjectId;
+  artists: [
     {
-      artistRef: ObjectId;
+      artist: ObjectId;
       timestamp: Date;
     }
   ];
 }
 const assignArtistSchema = new Schema({
-  managerRef: {
+  manager: {
     type: Schema.Types.ObjectId,
     ref: "User",
     required: true,
     unique: true,
   },
-  artistRefs: [
+  artists: [
     {
-      artistRef: {
+      artist: {
         type: Schema.Types.ObjectId,
         ref: "User",
         // required: true,

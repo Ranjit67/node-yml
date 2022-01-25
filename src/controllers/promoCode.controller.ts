@@ -25,7 +25,7 @@ class PromoCodeController {
       });
       if (!promoCodeSave)
         throw new NotAcceptable(promoCodeMessage.error.notCreated);
-      res.json({ data: promoCodeMessage.success.created });
+      res.json({ success: { message: promoCodeMessage.success.created } });
     } catch (error) {
       next(error);
     }
@@ -33,9 +33,9 @@ class PromoCodeController {
   public async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       const promoCode = await PromoCodeSchema.find()
-        .populate("appliedUser.userRef")
+        .populate("appliedUser.user")
         .select("-password");
-      res.json({ data: promoCode });
+      res.json({ success: { data: promoCode } });
     } catch (error) {
       next(error);
     }
@@ -50,10 +50,10 @@ class PromoCodeController {
       const promoCode = await PromoCodeSchema.findOne({
         secretString,
       })
-        .populate("appliedUser.userRef")
+        .populate("appliedUser.user")
         .select("-password");
       if (!promoCode) throw new NotFound(promoCodeMessage.error.notFound);
-      res.json({ data: promoCode });
+      res.json({ success: { data: promoCode } });
     } catch (error) {
       next(error);
     }
@@ -64,7 +64,7 @@ class PromoCodeController {
       const updatePromoCodeFirstTime = await PromoCodeSchema.updateOne(
         {
           secretString,
-          "appliedUser.userRef": userID,
+          "appliedUser.user": userID,
         },
         {
           $push: {
@@ -75,14 +75,16 @@ class PromoCodeController {
         }
       );
       if (updatePromoCodeFirstTime.matchedCount)
-        return res.json({ data: promoCodeMessage.success.applySuccess });
+        return res.json({
+          success: { message: promoCodeMessage.success.applySuccess },
+        });
 
       const updatePromoCode = await PromoCodeSchema.updateOne(
         { secretString },
         {
           $push: {
             appliedUser: {
-              userRef: userID,
+              user: userID,
 
               numberOfTimeUsed: [
                 {
@@ -95,7 +97,7 @@ class PromoCodeController {
       );
       if (!updatePromoCode.modifiedCount)
         throw new NotAcceptable(promoCodeMessage.error.notApply);
-      res.json({ data: promoCodeMessage.success.applySuccess });
+      res.json({ success: { message: promoCodeMessage.success.applySuccess } });
     } catch (error) {
       next(error);
     }
@@ -129,7 +131,9 @@ class PromoCodeController {
       );
       if (!updatePromoCode)
         throw new NotAcceptable(promoCodeMessage.error.updateError2);
-      res.json({ data: promoCodeMessage.success.updateSuccess });
+      res.json({
+        success: { message: promoCodeMessage.success.updateSuccess },
+      });
     } catch (error) {
       next(error);
     }
@@ -144,7 +148,9 @@ class PromoCodeController {
       });
       if (!deletePromoCodes)
         throw new NotFound(promoCodeMessage.error.notFound);
-      res.json({ data: promoCodeMessage.success.deleteSuccess });
+      res.json({
+        success: { message: promoCodeMessage.success.deleteSuccess },
+      });
     } catch (error) {
       next(error);
     }

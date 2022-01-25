@@ -37,7 +37,7 @@ export interface BookingModels extends Document {
   status: bookingStatus;
   artist: ObjectId;
   user: ObjectId;
-  personalizedVideoRef: ObjectId;
+  personalizedVideo: ObjectId;
   //   requestType: string;
   personalizedMessage: string;
   eventDuration: string;

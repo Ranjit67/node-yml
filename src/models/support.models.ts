@@ -1,13 +1,13 @@
 import { ObjectId, Schema, Document, model } from "mongoose";
 
 export interface SupportModel extends Document {
-  userRef: ObjectId;
+  user: ObjectId;
   message: string;
   timestamp: Date;
 }
 
 const supportSchema = new Schema({
-  userRef: {
+  user: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },

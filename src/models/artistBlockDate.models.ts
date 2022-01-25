@@ -1,7 +1,7 @@
 import { Document, Schema, model, ObjectId } from "mongoose";
 
 export interface ArtistBlockDateModel extends Document {
-  artistRef: ObjectId;
+  artist: ObjectId;
   blockedDates: [
     {
       date: number;
@@ -11,7 +11,7 @@ export interface ArtistBlockDateModel extends Document {
 }
 
 const artistBlockDateSchema = new Schema({
-  artistRef: {
+  artist: {
     type: Schema.Types.ObjectId,
     ref: "User",
     unique: true,

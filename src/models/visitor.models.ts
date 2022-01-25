@@ -1,21 +1,21 @@
 import { ObjectId, Schema, Document, model } from "mongoose";
 
 export interface VisitorModel extends Document {
-  userRefs: [
+  users: [
     {
       spentTime: string;
       lastTimeVisit: Date;
-      userRef: ObjectId;
+      user: ObjectId;
       count: number;
     }
   ];
-  artistRef: ObjectId;
+  artist: ObjectId;
 }
 
 const visitorSchema = new Schema({
-  userRefs: [
+  users: [
     {
-      userRef: {
+      user: {
         type: Schema.Types.ObjectId,
         ref: "User",
       },
@@ -34,7 +34,7 @@ const visitorSchema = new Schema({
       },
     },
   ],
-  artistRef: {
+  artist: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },

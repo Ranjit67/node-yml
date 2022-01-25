@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 import { PricingModel } from "../types";
 
 const pricingSchema = new Schema({
-  artistRef: {
+  artist: {
     type: Schema.Types.ObjectId,
     ref: "User",
     unique: true,

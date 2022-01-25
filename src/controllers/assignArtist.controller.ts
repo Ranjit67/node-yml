@@ -33,31 +33,33 @@ class AssignArtistController {
 
       const updateAssignArtist = await AssignArtistSchema.findOneAndUpdate(
         {
-          managerRef: managerId,
-          "artistRefs.artistRef": { $ne: artistId },
+          manager: managerId,
+          "artists.artist": { $ne: artistId },
         },
         {
           $addToSet: {
-            artistRefs: {
-              artistRef: artistId,
+            artists: {
+              artist: artistId,
             },
           },
         }
       );
       if (updateAssignArtist)
-        return res.json({ data: "Artist is assigned successfully." });
+        return res.json({
+          success: { message: "Artist is assigned successfully." },
+        });
 
       const assignArtist = new AssignArtistSchema({
-        managerRef: managerId,
+        manager: managerId,
       });
-      assignArtist.artistRefs.push({
-        artistRef: artistId,
+      assignArtist.artists.push({
+        artist: artistId,
         timestamp: new Date(),
       }); // here Error handling throw middleware.
       const saveAssignArtist = await assignArtist.save();
       if (!saveAssignArtist)
         throw new InternalServerError("Artist is not assigned.");
-      res.json({ data: "Artist is assigned successfully." });
+      res.json({ success: { message: "Artist is assigned successfully." } });
     } catch (error) {
       next(error);
     }
@@ -68,11 +70,11 @@ class AssignArtistController {
       if (!managerId || !artistId)
         throw new BadRequest("All fields are required.");
       const findAndUpdate = await AssignArtistSchema.updateOne(
-        { managerRef: managerId },
+        { manager: managerId },
         {
           $pull: {
-            artistRefs: {
-              artistRef: artistId,
+            artists: {
+              artist: artistId,
             },
           },
         }
@@ -82,7 +84,7 @@ class AssignArtistController {
       if (!findAndUpdate.modifiedCount)
         throw new Conflict("Artist is not assign to this Manager .");
 
-      res.json({ data: "Artist is remove from manager" });
+      res.json({ success: { message: "Artist is remove from manager" } });
     } catch (error) {
       next(error);
     }
@@ -96,9 +98,9 @@ class AssignArtistController {
       const { managerId } = req.params;
       if (!managerId) throw new BadRequest("All fields are required.");
       const findManagerData = await AssignArtistSchema.findOne({
-        managerRef: managerId,
-      }).populate("artistRefs.artistRef");
-      res.json({ data: findManagerData?.artistRefs });
+        manager: managerId,
+      }).populate("artists.artist");
+      res.json({ success: { data: findManagerData?.artists } });
     } catch (error) {
       next(error);
     }
@@ -112,9 +114,9 @@ class AssignArtistController {
       const { artistId } = req.params;
       if (!artistId) throw new BadRequest("All fields are required.");
       const findManagerData = await AssignArtistSchema.findOne({
-        "artistRefs.artistRef": artistId,
-      }).populate("managerRef");
-      res.json({ data: findManagerData?.managerRef });
+        "artists.artist": artistId,
+      }).populate("manager");
+      res.json({ success: { data: findManagerData?.manager } });
     } catch (error) {
       next(error);
     }

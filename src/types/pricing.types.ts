@@ -1,7 +1,7 @@
 import { ObjectId } from "mongoose";
 
 export default interface PricingModel extends Document {
-  artistRef: ObjectId;
+  artist: ObjectId;
   prices: [
     {
       numberOfDays: number;

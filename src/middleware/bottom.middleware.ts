@@ -23,7 +23,7 @@ class BottomMiddleware {
   ) {
     res.status(err.status || 500);
 
-    if (err?.keyPattern?.["managerRef"] === 1)
+    if (err?.keyPattern?.["manager"] === 1)
       return new AssignArtistErrorHandler().allAlreadyAssign(res);
     if (err?.keyPattern?.["serviceName"] === 1)
       return new ServiceErrorHandler().allAlreadyExists(res);

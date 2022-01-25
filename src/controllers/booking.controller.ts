@@ -187,6 +187,24 @@ class BookingController {
       next(error);
     }
   }
+  async bookingCancel(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { bookingId, cancelBy } = req.body;
+
+      // const updateBooking = await BookingSchema.findByIdAndUpdate(bookingId, {
+      //   status: "cancel",
+      // });
+      // if (!updateBooking)
+      //   throw new NotAcceptable(bookingMessage.error.bookingCancel);
+      // res.json({
+      //   success: {
+      //     message: bookingMessage.success.bookingCancel,
+      //   },
+      // });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default BookingController;

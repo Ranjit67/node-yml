@@ -13,7 +13,7 @@ export interface PromoCodeModel extends Document {
   timestamp: Date;
   appliedUser: [
     {
-      userRef: ObjectId;
+      user: ObjectId;
       numberOfTimeUsed: [
         {
           date: Date;
@@ -56,7 +56,7 @@ const promoCodeSchema = new Schema({
   },
   appliedUser: [
     {
-      userRef: {
+      user: {
         type: Schema.Types.ObjectId,
         ref: "User",
       },

@@ -1,7 +1,7 @@
 import { Document, Schema, model, ObjectId } from "mongoose";
 
 export interface ArtistMediaModel extends Document {
-  artistRef: ObjectId;
+  artist: ObjectId;
   artistVideos: [
     {
       videoFile: string;
@@ -25,7 +25,7 @@ export interface ArtistMediaModel extends Document {
 }
 
 const artistMediaSchema = new Schema({
-  artistRef: {
+  artist: {
     type: Schema.Types.ObjectId,
     ref: "User",
     unique: true,

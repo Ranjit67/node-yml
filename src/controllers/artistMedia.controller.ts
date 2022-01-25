@@ -34,7 +34,7 @@ class ArtistMediaController {
           });
         }
         const firstUpdate = await ArtistMediaSchema.updateOne(
-          { artistRef: artistId },
+          { artist: artistId },
           {
             $push: {
               artistVideos: {
@@ -48,19 +48,25 @@ class ArtistMediaController {
         );
         if (firstUpdate.matchedCount === 1)
           return res.json({
-            data: artistMediaMessage.success.artistMediaUpdated,
+            success: {
+              message: artistMediaMessage.success.artistMediaUpdated,
+            },
           });
         const saveData = await ArtistMediaSchema.create({
-          artistRef: artistId,
+          artist: artistId,
           artistVideos: videoArray,
           youtubeVideos: linkArray,
         });
         if (!saveData)
           throw new NotAcceptable(artistMediaMessage.error.notCreated);
-        res.json({ data: artistMediaMessage.success.artistMediaUpdated });
+        res.json({
+          success: {
+            message: artistMediaMessage.success.artistMediaUpdated,
+          },
+        });
       } else {
         const firstUpdate = await ArtistMediaSchema.updateOne(
-          { artistRef: artistId },
+          { artist: artistId },
           {
             $push: {
               youtubeVideos: {
@@ -75,13 +81,15 @@ class ArtistMediaController {
           });
 
         const saveData = await ArtistMediaSchema.create({
-          artistRef: artistId,
+          artist: artistId,
           youtubeVideos: linkArray,
         });
         if (!saveData)
           throw new NotAcceptable(artistMediaMessage.error.notCreated);
         return res.json({
-          data: artistMediaMessage.success.artistMediaUpdated,
+          success: {
+            message: artistMediaMessage.success.artistMediaUpdated,
+          },
         });
         // no media file
       }
@@ -107,7 +115,7 @@ class ArtistMediaController {
         });
       }
       const firstUpdate = await ArtistMediaSchema.updateOne(
-        { artistRef: artistId },
+        { artist: artistId },
         {
           $push: {
             artistPhotos: {
@@ -121,13 +129,15 @@ class ArtistMediaController {
           data: artistMediaMessage.success.artistPhotoUpdated,
         });
       const saveData = await ArtistMediaSchema.create({
-        artistRef: artistId,
+        artist: artistId,
         artistPhotos: imageArray,
       });
       if (!saveData)
         throw new NotAcceptable(artistMediaMessage.error.photoNotCreated);
       return res.json({
-        data: artistMediaMessage.success.artistPhotoUpdated,
+        success: {
+          message: artistMediaMessage.success.artistPhotoUpdated,
+        },
       });
     } catch (error) {
       next(error);
@@ -140,10 +150,10 @@ class ArtistMediaController {
       if (!artistId)
         throw new BadRequest(artistMediaMessage.error.artistIdRequired);
       const findData = await ArtistMediaSchema.findOne({
-        artistRef: artistId,
+        artist: artistId,
       }).select("artistVideos youtubeVideos");
       if (!findData) throw new NotFound(artistMediaMessage.error.notDataFound);
-      return res.json({ data: findData });
+      return res.json({ success: { data: findData } });
     } catch (error) {
       next(error);
     }
@@ -154,10 +164,12 @@ class ArtistMediaController {
       if (!artistId)
         throw new BadRequest(artistMediaMessage.error.artistIdRequired);
       const findData = await ArtistMediaSchema.findOne({
-        artistRef: artistId,
+        artist: artistId,
       }).select("artistPhotos");
       if (!findData) throw new NotFound(artistMediaMessage.error.notDataFound);
-      return res.json({ data: findData });
+      return res.json({
+        success: { data: findData },
+      });
     } catch (error) {
       next(error);
     }
@@ -169,7 +181,7 @@ class ArtistMediaController {
       if (!artistId || !videoIds.length)
         throw new BadRequest(artistMediaMessage.error.allField);
       const findVideos = await ArtistMediaSchema.findOne({
-        artistRef: artistId,
+        artist: artistId,
       }).select("artistVideos");
       const getVideoItems: any = findVideos?.artistVideos?.filter(
         (element: any) =>
@@ -180,7 +192,7 @@ class ArtistMediaController {
         const deleteVideo = await awsS3.delete(a.videoFile);
       }
       const update = await ArtistMediaSchema.updateOne(
-        { artistRef: artistId },
+        { artist: artistId },
         {
           $pull: {
             artistVideos: {
@@ -199,7 +211,9 @@ class ArtistMediaController {
       if (update.matchedCount !== 1)
         throw new NotFound(artistMediaMessage.error.notDataFound);
 
-      return res.json({ data: artistMediaMessage.success.videoDeleted });
+      return res.json({
+        success: { message: artistMediaMessage.success.videoDeleted },
+      });
     } catch (error) {
       next(error);
     }
@@ -210,7 +224,7 @@ class ArtistMediaController {
       if (!artistId || !imageDataIds.length)
         throw new BadRequest(artistMediaMessage.error.allField);
       const findPhotos = await ArtistMediaSchema.findOne({
-        artistRef: artistId,
+        artist: artistId,
       }).select("artistPhotos");
       const getPhotoItems: any = findPhotos?.artistPhotos?.filter(
         (element: any) =>
@@ -221,7 +235,7 @@ class ArtistMediaController {
         const deletePhoto = await awsS3.delete(a.imageFile);
       }
       const update = await ArtistMediaSchema.updateOne(
-        { artistRef: artistId },
+        { artist: artistId },
         {
           $pull: {
             artistPhotos: {
@@ -234,7 +248,9 @@ class ArtistMediaController {
       );
       if (update.matchedCount !== 1)
         throw new NotFound(artistMediaMessage.error.notDataFound);
-      return res.json({ data: artistMediaMessage.success.photoDeleted });
+      return res.json({
+        success: { message: artistMediaMessage.success.photoDeleted },
+      });
     } catch (error) {
       next(error);
     }

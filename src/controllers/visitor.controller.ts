@@ -10,40 +10,44 @@ class VisitorController {
       if (!artistId || !spentTime || !userId)
         throw new BadRequest(visitorMessage.error.allField);
       const visitorFirstUpdate = await VisitorSchema.updateOne(
-        { artistRef: artistId, userRefs: { $elemMatch: { userRef: userId } } },
+        { artist: artistId, users: { $elemMatch: { user: userId } } },
         {
-          "userRefs.$.spentTime": spentTime,
+          "users.$.spentTime": spentTime,
           $inc: {
-            "userRefs.$.count": 1,
+            "users.$.count": 1,
           },
-          "userRefs.$.lastTimeVisit": new Date().toString(),
+          "users.$.lastTimeVisit": new Date().toString(),
         }
       );
       if (visitorFirstUpdate.matchedCount)
-        return res.json({ data: visitorMessage.success.visitorAdded });
+        return res.json({
+          success: { message: visitorMessage.success.visitorAdded },
+        });
       const visitorSecondUpdate = await VisitorSchema.updateOne(
-        { artistRef: artistId },
+        { artist: artistId },
         {
           $push: {
-            userRefs: {
-              userRef: userId,
+            users: {
+              user: userId,
               spentTime,
             },
           },
         }
       );
       if (visitorSecondUpdate.matchedCount)
-        return res.json({ data: visitorMessage.success.visitorAdded });
+        return res.json({
+          success: { message: visitorMessage.success.visitorAdded },
+        });
       if (
         visitorSecondUpdate.matchedCount &&
         !visitorSecondUpdate.modifiedCount
       )
         throw new NotAcceptable(visitorMessage.error.notUpdated);
       const visitor = new VisitorSchema({
-        artistRef: artistId,
+        artist: artistId,
       });
-      visitor.userRefs.push({
-        userRef: userId,
+      visitor.users.push({
+        user: userId,
         spentTime,
         lastTimeVisit: new Date(),
         count: 1,
@@ -51,7 +55,7 @@ class VisitorController {
       const saveVisitor = await visitor.save();
       if (!saveVisitor)
         throw new NotAcceptable(visitorMessage.error.notUpdated);
-      res.json({ data: visitorMessage.success.visitorAdded });
+      res.json({ success: { message: visitorMessage.success.visitorAdded } });
     } catch (error) {
       next(error);
     }
@@ -65,9 +69,9 @@ class VisitorController {
       const { artistId } = req.params;
       if (!artistId) throw new BadRequest(visitorMessage.error.allField);
       const visitors: any = await VisitorSchema.findOne({
-        artistRef: artistId,
-      }).populate("userRefs.userRef");
-      res.json({ data: visitors?.userRefs });
+        artist: artistId,
+      }).populate("users.user");
+      res.json({ data: visitors?.users });
     } catch (error) {
       next(error);
     }

@@ -9,13 +9,13 @@ class WalletController {
       const { userId, balance, spent } = req.body;
       if (!userId) throw new BadRequest(walletMessage.error.allField);
       const walletSave = await WalletSchema.create({
-        userRef: userId,
+        user: userId,
         balance: balance ?? 0,
         spent: spent ?? 0,
       });
       if (!walletSave) throw new NotAcceptable(walletMessage.error.notCreated);
       const walletHistory = new WalletHistorySchema({
-        userRef: userId,
+        user: userId,
       });
       walletHistory.transactionHistory.push({
         type: "CR",
@@ -40,10 +40,11 @@ class WalletController {
   public async getWallet(req: Request, res: Response, next: NextFunction) {
     try {
       const { userId } = req.params;
-      const findWallet = await WalletSchema.findOne({ userRef: userId }).select(
+      const findWallet = await WalletSchema.findOne({ user: userId }).select(
         "-__v"
       );
-      if (!findWallet) return res.json({ data: { balance: 0, spent: 0 } });
+      if (!findWallet)
+        return res.json({ success: { data: { balance: 0, spent: 0 } } });
       return res.json({ success: { data: findWallet } });
     } catch (error) {
       next(error);

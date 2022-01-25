@@ -12,12 +12,14 @@ class SupportController {
       if (!userId || !message)
         throw new BadRequest(supportMessage.error.allField);
       const saveSupport = await SupportSchema.create({
-        userRef: userId,
+        user: userId,
         message,
       });
       if (!saveSupport)
         throw new NotAcceptable(supportMessage.error.dataNotAdded);
-      res.json({ data: supportMessage.success.supportMessageSent });
+      res.json({
+        success: { message: supportMessage.success.supportMessageSent },
+      });
     } catch (error) {
       next(error);
     }
@@ -29,11 +31,11 @@ class SupportController {
   ) {
     try {
       const supportList = await SupportSchema.find().populate({
-        path: "userRef",
+        path: "user",
         select: "-password",
       });
 
-      res.json({ data: supportList });
+      res.json({ success: { data: supportList } });
     } catch (error) {
       next(error);
     }
@@ -43,11 +45,11 @@ class SupportController {
       const { supportId } = req.params;
       if (!supportId) throw new BadRequest(supportMessage.error.allField);
       const support = await SupportSchema.findById(supportId).populate({
-        path: "userRef",
+        path: "user",
         select: "-password",
       });
       if (!support) throw new NotAcceptable(supportMessage.error.dataNotFound);
-      res.json({ data: support });
+      res.json({ success: { data: support } });
     } catch (error) {
       next(error);
     }
@@ -61,7 +63,9 @@ class SupportController {
         _id: { $in: supportIds },
       });
       if (!support) throw new NotAcceptable(supportMessage.error.dataNotFound);
-      res.json({ data: supportMessage.success.deleteSuccesses });
+      res.json({
+        success: { message: supportMessage.success.deleteSuccesses },
+      });
     } catch (error) {
       next(error);
     }
@@ -84,8 +88,10 @@ class SupportController {
       const SendEmail = await new EmailService().emailSend(emailContent);
 
       res.json({
-        data: supportMessage.success.supportMessageSendToUser,
-        SendEmail,
+        success: {
+          message: supportMessage.success.supportMessageSendToUser,
+          SendEmail,
+        },
       });
     } catch (error) {
       next(error);

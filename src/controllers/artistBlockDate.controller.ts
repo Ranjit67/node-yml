@@ -22,13 +22,13 @@ class ArtistBlockDateController {
       }));
 
       const firstUpdate = await ArtistBlockDateSchema.updateOne(
-        { artistRef: artistId },
+        { artist: artistId },
         {
           $push: { blockedDates: { $each: structDates } },
         }
       );
       const removeOlderDates = await ArtistBlockDateSchema.updateOne(
-        { artistRef: artistId },
+        { artist: artistId },
         {
           $pull: {
             blockedDates: {
@@ -39,15 +39,17 @@ class ArtistBlockDateController {
       );
       if (firstUpdate.matchedCount === 1)
         return res.json({
-          data: artistBlockDateMessage.success.blockDateInput,
+          success: { message: artistBlockDateMessage.success.blockDateInput },
         });
       const firstTimeSave = await ArtistBlockDateSchema.create({
-        artistRef: artistId,
+        artist: artistId,
         blockedDates: structDates,
       });
       if (!firstTimeSave)
         throw new NotAcceptable(artistBlockDateMessage.error.notUpdated);
-      return res.json({ data: artistBlockDateMessage.success.blockDateInput });
+      return res.json({
+        success: { message: artistBlockDateMessage.success.blockDateInput },
+      });
     } catch (error) {
       next(error);
     }
@@ -62,14 +64,14 @@ class ArtistBlockDateController {
       if (!artistId)
         throw new BadRequest(artistBlockDateMessage.error.allField);
       const artistBlockDate: any = await ArtistBlockDateSchema.findOne({
-        artistRef: artistId,
+        artist: artistId,
       }).select("blockedDates");
-      if (!artistBlockDate) res.json({ data: [] });
+      if (!artistBlockDate) res.json({ success: { data: [] } });
       const structDates = artistBlockDate.blockedDates.map((element: any) => ({
         timestamp: element.timestamp,
         date: new Date(element.date),
       }));
-      return res.json({ data: structDates });
+      return res.json({ success: { data: structDates } });
     } catch (error) {
       next(error);
     }
