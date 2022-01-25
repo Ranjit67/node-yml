@@ -17,9 +17,9 @@ class PersonalizedVideoController {
       const awsS3Services = new AwsS3Services();
       const uploadVideo = await awsS3Services.upload(video);
       const createPersonalizeVideo = await PersonalizeVideoSchema.create({
-        userRef: findBooking.userRef.toString(),
-        artistRef: findBooking.artistRef.toString(),
-        bookingRef: bookingId,
+        user: findBooking.userRef.toString(),
+        artist: findBooking.artistRef.toString(),
+        booking: bookingId,
         videoUrl: uploadVideo.Location,
         videoFile: uploadVideo.Key,
         timestamp: new Date(),

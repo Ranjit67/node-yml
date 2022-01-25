@@ -1,24 +1,24 @@
 import { Document, Schema, model, ObjectId } from "mongoose";
 
 export interface PersonalizeModel extends Document {
-  userRef: ObjectId;
-  artistRef: ObjectId;
-  bookingRef: ObjectId;
+  user: ObjectId;
+  artist: ObjectId;
+  booking: ObjectId;
   videoUrl: string;
   videoFile: string;
   timestamp: Date;
 }
 
 const personalizeSchema = new Schema({
-  userRef: {
+  user: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },
-  artistRef: {
+  artist: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },
-  bookingRef: {
+  booking: {
     type: Schema.Types.ObjectId,
     ref: "Booking",
   },
