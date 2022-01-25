@@ -39,6 +39,7 @@ class CategoryController {
           model: "Genres",
         },
       });
+
       res.json({
         success: {
           data: categoryList,

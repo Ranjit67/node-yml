@@ -11,14 +11,14 @@ class PersonalizedVideoController {
       const video = req.files.video;
       if (!bookingId || !video)
         throw new BadRequest(personalizeVideoMessage.error.allField);
-      const findBooking = await BookingSchema.findById({ bookingId });
+      const findBooking = await BookingSchema.findById(bookingId);
       if (!findBooking)
         throw new NotAcceptable(personalizeVideoMessage.error.noBookingFound);
       const awsS3Services = new AwsS3Services();
       const uploadVideo = await awsS3Services.upload(video);
       const createPersonalizeVideo = await PersonalizeVideoSchema.create({
-        userRef: findBooking.userRef,
-        artistRef: findBooking.artistRef,
+        userRef: findBooking.userRef.toString(),
+        artistRef: findBooking.artistRef.toString(),
         bookingRef: bookingId,
         videoUrl: uploadVideo.Location,
         videoFile: uploadVideo.Key,
@@ -28,7 +28,7 @@ class PersonalizedVideoController {
         throw new NotAcceptable(personalizeVideoMessage.error.notCreated);
       const updateBooking = await BookingSchema.updateOne(
         { _id: bookingId },
-        { personalizeVideoRef: createPersonalizeVideo._id }
+        { personalizedVideoRef: createPersonalizeVideo._id }
       );
       if (updateBooking.matchedCount !== 1)
         throw new NotAcceptable(personalizeVideoMessage.error.notUpdated);

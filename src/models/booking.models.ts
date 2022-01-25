@@ -89,7 +89,7 @@ const bookingSchema = new Schema({
   },
   personalizedVideoRef: {
     type: Schema.Types.ObjectId,
-    ref: "PersonalizedVideo",
+    ref: "PersonalizeVideo",
   },
   //   requestType: {
   //     type: String,

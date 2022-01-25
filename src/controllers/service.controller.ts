@@ -31,7 +31,11 @@ class ServiceController {
       });
       if (!saveService)
         throw new InternalServerError("Service is not created.");
-      res.json({ data: "Service is created successfully." });
+      res.json({
+        success: {
+          message: "Service is created successfully.",
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -39,7 +43,9 @@ class ServiceController {
   public async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       const findAllService = await ServiceSchema.find({});
-      res.json({ data: findAllService });
+      res.json({
+        success: { data: findAllService },
+      });
     } catch (error) {
       next(error);
     }
@@ -48,7 +54,7 @@ class ServiceController {
     try {
       const { id } = req.params;
       const findOneService = await ServiceSchema.findById(id);
-      res.json({ data: findOneService });
+      res.json({ success: { data: findOneService } });
     } catch (error) {
       next(error);
     }
@@ -95,7 +101,11 @@ class ServiceController {
       );
       if (!findOneAndUpdateService)
         throw new InternalServerError("Service is not updated.");
-      res.json({ data: "Service is updated successfully." });
+      res.json({
+        success: {
+          message: " Service is updated successfully.",
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -108,7 +118,10 @@ class ServiceController {
       // if(!findOneAndDeleteService) throw new InternalServerError("Service is not deleted.")
       // res.json({data:"Service is deleted successfully."})
       res.json({
-        data: "Your logic is same but Event logic will be write when user schema ready.",
+        success: {
+          message:
+            "Your logic is same but Event logic will be write when user schema ready.",
+        },
       });
     } catch (error) {
       next(error);

@@ -1,9 +1,11 @@
+import { RDS } from "aws-sdk";
 import { Response, Request, NextFunction } from "express";
 import {
   BadRequest,
   InternalServerError,
   Conflict,
   NotFound,
+  NotAcceptable,
 } from "http-errors";
 import { BookingSchema, RequestSchema, NotificationSchema } from "../models";
 import { bookingMessage } from "../resultMessage";
@@ -122,6 +124,55 @@ class BookingController {
         success: {
           message: bookingMessage.success.userBookingList,
           data: bookingListUser,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async bookingPayment(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { bookingId, paymentAmount } = req.body;
+      const findBooking = await BookingSchema.findById(bookingId);
+      if (findBooking?.bookingPrice !== +paymentAmount)
+        throw new NotAcceptable(bookingMessage.error.bookingPriceNotAccept);
+      const bookingStatusUpdate = await BookingSchema.findByIdAndUpdate(
+        bookingId,
+        {
+          status: "confirm",
+        }
+      );
+      if (!bookingStatusUpdate)
+        throw new InternalServerError(bookingMessage.error.statusNotUpdate);
+      res.json({
+        success: {
+          message: bookingMessage.success.bookingConfirm,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async bookingPastConfirmation(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { bookingId, isComplete } = req.body;
+      const updateBooking = await BookingSchema.findByIdAndUpdate(bookingId, {
+        isComplete: Boolean(isComplete),
+        status: "past",
+      });
+      if (!updateBooking)
+        throw new NotAcceptable(bookingMessage.error.bookingComplete);
+      if (!isComplete) {
+        // send notification mail to super admin
+      }
+      res.json({
+        success: {
+          message: bookingMessage.success.bookingComplete,
         },
       });
     } catch (error) {

@@ -13,7 +13,11 @@ class LanguageController {
       });
       if (!languageSave)
         throw new GatewayTimeout(languageMessage.error.notCreated);
-      res.json({ data: languageMessage.success.created });
+      res.json({
+        success: {
+          message: languageMessage.success.created,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -22,7 +26,11 @@ class LanguageController {
   public async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       const findAllLanguage = await LanguageSchema.find();
-      res.json({ data: findAllLanguage });
+      res.json({
+        success: {
+          data: findAllLanguage,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -32,7 +40,11 @@ class LanguageController {
     try {
       const { id } = req.params;
       const findOneLanguage = await LanguageSchema.findById(id);
-      res.json({ data: findOneLanguage });
+      res.json({
+        success: {
+          data: findOneLanguage,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -49,7 +61,11 @@ class LanguageController {
       );
       if (!updateLanguage)
         throw new GatewayTimeout(languageMessage.error.notUpdate);
-      res.json({ data: languageMessage.success.updated });
+      res.json({
+        success: {
+          message: languageMessage.success.updated,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -65,14 +81,22 @@ class LanguageController {
         });
         if (!deleteLanguage)
           throw new GatewayTimeout("Language is not deleted.");
-        res.json({ data: "Languages are deleted successfully." });
+        res.json({
+          success: {
+            message: "Languages are deleted successfully.",
+          },
+        });
       } else {
         const deleteLanguage = await LanguageSchema.findOneAndDelete({
           _id: language_idsOrId,
         });
         if (!deleteLanguage)
           throw new GatewayTimeout("Language is not deleted.");
-        res.json({ data: "Language is deleted successfully." });
+        res.json({
+          success: {
+            message: "Language is deleted successfully.",
+          },
+        });
       }
     } catch (error) {
       next(error);

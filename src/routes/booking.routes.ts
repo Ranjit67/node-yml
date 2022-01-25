@@ -18,6 +18,11 @@ class BookingRouter {
       "/list-of-bookings-user/:userId",
       this.bookingController.getAllBookingUser
     );
+    this.router.post("/booking-payment", this.bookingController.bookingPayment);
+    this.router.post(
+      "/booking-past-confirmation",
+      this.bookingController.bookingPastConfirmation
+    );
     // this.router.get("/all",this.getAll);
     // this.router.get("/:requestId",this.getRequest);
     // this.router.put("/update",this.update);

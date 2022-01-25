@@ -42,7 +42,11 @@ class subCategoryController {
         throw new InternalServerError(
           subCategoryMessage.error.subCategoryNotLinked
         );
-      res.json({ data: subCategoryMessage.success.created });
+      res.json({
+        success: {
+          message: subCategoryMessage.success.created,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -58,7 +62,11 @@ class subCategoryController {
       const findSubCategories = await SubCategorySchema.find({
         parentId: categoryId,
       });
-      res.json({ data: findSubCategories });
+      res.json({
+        success: {
+          data: findSubCategories,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -95,7 +103,11 @@ class subCategoryController {
 
         if (!updateSubCategory)
           throw new NotAcceptable(subCategoryMessage.error.notUpdated);
-        return res.json({ data: subCategoryMessage.success.updated });
+        return res.json({
+          success: {
+            message: subCategoryMessage.success.updated,
+          },
+        });
       } else {
         const updateSubCategory = await SubCategorySchema.findByIdAndUpdate(
           subcategoryId,
@@ -104,7 +116,11 @@ class subCategoryController {
         );
         if (!updateSubCategory)
           throw new NotAcceptable(subCategoryMessage.error.notUpdated);
-        res.json({ data: subCategoryMessage.success.updated });
+        res.json({
+          success: {
+            message: subCategoryMessage.success.updated,
+          },
+        });
       }
     } catch (error) {
       next(error);

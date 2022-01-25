@@ -32,7 +32,11 @@ class GenresController {
       );
       if (!updateInSubCategory)
         throw new NotAcceptable(genresMessage.error.genresNotLinked);
-      res.json({ data: genresMessage.success.created });
+      res.json({
+        success: {
+          message: genresMessage.success.created,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -50,7 +54,11 @@ class GenresController {
         parentId: { $in: subCategoryIds },
       });
 
-      res.json({ data: findGenresUnder });
+      res.json({
+        success: {
+          data: findGenresUnder,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -81,7 +89,11 @@ class GenresController {
         );
         if (!updateGenres)
           throw new NotAcceptable(genresMessage.error.notUpdated);
-        return res.json({ data: genresMessage.success.updated });
+        return res.json({
+          success: {
+            message: genresMessage.success.updated,
+          },
+        });
       } else {
         const updateGenres = await GenresSchema.findByIdAndUpdate(genresId, {
           title: genresNewName ?? findGenres?.title,
@@ -89,7 +101,11 @@ class GenresController {
         if (!updateGenres)
           throw new NotAcceptable(genresMessage.error.notUpdated);
 
-        return res.json({ data: genresMessage.success.updated });
+        return res.json({
+          success: {
+            message: genresMessage.success.updated,
+          },
+        });
       }
     } catch (error) {
       next(error);
