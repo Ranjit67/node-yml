@@ -2,8 +2,8 @@ import { Document, Schema, model, ObjectId } from "mongoose";
 
 export interface CategoryModels extends Document {
   title: string;
-  subCategoryRefs: ObjectId[];
-  genresRefs: ObjectId[];
+  subcategories: ObjectId[];
+  genres: ObjectId[];
   timestamp: Date;
   iconUrl: string;
   iconFile: string;
@@ -21,13 +21,13 @@ const categorySchema = new Schema({
   iconFile: {
     type: String,
   },
-  subCategoryRefs: [
+  subcategories: [
     {
       type: Schema.Types.ObjectId,
       ref: "SubCategory",
     },
   ],
-  genresRefs: [
+  genres: [
     {
       type: Schema.Types.ObjectId,
       ref: "Genre",

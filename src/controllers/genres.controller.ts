@@ -26,7 +26,7 @@ class GenresController {
         subCategoryId,
         {
           $push: {
-            genresRefs: saveGenres?._id,
+            genres: saveGenres?._id,
           },
         }
       );

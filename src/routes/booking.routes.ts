@@ -23,10 +23,6 @@ class BookingRouter {
       "/booking-past-confirmation",
       this.bookingController.bookingPastConfirmation
     );
-    // this.router.get("/all",this.getAll);
-    // this.router.get("/:requestId",this.getRequest);
-    // this.router.put("/update",this.update);
-    // this.router.delete("/delete",this.delete);
   }
 }
 export default BookingRouter;

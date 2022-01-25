@@ -16,44 +16,50 @@ class FavoriteController {
       if (!userId || !artistId)
         throw new BadRequest(favoriteMessage.error.allField);
       const firstUpdate = await FavoriteSchema.updateOne(
-        { artistRef: artistId, "favorites.userRef": userId },
+        { artist: artistId, "favorites.userRef": userId },
         {
           $pull: {
             favorites: {
-              userRef: userId,
+              user: userId,
             },
           },
         }
       );
       if (firstUpdate.matchedCount)
-        return res.json({ data: favoriteMessage.success.removeFavorite });
+        return res.json({
+          success: {
+            message: favoriteMessage.success.removeFavorite,
+          },
+        });
       const secondUpdate = await FavoriteSchema.updateOne(
-        { artistRef: artistId },
+        { artist: artistId },
         {
           $push: {
             favorites: {
-              userRef: userId,
+              user: userId,
             },
           },
         }
       );
       if (secondUpdate.matchedCount)
-        return res.json({ data: favoriteMessage.success.addFavorite });
+        return res.json({
+          success: { message: favoriteMessage.success.addFavorite },
+        });
       const findArtist: any = await UserSchema.findOne({ _id: artistId });
 
       if (findArtist.role !== "artist")
         throw new NotFound(favoriteMessage.error.notArtist);
       const favorite = new FavoriteSchema({
-        artistRef: artistId,
+        artist: artistId,
       });
       favorite.favorites.push({
-        userRef: userId,
+        user: userId,
         timestamp: new Date(),
       });
       const saveFavorite = await favorite.save();
       if (!saveFavorite)
         throw new NotAcceptable(favoriteMessage.error.addFavorite);
-      res.json({ data: favoriteMessage.success.addFavorite });
+      res.json({ success: { message: favoriteMessage.success.addFavorite } });
     } catch (error) {
       next(error);
     }
@@ -62,12 +68,16 @@ class FavoriteController {
     try {
       const { artistId } = req.params;
       const findFavoriteArtist: any = await FavoriteSchema.findOne({
-        artistRef: artistId,
+        artist: artistId,
       }).populate({
-        path: "favorites.userRef",
+        path: "favorites.user",
         select: "-password",
       });
-      res.json({ data: findFavoriteArtist.favorites });
+      res.json({
+        success: {
+          data: findFavoriteArtist.favorites,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -76,16 +86,16 @@ class FavoriteController {
     try {
       const { userId } = req.params;
       const findArtistsUserMakeFavorite = await FavoriteSchema.find({
-        "favorites.userRef": userId,
+        "favorites.user": userId,
       }).populate({
-        path: "artistRef",
+        path: "artist",
         match: { status: { $eq: "active" } },
         select: "-password",
       });
       const removeNullField = findArtistsUserMakeFavorite.filter(
         (item: any) => item.artistRef !== null
       );
-      res.json({ data: removeNullField });
+      res.json({ success: { data: removeNullField } });
     } catch (error) {
       next(error);
     }

@@ -1,17 +1,17 @@
 import { Document, Schema, model, ObjectId } from "mongoose";
 
 export interface FavoritesModel extends Document {
-  artistRef: ObjectId;
+  artist: ObjectId;
   favorites: [
     {
       timestamp: Date;
-      userRef: ObjectId;
+      user: ObjectId;
     }
   ];
 }
 
 const FavoritesSchema = new Schema({
-  artistRef: {
+  artist: {
     type: Schema.Types.ObjectId,
     ref: "User",
     required: true,
@@ -23,7 +23,7 @@ const FavoritesSchema = new Schema({
         type: Date,
         default: new Date().toString(),
       },
-      userRef: {
+      user: {
         type: Schema.Types.ObjectId,
         ref: "User",
       },

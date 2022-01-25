@@ -13,7 +13,7 @@ class subCategoryController {
       if (!subCategory || !categoryId || !iconPicture)
         throw new BadRequest(subCategoryMessage.error.allField);
       const findCategory = await CategorySchema.findById(categoryId);
-      if (findCategory?.genresRefs?.length)
+      if (findCategory?.genres?.length)
         throw new NotAcceptable(subCategoryMessage.error.haveGenresInCategory);
       // icon upload
       const awsS3 = new AwsS3Services();
@@ -34,7 +34,7 @@ class subCategoryController {
         { _id: categoryId },
         {
           $push: {
-            subCategoryRefs: subCategorySave?._id,
+            subcategories: subCategorySave?._id,
           },
         }
       );

@@ -17,7 +17,7 @@ const subCategorySchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Category",
   },
-  genresRefs: [
+  genres: [
     {
       type: Schema.Types.ObjectId, // update when  genres are added
       ref: "Genre",
