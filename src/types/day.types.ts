@@ -1,4 +1,9 @@
 import { Document } from "mongoose";
 export default interface DayModel extends Document {
-  days: number[];
+  days: [
+    {
+      timestamp: Date;
+      day: number;
+    }
+  ];
 }

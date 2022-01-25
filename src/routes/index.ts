@@ -22,3 +22,4 @@ export { default as SubCategoryRoutes } from "./subCategory.routes";
 export { default as AssignArtistRoutes } from "./assignArtist.routes";
 export { default as WalletHistoryRoute } from "./walletHistory.routes";
 export { default as ArtistBlockDateRoutes } from "./artistBlockDate.routes";
+export { default as PersonalizeVideoRoute } from "./personalizeVideo.routes";

@@ -14,6 +14,7 @@ import {
   ServiceRoutes,
   WalletHistoryRoute,
   AssignArtistRoutes,
+  PersonalizeVideoRoute,
   PromoCodeRoutes,
   FavoriteRoutes,
   VisitorRoutes,
@@ -54,6 +55,7 @@ const object = {
     new AssignArtistRoutes(),
     new WalletHistoryRoute(),
     new ArtistBlockDateRoutes(),
+    new PersonalizeVideoRoute(),
   ],
   topMiddleware: [new TopMiddleware().allowCrossDomain],
   bottomMiddleware: [

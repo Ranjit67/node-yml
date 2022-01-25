@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { NotAcceptable, BadRequest } from "http-errors";
-import { RequestSchema } from "../models";
+import { NotAcceptable, BadRequest, Conflict } from "http-errors";
+import { RequestSchema, BookingSchema } from "../models";
 import { requestMessage } from "../resultMessage";
 class RequestController {
   public async create(req: Request, res: Response, next: NextFunction) {
@@ -66,6 +66,34 @@ class RequestController {
       next(error);
     }
   }
-  // public async
+  public async acceptPriceSet(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { requestId, price } = req.body;
+      if (!requestId || !price)
+        throw new BadRequest(requestMessage.error.allField);
+      const findRequest = await RequestSchema.findById(requestId);
+      if (!findRequest)
+        throw new Conflict(requestMessage.error.requestNotFound);
+      const findUpdateBooking = await BookingSchema.findByIdAndUpdate(
+        findRequest.bookingRef,
+        {
+          bookingPrice: price,
+        }
+      );
+      if (!findUpdateBooking)
+        throw new Conflict(requestMessage.error.bookingPriceNotUpdated);
+      const deleteRequest = await RequestSchema.findByIdAndDelete(requestId);
+      if (!deleteRequest)
+        throw new Conflict(requestMessage.error.requestNotDeleted);
+      // notification mail send to user
+      res.json({
+        success: {
+          message: requestMessage.success.acceptPriceSet,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 export default RequestController;

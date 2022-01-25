@@ -18,6 +18,10 @@ class RequestRouter {
       "/all-request-sender/:senderUserId",
       this.requestController.getRequestSender
     );
+    this.router.post(
+      "/accept-price-set",
+      this.requestController.acceptPriceSet
+    );
   }
 }
 export default RequestRouter;

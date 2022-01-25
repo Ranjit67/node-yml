@@ -21,3 +21,4 @@ export { default as EventController } from "./event.controller";
 export { default as CrowdController } from "./crowd.controller";
 export { default as UserController } from "./user.controller";
 export { default as DayController } from "./day.controller";
+export { default as PersonalizeVideoController } from "./personalizeVideo.controller";

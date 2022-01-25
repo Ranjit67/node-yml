@@ -10,25 +10,43 @@ class DayController {
       const findData: any = await DaySchema.findOne();
       if (!findData) {
         const day = new DaySchema({
-          days: [num],
+          days: [
+            {
+              day: num,
+              timestamp: new Date(),
+            },
+          ],
         });
         const saveDay = await day.save();
         if (!saveDay) throw new NotAcceptable(dayMessage.error.notSave);
 
-        return res.json({ data: dayMessage.success.save });
+        return res.json({
+          success: {
+            message: dayMessage.success.save,
+          },
+        });
       } else {
-        if (findData.days.find((day: any) => day === num))
+        const checkNumIsThere = await DaySchema.findOne({ "days.day": num });
+        if (checkNumIsThere)
           throw new BadRequest(dayMessage.error.duplicateName);
+
         const updateData = await DaySchema.findOneAndUpdate(
           {},
           {
             $push: {
-              days: num,
+              days: {
+                day: num,
+                timestamp: new Date(),
+              },
             },
           }
         );
         if (!updateData) throw new NotAcceptable(dayMessage.error.notSave);
-        return res.json({ data: dayMessage.success.save });
+        return res.json({
+          success: {
+            message: dayMessage.success.save,
+          },
+        });
       }
     } catch (error) {
       next(error);
@@ -38,7 +56,11 @@ class DayController {
     try {
       const day = await DaySchema.findOne().select("-__v");
       if (!day) return res.json({ data: [] });
-      res.json({ data: day.days });
+      res.json({
+        success: {
+          data: day.days,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -48,13 +70,17 @@ class DayController {
       const { oldNum, newNum } = req.body;
       if (newNum < 1) throw new BadRequest(dayMessage.error.num);
       const updateData = await DaySchema.findOneAndUpdate(
-        { days: oldNum },
+        { "days.day": oldNum },
         {
-          "days.$": newNum,
+          "days.$.day": newNum,
         }
       );
       if (!updateData) throw new NotAcceptable(dayMessage.error.notUpdated);
-      return res.json({ data: dayMessage.success.updated });
+      return res.json({
+        success: {
+          message: dayMessage.success.updated,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -68,13 +94,19 @@ class DayController {
         {
           $pull: {
             days: {
-              $in: numArray,
+              day: {
+                $in: numArray,
+              },
             },
           },
         }
       );
       if (!deleteDay) throw new NotAcceptable(dayMessage.error.notDelete);
-      return res.json({ data: dayMessage.success.delete });
+      return res.json({
+        success: {
+          message: dayMessage.success.delete,
+        },
+      });
     } catch (error) {
       next(error);
     }
