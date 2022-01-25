@@ -28,7 +28,11 @@ class WalletController {
       if (!walletHistorySave)
         throw new NotAcceptable(walletMessage.error.notAddedHistory);
 
-      res.json({ data: walletMessage.success.created });
+      res.json({
+        success: {
+          message: walletMessage.success.created,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -40,7 +44,7 @@ class WalletController {
         "-__v"
       );
       if (!findWallet) return res.json({ data: { balance: 0, spent: 0 } });
-      return res.json({ data: findWallet });
+      return res.json({ success: { data: findWallet } });
     } catch (error) {
       next(error);
     }

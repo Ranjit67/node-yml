@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { BadRequest, NotAcceptable, NotFound } from "http-errors";
+import { BadRequest, NotFound } from "http-errors";
 import { walletHistoryMessage } from "../resultMessage";
 import { WalletHistorySchema } from "../models";
 
@@ -15,7 +15,9 @@ class WalletHistory {
         userRef: userId,
       }).select("-__v");
       if (!findWalletHistory) return res.json({ data: [] });
-      return res.json({ data: findWalletHistory.transactionHistory });
+      return res.json({
+        success: { data: findWalletHistory.transactionHistory },
+      });
     } catch (error) {
       next(error);
     }
@@ -36,7 +38,9 @@ class WalletHistory {
       });
       if (!findWalletHistory)
         throw new NotFound(walletHistoryMessage.error.transactionNotFound);
-      return res.json({ data: findWalletHistory.transactionHistory });
+      return res.json({
+        success: { data: findWalletHistory.transactionHistory },
+      });
     } catch (error) {
       next(error);
     }
