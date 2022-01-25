@@ -30,7 +30,11 @@ class EventController {
         timestamp: new Date(),
       });
       if (!saveEvent) throw new InternalServerError("Event is not created.");
-      res.json({ data: "Event is created successfully." });
+      res.json({
+        success: {
+          message: "Event is created successfully.",
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -38,7 +42,11 @@ class EventController {
   public async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       const findAllEvent = await EventSchema.find({});
-      res.json({ data: findAllEvent });
+      res.json({
+        success: {
+          data: findAllEvent,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -47,7 +55,11 @@ class EventController {
     try {
       const { id } = req.params;
       const findOneEvent = await EventSchema.findById(id);
-      res.json({ data: findOneEvent });
+      res.json({
+        success: {
+          data: findOneEvent,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -90,7 +102,11 @@ class EventController {
       );
       if (!findOneAndUpdateEvent)
         throw new InternalServerError("Event is not updated.");
-      res.json({ data: "Event is updated successfully." });
+      res.json({
+        success: {
+          message: "Event is updated successfully.",
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -106,7 +122,10 @@ class EventController {
       //   res.json({ data: "Event is deleted successfully." });
       //   res.json({ data: "Event is deleted successfully." });
       res.json({
-        data: "Your logic is same but Event logic will be write when user schema ready.",
+        success: {
+          message:
+            "Your logic is same but Event logic will be write when user schema ready.",
+        },
       });
     } catch (error) {
       next(error);

@@ -21,7 +21,11 @@ class CategoryController {
       });
       if (!saveCategory)
         throw new NotAcceptable(categoryMessage.error.notCreated);
-      res.json({ data: categoryMessage.success.categoryCreates });
+      res.json({
+        success: {
+          message: categoryMessage.success.categoryCreates,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -35,7 +39,11 @@ class CategoryController {
           model: "Genres",
         },
       });
-      res.json({ data: categoryList });
+      res.json({
+        success: {
+          data: categoryList,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -53,7 +61,11 @@ class CategoryController {
       });
       if (!category)
         throw new NotAcceptable(categoryMessage.error.dataNotFound);
-      res.json({ data: category });
+      res.json({
+        success: {
+          data: category,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -82,7 +94,11 @@ class CategoryController {
         );
         if (!updateCategory)
           throw new NotAcceptable(categoryMessage.error.notUpdated);
-        res.json({ data: categoryMessage.success.categoryUpdated });
+        res.json({
+          success: {
+            message: categoryMessage.success.categoryUpdated,
+          },
+        });
       } else {
         const updateCategory = await CategorySchema.findByIdAndUpdate(
           categoryId,
@@ -91,7 +107,11 @@ class CategoryController {
         );
         if (!updateCategory)
           throw new NotAcceptable(categoryMessage.error.notUpdated);
-        res.json({ data: categoryMessage.success.categoryUpdated });
+        res.json({
+          success: {
+            message: categoryMessage.success.categoryUpdated,
+          },
+        });
       }
     } catch (error) {
       next(error);
