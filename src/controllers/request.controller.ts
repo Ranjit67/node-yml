@@ -10,14 +10,18 @@ class RequestController {
         throw new BadRequest(requestMessage.error.allField);
       const createRequest = await RequestSchema.create({
         requestType,
-        receiverUserRef: receiverUserId,
-        senderUserRef: senderUserId,
+        receiverUser: receiverUserId,
+        senderUser: senderUserId,
         details,
         timestamp: new Date(),
       });
       if (!createRequest)
         throw new NotAcceptable(requestMessage.error.notCreated);
-      res.json({ data: requestMessage.success.created });
+      res.json({
+        success: {
+          message: requestMessage.success.created,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -31,10 +35,10 @@ class RequestController {
       const { receiverUserId } = req.params;
       if (!receiverUserId) throw new BadRequest(requestMessage.error.allField);
       const requestReceiver = await RequestSchema.find({
-        receiverUserRef: receiverUserId,
+        receiverUser: receiverUserId,
       })
-        .populate("senderUserRef")
-        .populate("bookingRef");
+        .populate("senderUser")
+        .populate("booking");
       res.json({
         success: {
           data: requestReceiver,
@@ -53,10 +57,10 @@ class RequestController {
       const { senderUserId } = req.params;
       if (!senderUserId) throw new BadRequest(requestMessage.error.allField);
       const requestSender = await RequestSchema.find({
-        senderUserRef: senderUserId,
+        senderUser: senderUserId,
       })
-        .populate("receiverUserRef")
-        .populate("bookingRef");
+        .populate("receiverUser")
+        .populate("booking");
       res.json({
         success: {
           data: requestSender,
@@ -75,7 +79,7 @@ class RequestController {
       if (!findRequest)
         throw new Conflict(requestMessage.error.requestNotFound);
       const findUpdateBooking = await BookingSchema.findByIdAndUpdate(
-        findRequest.bookingRef,
+        findRequest.booking,
         {
           bookingPrice: price,
         }

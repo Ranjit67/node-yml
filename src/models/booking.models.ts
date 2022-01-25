@@ -32,11 +32,11 @@ export interface BookingModels extends Document {
   crowdSize: number;
   serviceType: ObjectId;
   bookingType: bookingType;
-  bookingRescheduleRef: ObjectId;
+  bookingReschedule: ObjectId;
   bookingPrice: number;
   status: bookingStatus;
-  artistRef: ObjectId;
-  userRef: ObjectId;
+  artist: ObjectId;
+  user: ObjectId;
   personalizedVideoRef: ObjectId;
   //   requestType: string;
   personalizedMessage: string;
@@ -68,7 +68,7 @@ const bookingSchema = new Schema({
     enum: ["personalizedMessage", "other"],
     type: String,
   },
-  bookingRescheduleRef: {
+  bookingReschedule: {
     type: Schema.Types.ObjectId,
     ref: "BookingReschedule",
   },
@@ -79,15 +79,15 @@ const bookingSchema = new Schema({
     enum: ["pending", "confirm", "cancel", "past"],
     type: String,
   },
-  artistRef: {
+  artist: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },
-  userRef: {
+  user: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },
-  personalizedVideoRef: {
+  personalizedVideo: {
     type: Schema.Types.ObjectId,
     ref: "PersonalizeVideo",
   },

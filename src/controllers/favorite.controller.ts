@@ -16,7 +16,7 @@ class FavoriteController {
       if (!userId || !artistId)
         throw new BadRequest(favoriteMessage.error.allField);
       const firstUpdate = await FavoriteSchema.updateOne(
-        { artist: artistId, "favorites.userRef": userId },
+        { artist: artistId, "favorites.user": userId },
         {
           $pull: {
             favorites: {
@@ -93,7 +93,7 @@ class FavoriteController {
         select: "-password",
       });
       const removeNullField = findArtistsUserMakeFavorite.filter(
-        (item: any) => item.artistRef !== null
+        (item: any) => item.artist !== null
       );
       res.json({ success: { data: removeNullField } });
     } catch (error) {

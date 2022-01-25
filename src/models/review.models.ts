@@ -2,14 +2,14 @@ import { Schema, model } from "mongoose";
 import { ReviewModel } from "../types";
 
 const reviewSchema = new Schema({
-  artistRef: {
+  artist: {
     type: Schema.Types.ObjectId,
     ref: "User",
     unique: true,
   },
   userReview: [
     {
-      userRef: {
+      user: {
         type: Schema.Types.ObjectId,
         ref: "User",
       },

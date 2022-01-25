@@ -17,8 +17,8 @@ class PersonalizedVideoController {
       const awsS3Services = new AwsS3Services();
       const uploadVideo = await awsS3Services.upload(video);
       const createPersonalizeVideo = await PersonalizeVideoSchema.create({
-        user: findBooking.userRef.toString(),
-        artist: findBooking.artistRef.toString(),
+        user: findBooking.user.toString(),
+        artist: findBooking.artist.toString(),
         booking: bookingId,
         videoUrl: uploadVideo.Location,
         videoFile: uploadVideo.Key,
@@ -28,7 +28,7 @@ class PersonalizedVideoController {
         throw new NotAcceptable(personalizeVideoMessage.error.notCreated);
       const updateBooking = await BookingSchema.updateOne(
         { _id: bookingId },
-        { personalizedVideoRef: createPersonalizeVideo._id }
+        { personalizedVideo: createPersonalizeVideo._id }
       );
       if (updateBooking.matchedCount !== 1)
         throw new NotAcceptable(personalizeVideoMessage.error.notUpdated);

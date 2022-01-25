@@ -10,11 +10,11 @@ class ReviewController {
       if (!artistId || !userId || !title)
         throw new BadRequest(reviewMessage.error.allField);
       const firstUpdate = await ReviewSchema.updateOne(
-        { artistRef: artistId },
+        { artist: artistId },
         {
           $push: {
             userReview: {
-              userRef: userId,
+              user: userId,
               title,
               description,
               ratings,
@@ -25,10 +25,10 @@ class ReviewController {
       if (firstUpdate.matchedCount)
         return res.json({ data: reviewMessage.success.created });
       const newReview = new ReviewSchema({
-        artistRef: artistId,
+        artist: artistId,
       });
       newReview.userReview.push({
-        userRef: userId,
+        user: userId,
         title,
         description,
         ratings,
@@ -54,8 +54,8 @@ class ReviewController {
     try {
       const { artistId } = req.params;
       const findReview: any = await ReviewSchema.findOne({
-        artistRef: artistId,
-      }).populate("userReview.userRef");
+        artist: artistId,
+      }).populate("userReview.user");
       if (!findReview) return res.json({ data: [] });
       return res.json({
         success: {
@@ -97,7 +97,7 @@ class ReviewController {
       if (!artistId || !reviewIds.length)
         throw new BadRequest(reviewMessage.error.allField);
       const deleteReview = await ReviewSchema.updateOne(
-        { artistRef: artistId },
+        { artist: artistId },
         {
           $pull: {
             userReview: {

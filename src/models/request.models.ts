@@ -3,9 +3,9 @@ import { requestType, requestStatus } from "../types";
 export interface RequestModel extends Document {
   // rescheduleRef:ObjectId;
   requestType: requestType;
-  senderUserRef: ObjectId;
-  receiverUserRef: ObjectId;
-  bookingRef: ObjectId;
+  senderUser: ObjectId;
+  receiverUser: ObjectId;
+  booking: ObjectId;
   details: object;
   timestamp: Date;
   status: requestStatus;
@@ -28,16 +28,16 @@ const requestSchema = new Schema({
       "personalize",
     ],
   },
-  senderUserRef: {
+  senderUser: {
     type: Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
-  receiverUserRef: {
+  receiverUser: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },
-  bookingRef: {
+  booking: {
     type: Schema.Types.ObjectId,
     ref: "Booking",
   },

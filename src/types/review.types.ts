@@ -1,10 +1,10 @@
 import { ObjectId } from "mongoose";
 
 export default interface ReviewModel extends Document {
-  artistRef: ObjectId;
+  artist: ObjectId;
   userReview: [
     {
-      userRef: ObjectId;
+      user: ObjectId;
       title: string;
       description: string;
       ratings: number;

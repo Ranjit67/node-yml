@@ -43,8 +43,8 @@ class BookingController {
         serviceType: serviceId,
         bookingPrice,
         status,
-        artistRef: artistId,
-        userRef: userId,
+        artist: artistId,
+        user: userId,
         personalizedMessage,
         eventDuration,
         OtherDetails,
@@ -58,11 +58,11 @@ class BookingController {
       if (isRequestSend) {
         const requestCreate = await RequestSchema.create({
           requestType: personalizedMessage ? "personalize" : "pricing",
-          receiverUserRef: artistId,
-          senderUserRef: userId,
+          receiverUser: artistId,
+          senderUser: userId,
           details: requestDetails,
           timestamp: new Date(),
-          bookingRef: createBooking._id,
+          booking: createBooking._id,
         });
         if (!requestCreate)
           throw new InternalServerError(bookingMessage.error.requestNotCreated);
@@ -92,11 +92,16 @@ class BookingController {
     try {
       const { artistId } = req.params;
       const bookingListArtist = await BookingSchema.find({
-        artistRef: artistId,
+        artist: artistId,
       })
-        .populate("userRef")
+        .populate("user")
         .populate("eventType")
-        .populate("serviceType");
+        .populate("serviceType")
+        .populate({
+          path: "personalizedVideo",
+
+          select: "-__v -booking -artist -user -booking -videoFile ",
+        });
       res.json({
         success: {
           message: bookingMessage.success.artistBookingList,
@@ -115,11 +120,15 @@ class BookingController {
     try {
       const { userId } = req.params;
       const bookingListUser = await BookingSchema.find({
-        userRef: userId,
+        user: userId,
       })
-        .populate("artistRef")
+        .populate("artist")
         .populate("eventType")
-        .populate("serviceType");
+        .populate("serviceType")
+        .populate({
+          path: "personalizedVideo",
+          select: "-__v -booking -artist -user -booking -videoFile ",
+        });
       res.json({
         success: {
           message: bookingMessage.success.userBookingList,
