@@ -1,7 +1,7 @@
 import { Document, Schema, model, ObjectId } from "mongoose";
 import { requestType, requestStatus } from "../types";
 export interface RequestModel extends Document {
-  // rescheduleRef:ObjectId;
+  reschedule: ObjectId;
   requestType: requestType;
   senderUser: ObjectId;
   receiverUser: ObjectId;
@@ -13,11 +13,11 @@ export interface RequestModel extends Document {
 }
 
 const requestSchema = new Schema({
-  // rescheduleRef: {
-  //     type: Schema.Types.ObjectId,
-  //     required: true,
-  //     ref: "Reschedule",
-  // },
+  reschedule: {
+    type: Schema.Types.ObjectId,
+
+    ref: "BookingReschedule",
+  },
   requestType: {
     type: String,
     enum: [

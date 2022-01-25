@@ -20,3 +20,4 @@ export { default as artistBlockDateMessage } from "./artistBlockDate.message";
 export { default as requestMessage } from "./request.message";
 export { default as bookingMessage } from "./booking.message";
 export { default as personalizeVideoMessage } from "./personalizeVideo.message";
+export { default as bookingRescheduleMessage } from "./bookingReschedule.message";

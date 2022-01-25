@@ -38,7 +38,11 @@ class RequestController {
         receiverUser: receiverUserId,
       })
         .populate("senderUser")
-        .populate("booking");
+        .populate("booking")
+        .populate({
+          path: "reschedule",
+          select: "rescheduleDate rescheduleBy",
+        });
       res.json({
         success: {
           data: requestReceiver,
@@ -60,7 +64,11 @@ class RequestController {
         senderUser: senderUserId,
       })
         .populate("receiverUser")
-        .populate("booking");
+        .populate("booking")
+        .populate({
+          path: "reschedule",
+          select: "rescheduleDate rescheduleBy",
+        });
       res.json({
         success: {
           data: requestSender,

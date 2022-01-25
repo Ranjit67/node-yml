@@ -1,4 +1,3 @@
-import { RDS } from "aws-sdk";
 import { Response, Request, NextFunction } from "express";
 import {
   BadRequest,

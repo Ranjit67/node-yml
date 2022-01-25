@@ -10,6 +10,7 @@ class ReviewRoutes {
   }
   private routes() {
     this.router.post("/create", this.reviewController.create);
+    this.router.get("/all-review", this.reviewController.getAllReview);
     this.router.get(
       "/all-review/:artistId",
       this.reviewController.getArtistReview

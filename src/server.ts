@@ -1,5 +1,5 @@
 import App from "./app";
-import schedule from "node-schedule";
+// import schedule from "node-schedule";
 import { BottomMiddleware, TopMiddleware } from "./middleware";
 import {
   ArtistBlockDateRoutes,
@@ -22,6 +22,7 @@ import {
   CategoryRoutes,
   BookingRouter,
   SubCategoryRoutes,
+  BookingRescheduleRoute,
   GenresRoutes,
   PricingRoutes,
   ReviewRoutes,
@@ -56,6 +57,7 @@ const object = {
     new WalletHistoryRoute(),
     new ArtistBlockDateRoutes(),
     new PersonalizeVideoRoute(),
+    new BookingRescheduleRoute(),
   ],
   topMiddleware: [new TopMiddleware().allowCrossDomain],
   bottomMiddleware: [

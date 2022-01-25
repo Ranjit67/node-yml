@@ -91,6 +91,17 @@ class ReviewController {
     }
   }
 
+  public async getAllReview(req: Request, res: Response, next: NextFunction) {
+    try {
+      const findReview = await ReviewSchema.find({})
+        .populate("userReview.user")
+        .populate("artist");
+      res.json({ success: { data: findReview } });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   public async delete(req: Request, res: Response, next: NextFunction) {
     try {
       const { artistId, reviewIds } = req.body;
