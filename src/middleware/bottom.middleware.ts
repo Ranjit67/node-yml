@@ -5,6 +5,7 @@ import {
   ServiceErrorHandler,
   EventErrorHandler,
   UserErrorHandler,
+  FavoriteErrorHandler,
 } from "../errorHandler";
 
 class BottomMiddleware {
@@ -33,6 +34,8 @@ class BottomMiddleware {
       return new UserErrorHandler().emailAlreadyExists(res);
     if (err?.keyPattern?.["phoneNumber"] === 1)
       return new UserErrorHandler().phoneAlreadyExists(res);
+    if (err?.path === "artist" || err?.path === "user")
+      return new FavoriteErrorHandler().objectId(res);
     res.json({
       error: {
         message: err.message,

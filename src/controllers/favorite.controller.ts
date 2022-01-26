@@ -67,6 +67,7 @@ class FavoriteController {
   public async viewUserList(req: Request, res: Response, next: NextFunction) {
     try {
       const { artistId } = req.params;
+      if (!artistId) throw new BadRequest(favoriteMessage.error.allField);
       const findFavoriteArtist: any = await FavoriteSchema.findOne({
         artist: artistId,
       }).populate({
@@ -85,6 +86,7 @@ class FavoriteController {
   public async viewArtistList(req: Request, res: Response, next: NextFunction) {
     try {
       const { userId } = req.params;
+      if (!userId) throw new BadRequest(favoriteMessage.error.allField);
       const findArtistsUserMakeFavorite = await FavoriteSchema.find({
         "favorites.user": userId,
       }).populate({
