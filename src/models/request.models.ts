@@ -8,6 +8,7 @@ export interface RequestModel extends Document {
   booking: ObjectId;
   details: object;
   timestamp: Date;
+  isCancel: boolean;
   status: requestStatus;
   reason: string;
 }
@@ -48,6 +49,10 @@ const requestSchema = new Schema({
     type: String,
     enum: ["pending", "accept", "reject"],
     default: "pending",
+  },
+  isCancel: {
+    type: Boolean,
+    default: false,
   },
   reason: {
     type: String,

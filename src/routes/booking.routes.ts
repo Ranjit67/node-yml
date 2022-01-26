@@ -27,6 +27,10 @@ class BookingRouter {
       "/booking-cancel-wallet",
       this.bookingController.bookingCancelWallet
     );
+    this.router.post(
+      "/booking-cancel-bank",
+      this.bookingController.bookingCancelBankAccount
+    );
   }
 }
 export default BookingRouter;

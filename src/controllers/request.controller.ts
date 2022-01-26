@@ -94,7 +94,9 @@ class RequestController {
       );
       if (!findUpdateBooking)
         throw new Conflict(requestMessage.error.bookingPriceNotUpdated);
-      const deleteRequest = await RequestSchema.findByIdAndDelete(requestId);
+      const deleteRequest = await RequestSchema.findByIdAndUpdate(requestId, {
+        status: "accept",
+      });
       if (!deleteRequest)
         throw new Conflict(requestMessage.error.requestNotDeleted);
       // notification mail send to user

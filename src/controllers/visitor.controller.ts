@@ -71,7 +71,7 @@ class VisitorController {
       const visitors: any = await VisitorSchema.findOne({
         artist: artistId,
       }).populate("users.user");
-      res.json({ data: visitors?.users });
+      res.json({ success: { data: visitors?.users } });
     } catch (error) {
       next(error);
     }

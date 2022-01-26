@@ -202,7 +202,20 @@ class BookingController {
         walletHistoryTitle,
         walletHistoryDescription,
       } = req.body;
+      if (
+        !bookingId ||
+        !refundAmount ||
+        !walletHistoryTitle ||
+        !walletHistoryDescription
+      )
+        throw new BadRequest(bookingMessage.error.allField);
       const findBooking: any = await BookingSchema.findById(bookingId);
+      const updateRequest = await RequestSchema.updateOne(
+        { booking: bookingId, status: "pending" },
+        {
+          isCancel: true,
+        }
+      ); // nothing need to check if have then update
       const updateBookingStatus = await BookingSchema.findByIdAndUpdate(
         bookingId,
         {
@@ -218,7 +231,7 @@ class BookingController {
         }
       );
       if (firstWalletUpdate.matchedCount === 1) {
-        const walletHistory = await WalletHistorySchema.findOneAndUpdate(
+        const createWalletHistory = await WalletHistorySchema.findOneAndUpdate(
           { user: findBooking.user.toString() },
           {
             $push: {
@@ -232,6 +245,8 @@ class BookingController {
             },
           }
         );
+        if (!createWalletHistory)
+          throw new NotAcceptable(bookingMessage.error.walletHistoryNotCreated);
         return res.json({
           success: {
             message: bookingMessage.success.bookingCancelWallet,
@@ -257,7 +272,46 @@ class BookingController {
             },
           ],
         });
+        if (!createWalletHistory)
+          throw new NotAcceptable(bookingMessage.error.walletHistoryNotCreated);
+        return res.json({
+          success: {
+            message: bookingMessage.success.bookingCancelWallet,
+          },
+        });
       }
+    } catch (error) {
+      next(error);
+    }
+  }
+  async bookingCancelBankAccount(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { bookingId, amount } = req.body;
+      if (!bookingId || !amount)
+        throw new BadRequest(bookingMessage.error.allField);
+      const updateRequest = await RequestSchema.updateOne(
+        { booking: bookingId, status: "pending" },
+        {
+          isCancel: true,
+        }
+      ); // nothing need to check if have then update
+      const changeBookingStatus = await BookingSchema.findByIdAndUpdate(
+        bookingId,
+        {
+          status: "cancel",
+        }
+      );
+      if (!changeBookingStatus)
+        throw new NotAcceptable(bookingMessage.error.bookingCancel);
+      res.json({
+        success: {
+          message: bookingMessage.success.bookingCancel,
+        },
+      });
     } catch (error) {
       next(error);
     }

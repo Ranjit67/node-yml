@@ -1,5 +1,6 @@
 const bookingMessage = {
   error: {
+    allField: "All field are required",
     notCreated: "Booking is Not crated.",
     requestNotCreated: "Request is Not crated.",
     bookingPriceNotAccept: "Booking price Not acceptable.",
@@ -7,6 +8,8 @@ const bookingMessage = {
     bookingComplete: "Something went wrong, Your action not recorded.",
     walletNotCreated:
       "Something went wrong, Money could not added into your wallet.",
+    walletHistoryNotCreated: "Something went wrong,  Wallet history.",
+    bookingCancel: "Something went wrong, Your action not recorded.",
   },
   success: {
     artistBookingList: "Artist Booking List.",
@@ -16,6 +19,8 @@ const bookingMessage = {
     bookingComplete: "Thank you for giving, Your valuable response.",
     bookingCancelWallet:
       "Booking Cancel Successfully and Amount will credited in your wallet shortly.",
+    bookingCancel:
+      "Booking Cancel Successfully.Amount will be credited in your bank account shortly.",
   },
 };
 export default bookingMessage;

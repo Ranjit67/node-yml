@@ -14,7 +14,7 @@ class WalletHistory {
       const findWalletHistory = await WalletHistorySchema.findOne({
         user: userId,
       }).select("-__v");
-      if (!findWalletHistory) return res.json({ data: [] });
+      if (!findWalletHistory) return res.json({ success: { data: [] } });
       return res.json({
         success: { data: findWalletHistory.transactionHistory },
       });
