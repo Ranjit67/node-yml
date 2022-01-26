@@ -6,7 +6,14 @@ import {
   NotFound,
   NotAcceptable,
 } from "http-errors";
-import { BookingSchema, RequestSchema, NotificationSchema } from "../models";
+import {
+  BookingSchema,
+  RequestSchema,
+  BookingRescheduleSchema,
+  WalletSchema,
+  WalletHistorySchema,
+  NotificationSchema,
+} from "../models";
 import { bookingMessage } from "../resultMessage";
 
 class BookingController {
@@ -187,20 +194,70 @@ class BookingController {
       next(error);
     }
   }
-  async bookingCancel(req: Request, res: Response, next: NextFunction) {
+  async bookingCancelWallet(req: Request, res: Response, next: NextFunction) {
     try {
-      const { bookingId, cancelBy } = req.body;
-
-      // const updateBooking = await BookingSchema.findByIdAndUpdate(bookingId, {
-      //   status: "cancel",
-      // });
-      // if (!updateBooking)
-      //   throw new NotAcceptable(bookingMessage.error.bookingCancel);
-      // res.json({
-      //   success: {
-      //     message: bookingMessage.success.bookingCancel,
-      //   },
-      // });
+      const {
+        bookingId,
+        refundAmount,
+        walletHistoryTitle,
+        walletHistoryDescription,
+      } = req.body;
+      const findBooking: any = await BookingSchema.findById(bookingId);
+      const updateBookingStatus = await BookingSchema.findByIdAndUpdate(
+        bookingId,
+        {
+          status: "cancel",
+        }
+      );
+      const firstWalletUpdate = await WalletSchema.updateOne(
+        { user: findBooking.user.toString() },
+        {
+          $inc: {
+            balance: +refundAmount,
+          },
+        }
+      );
+      if (firstWalletUpdate.matchedCount === 1) {
+        const walletHistory = await WalletHistorySchema.findOneAndUpdate(
+          { user: findBooking.user.toString() },
+          {
+            $push: {
+              transactionHistory: {
+                title: walletHistoryTitle,
+                type: "CR",
+                amount: +refundAmount,
+                description: walletHistoryDescription,
+                timestamp: new Date(),
+              },
+            },
+          }
+        );
+        return res.json({
+          success: {
+            message: bookingMessage.success.bookingCancelWallet,
+          },
+        });
+      } else {
+        const walletCreate = await WalletSchema.create({
+          user: findBooking.user.toString(),
+          balance: +refundAmount,
+          spent: 0,
+        });
+        if (!walletCreate)
+          throw new NotAcceptable(bookingMessage.error.walletNotCreated);
+        const createWalletHistory = await WalletHistorySchema.create({
+          user: findBooking.user.toString(),
+          transactionHistory: [
+            {
+              title: walletHistoryTitle,
+              type: "CR",
+              amount: +refundAmount,
+              description: walletHistoryDescription,
+              timestamp: new Date(),
+            },
+          ],
+        });
+      }
     } catch (error) {
       next(error);
     }

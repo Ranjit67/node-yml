@@ -23,7 +23,9 @@ class ReviewController {
         }
       );
       if (firstUpdate.matchedCount)
-        return res.json({ data: reviewMessage.success.created });
+        return res.json({
+          success: { message: reviewMessage.success.created },
+        });
       const newReview = new ReviewSchema({
         artist: artistId,
       });
@@ -56,7 +58,7 @@ class ReviewController {
       const findReview: any = await ReviewSchema.findOne({
         artist: artistId,
       }).populate("userReview.user");
-      if (!findReview) return res.json({ data: [] });
+      if (!findReview) return res.json({ success: { data: [] } });
       return res.json({
         success: {
           data: findReview.userReview,

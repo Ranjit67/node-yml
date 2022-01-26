@@ -23,7 +23,10 @@ class BookingRouter {
       "/booking-past-confirmation",
       this.bookingController.bookingPastConfirmation
     );
-    this.router.post("/booking-cancel", this.bookingController.bookingCancel);
+    this.router.post(
+      "/booking-cancel-wallet",
+      this.bookingController.bookingCancelWallet
+    );
   }
 }
 export default BookingRouter;
