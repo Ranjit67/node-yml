@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { NotificationController } from "../controllers";
+// import { ProtectedMiddleware } from "../middleware";
 
 class NotificationRoute {
   public router = Router();
@@ -10,9 +11,12 @@ class NotificationRoute {
   }
   private routes() {
     this.router.post("/create", this.notificationController.create);
-    // this.router.get("/all-notification", this.notificationController.getAll);
-    // this.router.put("/update", this.notificationController.update);
-    // this.router.delete("/delete", this.notificationController.delete);
-    // this.router.get("/all-notification/:id", this.notificationController.getOne);
+    this.router.get(
+      "/all-notification/:userId",
+      this.notificationController.getSelectedUserNotification
+    );
+    this.router.put("/make-read", this.notificationController.makeRead);
+    this.router.put("/delete", this.notificationController.delete);
   }
 }
+export default NotificationRoute;
