@@ -11,6 +11,14 @@ class PersonalizeVideoRoute {
   }
   private routes() {
     this.router.post("/create", this.personalizeVideoController.create);
+    this.router.get(
+      "/all-personalize-video/user/:userId",
+      this.personalizeVideoController.getPersonalizedVideoUser
+    );
+    this.router.get(
+      "/all-personalize-video/artist/:artistId",
+      this.personalizeVideoController.getPersonalizedVideoArtist
+    );
     // this.router.get("/all-personalize-video", this.personalizeVideoController.getAll);
     // this.router.put("/update", this.personalizeVideoController.update);
     // this.router.delete("/delete", this.personalizeVideoController.delete);

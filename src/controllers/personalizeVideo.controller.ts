@@ -42,6 +42,43 @@ class PersonalizedVideoController {
       next(error);
     }
   }
+  public async getPersonalizedVideoUser(
+    req: any,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { userId } = req.params;
+      const findVideoUser = await PersonalizeVideoSchema.find({
+        user: userId,
+      }).populate({
+        path: "artist",
+        select: "-password -__v -fcmToken",
+      });
+
+      res.json({ data: findVideoUser });
+    } catch (error) {
+      next(error);
+    }
+  }
+  public async getPersonalizedVideoArtist(
+    req: any,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { artistId } = req.params;
+      const findVideoUser = await PersonalizeVideoSchema.find({
+        artist: artistId,
+      }).populate({
+        path: "user",
+        select: "-password -__v -fcmToken",
+      });
+      res.json({ data: findVideoUser });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default PersonalizedVideoController;

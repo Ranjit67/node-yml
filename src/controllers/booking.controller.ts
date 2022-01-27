@@ -22,6 +22,8 @@ import {
   newBookingArtist,
   newBookingUser,
   newBookingManager,
+  bookingCancelByUserIcon,
+  bookingCancelByArtistIcon,
 } from "../notificationIcon";
 class BookingController {
   public async create(req: Request, res: Response, next: NextFunction) {
@@ -83,7 +85,6 @@ class BookingController {
         const findArtistManager = await AssignArtistSchema.find({
           "artists.artist": artistId,
         }).select("manager -_id");
-        // [artistId,userId, findArtistManager.map(item => item.manager)]
         const bookingContent = new BookingContent();
         for (let index of [
           userId,
@@ -283,6 +284,7 @@ class BookingController {
       next(error);
     }
   }
+
   async bookingCancelWallet(req: Request, res: Response, next: NextFunction) {
     try {
       const {
@@ -290,15 +292,20 @@ class BookingController {
         refundAmount,
         walletHistoryTitle,
         walletHistoryDescription,
+        cancelBy,
       } = req.body;
       if (
         !bookingId ||
         !refundAmount ||
         !walletHistoryTitle ||
-        !walletHistoryDescription
+        !walletHistoryDescription ||
+        !cancelBy
       )
         throw new BadRequest(bookingMessage.error.allField);
-      const findBooking: any = await BookingSchema.findById(bookingId);
+      // const findBooking: any = await BookingSchema.findById(bookingId);
+      const findBooking: any = await BookingSchema.findById(bookingId)
+        .populate("artist")
+        .populate("user");
       const updateRequest = await RequestSchema.updateOne(
         { booking: bookingId, status: "pending" },
         {
@@ -312,7 +319,7 @@ class BookingController {
         }
       );
       const firstWalletUpdate = await WalletSchema.updateOne(
-        { user: findBooking.user.toString() },
+        { user: findBooking.user._id.toString() },
         {
           $inc: {
             balance: +refundAmount,
@@ -321,7 +328,7 @@ class BookingController {
       );
       if (firstWalletUpdate.matchedCount === 1) {
         const createWalletHistory = await WalletHistorySchema.findOneAndUpdate(
-          { user: findBooking.user.toString() },
+          { user: findBooking.user._id.toString() },
           {
             $push: {
               transactionHistory: {
@@ -336,6 +343,90 @@ class BookingController {
         );
         if (!createWalletHistory)
           throw new NotAcceptable(bookingMessage.error.walletHistoryNotCreated);
+        //  notification
+        const findArtistManager = await AssignArtistSchema.find({
+          "artists.artist": findBooking.artist._id.toString(),
+        }).select("manager -_id");
+        const bookingContent = new BookingContent();
+        if (cancelBy === "user") {
+          for (let index of [
+            findBooking.user._id.toString(),
+            findBooking.artist._id.toString(),
+            findArtistManager.map((item) => item.manager),
+          ]) {
+            const title =
+              index === findBooking.user._id.toString()
+                ? bookingContent.bookingCancelByUserSelf(findBooking.user)
+                    .subject
+                : bookingContent.bookingCancelByUser(findBooking.artist)
+                    .subject;
+            const description =
+              index === findBooking.user._id.toString()
+                ? bookingContent.bookingCancelByUserSelf(findBooking.user).text
+                : bookingContent.bookingCancelByUser(findBooking.artist).text;
+            const bookingNotificationIcon =
+              index === findBooking.user._id.toString()
+                ? bookingCancelByUserIcon
+                : index === findBooking.artist._id.toString()
+                ? bookingCancelByUserIcon
+                : bookingCancelByUserIcon;
+            await new NotificationServices().notificationGenerate(
+              index,
+              findBooking.user._id.toString(),
+              title,
+              description,
+              bookingNotificationIcon,
+              {
+                subject: title,
+                text: description,
+              },
+              {
+                title,
+                body: description,
+                sound: "default",
+              }
+            );
+          }
+        } else {
+          for (let index of [
+            findBooking.user._id.toString(),
+            findBooking.artist._id.toString(),
+            findArtistManager.map((item) => item.manager),
+          ]) {
+            const title =
+              index === findBooking.artist._id.toString()
+                ? bookingContent.bookingCancelByArtistSelf(findBooking.artist)
+                    .subject
+                : bookingContent.bookingCancelArtist(findBooking.user).subject;
+            const description =
+              index === findBooking.artist._id.toString()
+                ? bookingContent.bookingCancelByArtistSelf(findBooking.artist)
+                    .text
+                : bookingContent.bookingCancelArtist(findBooking.user).text;
+            const bookingNotificationIcon =
+              index === findBooking.artist._id.toString()
+                ? bookingCancelByArtistIcon
+                : index === findBooking.artist._id.toString()
+                ? bookingCancelByArtistIcon
+                : bookingCancelByArtistIcon;
+            await new NotificationServices().notificationGenerate(
+              index,
+              findBooking.artist._id.toString(),
+              title,
+              description,
+              bookingNotificationIcon,
+              {
+                subject: title,
+                text: description,
+              },
+              {
+                title,
+                body: description,
+                sound: "default",
+              }
+            );
+          }
+        }
         return res.json({
           success: {
             message: bookingMessage.success.bookingCancelWallet,
@@ -343,7 +434,7 @@ class BookingController {
         });
       } else {
         const walletCreate = await WalletSchema.create({
-          user: findBooking.user.toString(),
+          user: findBooking.user_id.toString(),
           balance: +refundAmount,
           spent: 0,
         });
@@ -351,7 +442,7 @@ class BookingController {
           throw new NotAcceptable(bookingMessage.error.walletNotCreated);
 
         const createWalletHistory = new WalletHistorySchema({
-          user: findBooking.user.toString(),
+          user: findBooking.user._id.toString(),
         });
         createWalletHistory.transactionHistory.push({
           title: walletHistoryTitle,
@@ -363,6 +454,91 @@ class BookingController {
         const save = createWalletHistory.save();
         if (!save)
           throw new NotAcceptable(bookingMessage.error.walletHistoryNotCreated);
+        // notification
+
+        const findArtistManager = await AssignArtistSchema.find({
+          "artists.artist": findBooking.artist._id.toString(),
+        }).select("manager -_id");
+        const bookingContent = new BookingContent();
+        if (cancelBy === "user") {
+          for (let index of [
+            findBooking.user._id.toString(),
+            findBooking.artist._id.toString(),
+            findArtistManager.map((item) => item.manager),
+          ]) {
+            const title =
+              index === findBooking.user._id.toString()
+                ? bookingContent.bookingCancelByUserSelf(findBooking.user)
+                    .subject
+                : bookingContent.bookingCancelByUser(findBooking.artist)
+                    .subject;
+            const description =
+              index === findBooking.user._id.toString()
+                ? bookingContent.bookingCancelByUserSelf(findBooking.user).text
+                : bookingContent.bookingCancelByUser(findBooking.artist).text;
+            const bookingNotificationIcon =
+              index === findBooking.user._id.toString()
+                ? bookingCancelByUserIcon
+                : index === findBooking.artist._id.toString()
+                ? bookingCancelByUserIcon
+                : bookingCancelByUserIcon;
+            await new NotificationServices().notificationGenerate(
+              index,
+              findBooking.user._id.toString(),
+              title,
+              description,
+              bookingNotificationIcon,
+              {
+                subject: title,
+                text: description,
+              },
+              {
+                title,
+                body: description,
+                sound: "default",
+              }
+            );
+          }
+        } else {
+          for (let index of [
+            findBooking.user._id.toString(),
+            findBooking.artist._id.toString(),
+            findArtistManager.map((item) => item.manager),
+          ]) {
+            const title =
+              index === findBooking.artist._id.toString()
+                ? bookingContent.bookingCancelByArtistSelf(findBooking.artist)
+                    .subject
+                : bookingContent.bookingCancelArtist(findBooking.user).subject;
+            const description =
+              index === findBooking.artist._id.toString()
+                ? bookingContent.bookingCancelByArtistSelf(findBooking.artist)
+                    .text
+                : bookingContent.bookingCancelArtist(findBooking.user).text;
+            const bookingNotificationIcon =
+              index === findBooking.artist._id.toString()
+                ? bookingCancelByArtistIcon
+                : index === findBooking.artist._id.toString()
+                ? bookingCancelByArtistIcon
+                : bookingCancelByArtistIcon;
+            await new NotificationServices().notificationGenerate(
+              index,
+              findBooking.artist._id.toString(),
+              title,
+              description,
+              bookingNotificationIcon,
+              {
+                subject: title,
+                text: description,
+              },
+              {
+                title,
+                body: description,
+                sound: "default",
+              }
+            );
+          }
+        }
         return res.json({
           success: {
             message: bookingMessage.success.bookingCancelWallet,
@@ -373,13 +549,15 @@ class BookingController {
       next(error);
     }
   }
+
   async bookingCancelBankAccount(
     req: Request,
     res: Response,
     next: NextFunction
   ) {
     try {
-      const { bookingId, amount } = req.body;
+      const { bookingId, amount, cancelBy } = req.body;
+      // cancelBy- user/artist
       if (!bookingId || !amount)
         throw new BadRequest(bookingMessage.error.allField);
       const updateRequest = await RequestSchema.updateOne(
@@ -396,6 +574,90 @@ class BookingController {
       );
       if (!changeBookingStatus)
         throw new NotAcceptable(bookingMessage.error.bookingCancel);
+      const findBooking: any = await BookingSchema.findById(bookingId)
+        .populate("artist")
+        .populate("user");
+      const findArtistManager = await AssignArtistSchema.find({
+        "artists.artist": findBooking.artist._id.toString(),
+      }).select("manager -_id");
+      const bookingContent = new BookingContent();
+      if (cancelBy === "user") {
+        for (let index of [
+          findBooking.user._id.toString(),
+          findBooking.artist._id.toString(),
+          findArtistManager.map((item) => item.manager),
+        ]) {
+          const title =
+            index === findBooking.user._id.toString()
+              ? bookingContent.bookingCancelByUserSelf(findBooking.user).subject
+              : bookingContent.bookingCancelByUser(findBooking.artist).subject;
+          const description =
+            index === findBooking.user._id.toString()
+              ? bookingContent.bookingCancelByUserSelf(findBooking.user).text
+              : bookingContent.bookingCancelByUser(findBooking.artist).text;
+          const bookingNotificationIcon =
+            index === findBooking.user._id.toString()
+              ? bookingCancelByUserIcon
+              : index === findBooking.artist._id.toString()
+              ? bookingCancelByUserIcon
+              : bookingCancelByUserIcon;
+          await new NotificationServices().notificationGenerate(
+            index,
+            findBooking.user._id.toString(),
+            title,
+            description,
+            bookingNotificationIcon,
+            {
+              subject: title,
+              text: description,
+            },
+            {
+              title,
+              body: description,
+              sound: "default",
+            }
+          );
+        }
+      } else {
+        for (let index of [
+          findBooking.user._id.toString(),
+          findBooking.artist._id.toString(),
+          findArtistManager.map((item) => item.manager),
+        ]) {
+          const title =
+            index === findBooking.artist._id.toString()
+              ? bookingContent.bookingCancelByArtistSelf(findBooking.artist)
+                  .subject
+              : bookingContent.bookingCancelArtist(findBooking.user).subject;
+          const description =
+            index === findBooking.artist._id.toString()
+              ? bookingContent.bookingCancelByArtistSelf(findBooking.artist)
+                  .text
+              : bookingContent.bookingCancelArtist(findBooking.user).text;
+          const bookingNotificationIcon =
+            index === findBooking.artist._id.toString()
+              ? bookingCancelByArtistIcon
+              : index === findBooking.artist._id.toString()
+              ? bookingCancelByArtistIcon
+              : bookingCancelByArtistIcon;
+          await new NotificationServices().notificationGenerate(
+            index,
+            findBooking.artist._id.toString(),
+            title,
+            description,
+            bookingNotificationIcon,
+            {
+              subject: title,
+              text: description,
+            },
+            {
+              title,
+              body: description,
+              sound: "default",
+            }
+          );
+        }
+      }
 
       res.json({
         success: {
