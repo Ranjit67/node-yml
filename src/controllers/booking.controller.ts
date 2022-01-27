@@ -24,6 +24,7 @@ import {
   newBookingManager,
   bookingCancelByUserIcon,
   bookingCancelByArtistIcon,
+  bookingRequestIcon,
 } from "../notificationIcon";
 class BookingController {
   public async create(req: Request, res: Response, next: NextFunction) {
@@ -94,17 +95,25 @@ class BookingController {
           const title =
             index === userId
               ? bookingContent.newBookingUser().subject
+              : isRequestSend
+              ? bookingContent.bookingRequestReceivedByArtist().subject
               : bookingContent.newBookingArtist().subject;
           const description =
             index === userId
               ? bookingContent.newBookingUser().text
+              : isRequestSend
+              ? bookingContent.bookingRequestReceivedByArtist().text
               : bookingContent.newBookingArtist().text;
           const bookingNotificationIcon =
             index === userId
               ? newBookingUser
               : index === artistId
-              ? newBookingArtist
-              : newBookingManager;
+              ? isRequestSend
+                ? bookingRequestIcon
+                : newBookingArtist
+              : isRequestSend
+              ? bookingRequestIcon
+              : newBookingArtist;
           await new NotificationServices().notificationGenerate(
             index,
             userId,
