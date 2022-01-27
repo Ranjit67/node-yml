@@ -11,7 +11,7 @@ const walletHistorySchema = new Schema({
     {
       type: {
         type: String,
-        enum: ["DB", "CR"],
+        enum: ["Debit", "Credit"],
       },
       amount: {
         type: Number,

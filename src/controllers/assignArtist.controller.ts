@@ -113,10 +113,12 @@ class AssignArtistController {
     try {
       const { artistId } = req.params;
       if (!artistId) throw new BadRequest("All fields are required.");
-      const findManagerData = await AssignArtistSchema.findOne({
+      const findManagerData = await AssignArtistSchema.find({
         "artists.artist": artistId,
-      }).populate("manager");
-      res.json({ success: { data: findManagerData?.manager } });
+      })
+        .populate("manager")
+        .select("manager -_id");
+      res.json({ success: { data: findManagerData } });
     } catch (error) {
       next(error);
     }

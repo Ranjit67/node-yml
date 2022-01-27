@@ -18,11 +18,20 @@ class NotificationController {
           selfId,
           title,
           description,
-          superAdminSendToUserIcon
+          superAdminSendToUserIcon,
+          {
+            subject: title,
+            text: description,
+          },
+          {
+            title,
+            body: description,
+            sound: "default",
+          }
         );
 
       return res.json({
-        success: { message: sendNotification?.message },
+        success: { message: notificationMessage.success.create },
       });
     } catch (error) {
       next(error);

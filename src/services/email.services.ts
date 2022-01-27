@@ -1,7 +1,13 @@
 import nodemailer from "nodemailer";
 import { email, password } from "../config";
 class EmailService {
-  public emailSend(emailCredentials: any): any {
+  public emailSend(email: string, subject: string, message: string): any {
+    const emailCredentials = {
+      from: "noreply.skyrisecelebrity@gmail.com",
+      to: email,
+      subject: subject,
+      text: `${message}`,
+    };
     return new Promise((resolve, reject) => {
       const transport = nodemailer.createTransport({
         service: "gmail",
@@ -16,7 +22,7 @@ class EmailService {
           return resolve(info);
         })
         .catch((err) => {
-          return reject(err);
+          return resolve(err);
         });
     });
   }

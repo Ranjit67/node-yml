@@ -1,6 +1,6 @@
 import { ObjectId, Document } from "mongoose";
 
-export type transaction = "DB" | "CR";
+export type transaction = "Debit" | "Credit";
 
 export default interface WalletHistoryModel extends Document {
   user: ObjectId;

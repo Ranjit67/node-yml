@@ -7,6 +7,7 @@ const notificationMessage = {
   success: {
     makeRed: "Notification mark as read successfully.",
     deleted: "Notification are deleted successfully.",
+    create: "Notification Send Successfully",
   },
 };
 export default notificationMessage;

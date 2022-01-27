@@ -66,9 +66,11 @@ class UserController {
         });
         if (!saveEmailToken)
           throw new InternalServerError("Email token is not created.");
-
+        const emailContent = new EmailContent().emailOnSelfVerification(token);
         const SendEmail = await new EmailService().emailSend(
-          new EmailContent().emailOnSelfVerification(userSave?.email, token)
+          userSave?.email,
+          emailContent.subject,
+          emailContent.text
         );
         res.json({
           success: {
@@ -102,9 +104,11 @@ class UserController {
         });
         if (!saveEmailToken)
           throw new InternalServerError("Email token is not created.");
-
+        const emailContent = new EmailContent().emailOnSelfVerification(token);
         const SendEmail = await new EmailService().emailSend(
-          new EmailContent().emailOnSelfVerification(userSave?.email, token)
+          userSave?.email,
+          emailContent.subject,
+          emailContent.text
         );
         res.json({
           success: {
@@ -333,10 +337,14 @@ class UserController {
 
       const emailContent =
         stringData === "changePassword"
-          ? new EmailContent().emailResetPassword(email, token)
-          : new EmailContent().emailForgetPassword(email, token);
+          ? new EmailContent().emailResetPassword(token)
+          : new EmailContent().emailForgetPassword(token);
 
-      const SendEmail = await new EmailService().emailSend(emailContent);
+      const SendEmail = await new EmailService().emailSend(
+        email,
+        emailContent.subject,
+        emailContent.text
+      );
       res.json({
         success: {
           message: "Check your Email.",

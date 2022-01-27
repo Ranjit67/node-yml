@@ -80,12 +80,15 @@ class SupportController {
       if (!findUser?.email)
         throw new NotAcceptable(supportMessage.error.supportEmail);
       const emailContent = new EmailContent().supportEmailContent(
-        findUser?.email,
         findUser,
         message,
         subject
       );
-      const SendEmail = await new EmailService().emailSend(emailContent);
+      const SendEmail = await new EmailService().emailSend(
+        findUser?.email,
+        emailContent.subject,
+        emailContent.text
+      );
 
       res.json({
         success: {

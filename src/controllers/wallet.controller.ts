@@ -18,7 +18,7 @@ class WalletController {
         user: userId,
       });
       walletHistory.transactionHistory.push({
-        type: "CR",
+        type: "Credit",
         amount: balance ?? 0,
         title: "Add money",
         description: "Add money in wallet.",

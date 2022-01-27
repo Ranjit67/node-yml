@@ -1,4 +1,4 @@
 const email = "noreply.skyrisecelebrity@gmail.com";
-const password = "emdfftacmdreknoz";
+const password = "firsnhrcblhxzctw";
 
 export { email, password };

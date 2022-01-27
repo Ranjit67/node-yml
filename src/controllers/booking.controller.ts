@@ -9,13 +9,20 @@ import {
 import {
   BookingSchema,
   RequestSchema,
+  AssignArtistSchema,
   BookingRescheduleSchema,
   WalletSchema,
   WalletHistorySchema,
   NotificationSchema,
 } from "../models";
 import { bookingMessage } from "../resultMessage";
-
+import { NotificationServices } from "../services";
+import { BookingContent } from "../emailContent";
+import {
+  newBookingArtist,
+  newBookingUser,
+  newBookingManager,
+} from "../notificationIcon";
 class BookingController {
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
@@ -73,12 +80,94 @@ class BookingController {
         if (!requestCreate)
           throw new InternalServerError(bookingMessage.error.requestNotCreated);
         // notification send
+        const findArtistManager = await AssignArtistSchema.find({
+          "artists.artist": artistId,
+        }).select("manager -_id");
+        // [artistId,userId, findArtistManager.map(item => item.manager)]
+        const bookingContent = new BookingContent();
+        for (let index of [
+          userId,
+          artistId,
+          findArtistManager.map((item) => item.manager),
+        ]) {
+          const title =
+            index === userId
+              ? bookingContent.newBookingUser().subject
+              : bookingContent.newBookingArtist().subject;
+          const description =
+            index === userId
+              ? bookingContent.newBookingUser().text
+              : bookingContent.newBookingArtist().text;
+          const bookingNotificationIcon =
+            index === userId
+              ? newBookingUser
+              : index === artistId
+              ? newBookingArtist
+              : newBookingManager;
+          await new NotificationServices().notificationGenerate(
+            index,
+            userId,
+            title,
+            description,
+            bookingNotificationIcon,
+            {
+              subject: title,
+              text: description,
+            },
+            {
+              title,
+              body: description,
+              sound: "default",
+            }
+          );
+        }
         res.json({
           success: {
             message: bookingMessage.success.bookingCreated,
           },
         });
       } else {
+        const findArtistManager = await AssignArtistSchema.find({
+          "artists.artist": artistId,
+        }).select("manager -_id");
+        // [artistId,userId, findArtistManager.map(item => item.manager)]
+        const bookingContent = new BookingContent();
+        for (let index of [
+          userId,
+          artistId,
+          findArtistManager.map((item) => item.manager),
+        ]) {
+          const title =
+            index === userId
+              ? bookingContent.newBookingUser().subject
+              : bookingContent.newBookingArtist().subject;
+          const description =
+            index === userId
+              ? bookingContent.newBookingUser().text
+              : bookingContent.newBookingArtist().text;
+          const bookingNotificationIcon =
+            index === userId
+              ? newBookingUser
+              : index === artistId
+              ? newBookingArtist
+              : newBookingManager;
+          await new NotificationServices().notificationGenerate(
+            index,
+            userId,
+            title,
+            description,
+            bookingNotificationIcon,
+            {
+              subject: title,
+              text: description,
+            },
+            {
+              title,
+              body: description,
+              sound: "default",
+            }
+          );
+        }
         //notification send
         res.json({
           success: {
@@ -237,7 +326,7 @@ class BookingController {
             $push: {
               transactionHistory: {
                 title: walletHistoryTitle,
-                type: "CR",
+                type: "Credit",
                 amount: +refundAmount,
                 description: walletHistoryDescription,
                 timestamp: new Date(),
@@ -266,7 +355,7 @@ class BookingController {
         });
         createWalletHistory.transactionHistory.push({
           title: walletHistoryTitle,
-          type: "CR",
+          type: "Credit",
           amount: +refundAmount,
           description: walletHistoryDescription,
           timestamp: new Date(),
@@ -307,6 +396,7 @@ class BookingController {
       );
       if (!changeBookingStatus)
         throw new NotAcceptable(bookingMessage.error.bookingCancel);
+
       res.json({
         success: {
           message: bookingMessage.success.bookingCancel,
