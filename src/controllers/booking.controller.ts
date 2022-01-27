@@ -260,19 +260,19 @@ class BookingController {
         });
         if (!walletCreate)
           throw new NotAcceptable(bookingMessage.error.walletNotCreated);
-        const createWalletHistory = await WalletHistorySchema.create({
+
+        const createWalletHistory = new WalletHistorySchema({
           user: findBooking.user.toString(),
-          transactionHistory: [
-            {
-              title: walletHistoryTitle,
-              type: "CR",
-              amount: +refundAmount,
-              description: walletHistoryDescription,
-              timestamp: new Date(),
-            },
-          ],
         });
-        if (!createWalletHistory)
+        createWalletHistory.transactionHistory.push({
+          title: walletHistoryTitle,
+          type: "CR",
+          amount: +refundAmount,
+          description: walletHistoryDescription,
+          timestamp: new Date(),
+        });
+        const save = createWalletHistory.save();
+        if (!save)
           throw new NotAcceptable(bookingMessage.error.walletHistoryNotCreated);
         return res.json({
           success: {

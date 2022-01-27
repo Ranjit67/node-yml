@@ -48,7 +48,13 @@ class RequestController {
           data: requestReceiver,
         },
       });
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.path === "receiverUser")
+        return res.json({
+          success: {
+            data: [],
+          },
+        });
       next(error);
     }
   }
@@ -74,7 +80,13 @@ class RequestController {
           data: requestSender,
         },
       });
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.path === "senderUser")
+        return res.json({
+          success: {
+            data: [],
+          },
+        });
       next(error);
     }
   }
