@@ -56,7 +56,11 @@ class PersonalizedVideoController {
         select: "-password -__v -fcmToken",
       });
 
-      res.json({ data: findVideoUser });
+      res.json({
+        success: {
+          data: findVideoUser,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -74,7 +78,11 @@ class PersonalizedVideoController {
         path: "user",
         select: "-password -__v -fcmToken",
       });
-      res.json({ data: findVideoUser });
+      res.json({
+        success: {
+          data: findVideoUser,
+        },
+      });
     } catch (error) {
       next(error);
     }
