@@ -1,6 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { NotAcceptable, BadRequest, Conflict } from "http-errors";
-import { RequestSchema, BookingSchema } from "../models";
+import {
+  RequestSchema,
+  BookingSchema,
+  UserSchema,
+  AssignArtistSchema,
+} from "../models";
 import { requestMessage } from "../resultMessage";
 class RequestController {
   public async create(req: Request, res: Response, next: NextFunction) {
@@ -43,7 +48,28 @@ class RequestController {
           path: "reschedule",
           select: "rescheduleDate rescheduleBy",
         });
-      res.json({
+      const findUser: any = await UserSchema.findById(receiverUserId);
+      if (findUser?.role === "manager") {
+        const findAssignArtist = await AssignArtistSchema.findOne({
+          manager: receiverUserId,
+        }).select("artists.artist -_id");
+        const mapArtist = findAssignArtist?.artists.map(
+          (artist: any) => artist.artist
+        );
+        const requestArtistReceiver = await RequestSchema.find({
+          receiverUser: { $in: mapArtist },
+          requestType: { $ne: "manager" },
+        })
+          .populate("senderUser")
+          .populate("receiverUser");
+        const makeTogether = [...requestReceiver, ...requestArtistReceiver];
+        return res.json({
+          success: {
+            data: makeTogether,
+          },
+        });
+      }
+      return res.json({
         success: {
           data: requestReceiver,
         },
