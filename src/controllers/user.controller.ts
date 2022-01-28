@@ -12,9 +12,11 @@ import {
   JwtService,
   AwsS3Services,
   PasswordHasServices,
+  NotificationServices,
 } from "../services";
-import EmailContent from "../emailContent";
+import EmailContent, { UserContent } from "../emailContent";
 import { userMessage } from "../resultMessage";
+import { userBlockIcon, userUnblockIcon } from "../notificationIcon";
 
 class UserController {
   public async create(req: any, res: Response, next: NextFunction) {
@@ -287,6 +289,40 @@ class UserController {
       );
       if (updateUser.modifiedCount === 0)
         throw new NotAcceptable(userMessage.error.notUpdatedBlockOrUnblock);
+      if (findUser.status === "active" || findUser.status === "blocked") {
+        // notification start
+        const userContent = new UserContent();
+        const findAdmin: any = await UserSchema.findOne({ role: "admin" });
+        const title =
+          findUser.status === "active"
+            ? userContent.superAdminBlockUser(findUser).subject
+            : userContent.superAdminUnblockUser(findUser).subject;
+        const description =
+          findUser.status === "active"
+            ? userContent.superAdminBlockUser(findUser).text
+            : userContent.superAdminUnblockUser(findUser).text;
+        const icon =
+          findUser.status === "active" ? userBlockIcon : userUnblockIcon;
+        await new NotificationServices().notificationGenerate(
+          id,
+          findAdmin._id.toString(),
+          title,
+          description,
+          icon,
+          {
+            subject: title,
+            text: description,
+          },
+          {
+            title,
+            body: description,
+            sound: "default",
+          }
+        );
+
+        // notification end
+      }
+
       return res.json({
         success: {
           message:

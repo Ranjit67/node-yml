@@ -229,39 +229,62 @@ class BookingRescheduleController {
             findRequest.reschedule?._id.toString()
           );
         // notification start
+        if (actionBy === "artist") {
+          const title = bookingContent.bookingPermissionAcceptedByArtist(
+            findRequest.senderUser
+          ).subject;
 
-        const title =
-          actionBy === "artist"
-            ? bookingContent.bookingPermissionAcceptedByArtist(
-                findRequest.senderUser
-              ).subject
-            : bookingContent.bookingPermissionAcceptedByUser(
-                findRequest.senderUser
-              ).subject;
-        const description =
-          actionBy === "artist"
-            ? bookingContent.bookingPermissionAcceptedByArtist(
-                findRequest.senderUser
-              ).text
-            : bookingContent.bookingPermissionAcceptedByUser(
-                findRequest.senderUser
-              ).text;
-        await new NotificationServices().notificationGenerate(
-          findRequest.senderUser._id.toString(),
-          findRequest.receiverUser._id.toString(),
-          title,
-          description,
-          bookingRescheduleAcceptedByArtistIcon,
-          {
-            subject: title,
-            text: description,
-          },
-          {
+          const description = bookingContent.bookingPermissionAcceptedByArtist(
+            findRequest.senderUser
+          ).text;
+          await new NotificationServices().notificationGenerate(
+            findRequest.senderUser._id.toString(),
+            findRequest.receiverUser._id.toString(),
             title,
-            body: description,
-            sound: "default",
+            description,
+            bookingRescheduleAcceptedByArtistIcon,
+            {
+              subject: title,
+              text: description,
+            },
+            {
+              title,
+              body: description,
+              sound: "default",
+            }
+          );
+        } else {
+          const findArtistManager = await AssignArtistSchema.find({
+            "artists.artist": findRequest.senderUser._id.toString(),
+          }).select("manager -_id");
+          for (let index of [
+            findRequest.senderUser._id.toString(),
+            ...findArtistManager.map((item) => item.manager),
+          ]) {
+            const title = bookingContent.bookingPermissionAcceptedByUser(
+              findRequest.senderUser
+            ).subject;
+            const description = bookingContent.bookingPermissionAcceptedByUser(
+              findRequest.senderUser
+            ).text;
+            await new NotificationServices().notificationGenerate(
+              index,
+              findRequest.receiverUser._id.toString(),
+              title,
+              description,
+              bookingRescheduleAcceptedByArtistIcon,
+              {
+                subject: title,
+                text: description,
+              },
+              {
+                title,
+                body: description,
+                sound: "default",
+              }
+            );
           }
-        );
+        }
 
         // notification end
 
@@ -277,38 +300,64 @@ class BookingRescheduleController {
           status: "reject",
         });
         // notification start
-        const title =
-          actionBy === "artist"
-            ? bookingContent.bookingPermissionRejectByArtist(
-                findRequest.senderUser
-              ).subject
-            : bookingContent.bookingPermissionRejectedByUser(
-                findRequest.senderUser
-              ).subject;
-        const description =
-          actionBy === "artist"
-            ? bookingContent.bookingPermissionRejectByArtist(
-                findRequest.senderUser
-              ).text
-            : bookingContent.bookingPermissionRejectedByUser(
-                findRequest.senderUser
-              ).text;
-        await new NotificationServices().notificationGenerate(
-          findRequest.senderUser._id.toString(),
-          findRequest.receiverUser._id.toString(),
-          title,
-          description,
-          bookingRescheduleAcceptedByArtistIcon,
-          {
-            subject: title,
-            text: description,
-          },
-          {
+        if (actionBy === "artist") {
+          const title = bookingContent.bookingPermissionRejectByArtist(
+            findRequest.senderUser
+          ).subject;
+          const description = bookingContent.bookingPermissionRejectByArtist(
+            findRequest.senderUser
+          ).text;
+
+          await new NotificationServices().notificationGenerate(
+            findRequest.senderUser._id.toString(),
+            findRequest.receiverUser._id.toString(),
             title,
-            body: description,
-            sound: "default",
+            description,
+            bookingRescheduleAcceptedByArtistIcon,
+            {
+              subject: title,
+              text: description,
+            },
+            {
+              title,
+              body: description,
+              sound: "default",
+            }
+          );
+        } else {
+          const findArtistManager = await AssignArtistSchema.find({
+            "artists.artist": findRequest.senderUser._id.toString(),
+          }).select("manager -_id");
+
+          for (let index of [
+            findRequest.senderUser._id.toString(),
+            ...findArtistManager.map((item) => item.manager),
+          ]) {
+            const title = bookingContent.bookingPermissionRejectedByUser(
+              findRequest.senderUser
+            ).subject;
+            const description = bookingContent.bookingPermissionRejectedByUser(
+              findRequest.senderUser
+            ).text;
+            await new NotificationServices().notificationGenerate(
+              index,
+              findRequest.receiverUser._id.toString(),
+              title,
+              description,
+              bookingRescheduleAcceptedByArtistIcon,
+              {
+                subject: title,
+                text: description,
+              },
+              {
+                title,
+                body: description,
+                sound: "default",
+              }
+            );
           }
-        );
+        }
+
         // notification end
         res.json({
           success: {

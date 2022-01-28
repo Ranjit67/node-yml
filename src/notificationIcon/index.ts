@@ -24,3 +24,9 @@ export const bookingRescheduleAcceptedByArtistIcon =
   "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
 export const bookingRescheduleAcceptedByUserIcon =
   "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
+export const personalizeMessageReceiving =
+  "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
+export const userBlockIcon =
+  "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
+export const userUnblockIcon =
+  "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
