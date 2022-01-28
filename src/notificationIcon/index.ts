@@ -30,3 +30,5 @@ export const userBlockIcon =
   "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
 export const userUnblockIcon =
   "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
+export const assignArtistToManager =
+  "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";

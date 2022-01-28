@@ -6,6 +6,9 @@ import {
   NotFound,
 } from "http-errors";
 import { AssignArtistSchema, UserSchema, RequestSchema } from "../models";
+import { NotificationServices } from "../services";
+import { AssignArtistContent } from "../emailContent";
+import { assignArtistToManager } from "../notificationIcon";
 class AssignArtistController {
   public async assignArtist(req: Request, res: Response, next: NextFunction) {
     try {
@@ -13,22 +16,33 @@ class AssignArtistController {
 
       if (!managerId || !artistId)
         throw new BadRequest("All fields are required.");
+
       const findManager = await UserSchema.find({
         _id: { $in: [artistId, managerId] },
       });
+      const findArtistData = findManager.find(
+        (item) =>
+          item.role === "artist" && item._id.toString() === artistId.toString()
+      );
+      const findManagerData = findManager.find(
+        (item) =>
+          item.role === "manager" &&
+          item._id.toString() === managerId.toString()
+      );
+      // notification
+      const assignArtistContent = new AssignArtistContent();
+      const title =
+        assignArtistContent.managerRequestAcceptedByArtist(
+          findManagerData
+        ).subject;
 
-      if (
-        !findManager.find(
-          (item) =>
-            item.role === "artist" &&
-            item._id.toString() === artistId.toString()
-        ) ||
-        !findManager.find(
-          (item) =>
-            item.role === "manager" &&
-            item._id.toString() === managerId.toString()
-        )
-      )
+      const description =
+        assignArtistContent.managerRequestAcceptedByArtist(
+          findManagerData
+        ).text;
+
+      // notification credentials end
+      if (!findArtistData || !findManagerData)
         throw new BadRequest("Invalid user id.");
 
       const updateAssignArtist = await AssignArtistSchema.findOneAndUpdate(
@@ -44,6 +58,25 @@ class AssignArtistController {
           },
         }
       );
+      // notification start
+
+      await new NotificationServices().notificationGenerate(
+        managerId,
+        artistId,
+        title,
+        description,
+        assignArtistToManager,
+        {
+          subject: title,
+          text: description,
+        },
+        {
+          title,
+          body: description,
+          sound: "default",
+        }
+      );
+      // notification end
       if (updateAssignArtist)
         return res.json({
           success: { message: "Artist is assigned successfully." },
@@ -59,6 +92,26 @@ class AssignArtistController {
       const saveAssignArtist = await assignArtist.save();
       if (!saveAssignArtist)
         throw new InternalServerError("Artist is not assigned.");
+      // notification start  only send to manager
+
+      await new NotificationServices().notificationGenerate(
+        managerId,
+        artistId,
+        title,
+        description,
+        assignArtistToManager,
+        {
+          subject: title,
+          text: description,
+        },
+        {
+          title,
+          body: description,
+          sound: "default",
+        }
+      );
+
+      // notification end
       res.json({ success: { message: "Artist is assigned successfully." } });
     } catch (error) {
       next(error);
@@ -83,12 +136,36 @@ class AssignArtistController {
         throw new NotFound("Manager is not found.");
       if (!findAndUpdate.modifiedCount)
         throw new Conflict("Artist is not assign to this Manager .");
+      const findManger = await UserSchema.findOne({ _id: managerId });
+      const assignArtistContent = new AssignArtistContent();
+      const title =
+        assignArtistContent.artistAssignRemoveManagerSide(findManger).subject;
+
+      const description =
+        assignArtistContent.artistAssignRemoveManagerSide(findManger).text;
+      await new NotificationServices().notificationGenerate(
+        managerId,
+        artistId,
+        title,
+        description,
+        assignArtistToManager,
+        {
+          subject: title,
+          text: description,
+        },
+        {
+          title,
+          body: description,
+          sound: "default",
+        }
+      );
 
       res.json({ success: { message: "Artist is remove from manager" } });
     } catch (error) {
       next(error);
     }
   }
+
   public async managerUnderArtist(
     req: Request,
     res: Response,
