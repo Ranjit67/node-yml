@@ -7,6 +7,9 @@ import {
   AssignArtistSchema,
 } from "../models";
 import { requestMessage } from "../resultMessage";
+import { BookingContent } from "../emailContent";
+import { NotificationServices } from "../services";
+import { bookingPriceReceivedByUser } from "../notificationIcon";
 class RequestController {
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
@@ -137,7 +140,38 @@ class RequestController {
       });
       if (!deleteRequest)
         throw new Conflict(requestMessage.error.requestNotDeleted);
-      // notification mail send to user
+      // notification start to user only
+      const bookingContent = new BookingContent();
+      const findBooking: any = await BookingSchema.findById(findRequest.booking)
+        .populate("artist")
+        .populate("user");
+
+      const title = new BookingContent().bookingPriceSetByArtistSendToUser(
+        findBooking.user
+      ).subject;
+      const description =
+        new BookingContent().bookingPriceSetByArtistSendToUser(
+          findBooking.user
+        ).text;
+
+      await new NotificationServices().notificationGenerate(
+        findBooking.user._id.toString(),
+        findBooking.artist._id.toString(),
+        title,
+        description,
+        bookingPriceReceivedByUser,
+        {
+          subject: title,
+          text: description,
+        },
+        {
+          title,
+          body: description,
+          sound: "default",
+        }
+      );
+
+      // notification end
       res.json({
         success: {
           message: requestMessage.success.acceptPriceSet,

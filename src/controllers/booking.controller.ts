@@ -259,6 +259,9 @@ class BookingController {
       );
       if (!bookingStatusUpdate)
         throw new InternalServerError(bookingMessage.error.statusNotUpdate);
+      // notification start
+
+      // notification end
       res.json({
         success: {
           message: bookingMessage.success.bookingConfirm,

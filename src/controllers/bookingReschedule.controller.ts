@@ -10,8 +10,17 @@ import {
   BookingRescheduleSchema,
   BookingSchema,
   RequestSchema,
+  AssignArtistSchema,
 } from "../models";
 import { bookingRescheduleMessage } from "../resultMessage";
+import { BookingContent } from "../emailContent";
+import {
+  bookingRescheduleByUserPendingUserIcon,
+  bookingRescheduleByUserPendingArtistIcon,
+  bookingRescheduleAcceptedByArtistIcon,
+  bookingRescheduleAcceptedByUserIcon,
+} from "../notificationIcon";
+import { NotificationServices } from "../services";
 
 class BookingRescheduleController {
   public async create(req: Request, res: Response, next: NextFunction) {
@@ -23,12 +32,14 @@ class BookingRescheduleController {
         rescheduleBy,
         requestDetails,
       } = req.body;
-      const findBooking = await BookingSchema.findById(bookingId);
+      const findBooking: any = await BookingSchema.findById(bookingId)
+        .populate("artist")
+        .populate("user");
       if (!findBooking)
         throw new NotAcceptable(bookingRescheduleMessage.error.bookingNotFound);
       const createReschedule = await BookingRescheduleSchema.create({
-        artist: findBooking.artist.toString(),
-        user: findBooking.user.toString(),
+        artist: findBooking.artist._id.toString(),
+        user: findBooking.user._id.toString(),
         rescheduleBy: rescheduleBy,
         booking: findBooking._id.toString(),
         rescheduleDate: {
@@ -37,11 +48,18 @@ class BookingRescheduleController {
         },
         timestamp: new Date(),
       });
+
+      const findArtistManager = await AssignArtistSchema.find({
+        "artists.artist": findBooking.artist._id.toString(),
+      }).select("manager -_id");
+
+      const bookingContent = new BookingContent();
+
       if (rescheduleBy === "artist") {
         const createRequestReschedule = await RequestSchema.create({
           requestType: "rescheduledArtist",
-          senderUser: findBooking.artist.toString(),
-          receiverUser: findBooking.user.toString(),
+          senderUser: findBooking.artist._id.toString(),
+          receiverUser: findBooking.user._id.toString(),
           booking: findBooking._id.toString(),
           details: requestDetails,
           reschedule: createReschedule._id.toString(),
@@ -51,6 +69,53 @@ class BookingRescheduleController {
           throw new InternalServerError(
             bookingRescheduleMessage.error.notCreated
           );
+        // notification start
+        for (let index of [
+          findBooking.user._id.toString(),
+          findBooking.artist._id.toString(),
+          findArtistManager.map((item) => item.manager),
+        ]) {
+          const title =
+            index === findBooking.artist._id.toString()
+              ? bookingContent.bookingRescheduleByArtistPendingArtist(
+                  findBooking.artist
+                ).subject
+              : bookingContent.bookingRescheduleByArtistPendingUser(
+                  findBooking.user
+                ).subject;
+          const description =
+            index === findBooking.artist._id.toString()
+              ? bookingContent.bookingRescheduleByArtistPendingArtist(
+                  findBooking.artist
+                ).text
+              : bookingContent.bookingRescheduleByArtistPendingUser(
+                  findBooking.user
+                ).text;
+          const bookingNotificationIcon =
+            index === findBooking.artist._id.toString()
+              ? bookingRescheduleByUserPendingUserIcon
+              : index === findBooking.artist._id.toString()
+              ? bookingRescheduleByUserPendingArtistIcon
+              : bookingRescheduleByUserPendingArtistIcon;
+          await new NotificationServices().notificationGenerate(
+            index,
+            findBooking.artist._id.toString(),
+            title,
+            description,
+            bookingNotificationIcon,
+            {
+              subject: title,
+              text: description,
+            },
+            {
+              title,
+              body: description,
+              sound: "default",
+            }
+          );
+        }
+
+        // notification end
         res.json({
           success: {
             message: bookingRescheduleMessage.success.createdUser,
@@ -59,8 +124,8 @@ class BookingRescheduleController {
       } else {
         const createRequestReschedule = await RequestSchema.create({
           requestType: "rescheduledCustomer",
-          senderUser: findBooking.user.toString(),
-          receiverUser: findBooking.artist.toString(),
+          senderUser: findBooking.user._id.toString(),
+          receiverUser: findBooking.artist._id.toString(),
           booking: findBooking._id.toString(),
           details: requestDetails,
           reschedule: createReschedule._id.toString(),
@@ -70,6 +135,55 @@ class BookingRescheduleController {
           throw new InternalServerError(
             bookingRescheduleMessage.error.notCreated
           );
+        // notification start
+
+        for (let index of [
+          findBooking.user._id.toString(),
+          findBooking.artist._id.toString(),
+          findArtistManager.map((item) => item.manager),
+        ]) {
+          const title =
+            index === findBooking.user._id.toString()
+              ? bookingContent.bookingRescheduleByUserPendingUser(
+                  findBooking.user
+                ).subject
+              : bookingContent.bookingRescheduleByUserPendingArtist(
+                  findBooking.artist
+                ).subject;
+          const description =
+            index === findBooking.user._id.toString()
+              ? bookingContent.bookingRescheduleByUserPendingUser(
+                  findBooking.user
+                ).text
+              : bookingContent.bookingRescheduleByUserPendingArtist(
+                  findBooking.artist
+                ).text;
+          const bookingNotificationIcon =
+            index === findBooking.user._id.toString()
+              ? bookingRescheduleByUserPendingUserIcon
+              : index === findBooking.artist._id.toString()
+              ? bookingRescheduleByUserPendingArtistIcon
+              : bookingRescheduleByUserPendingArtistIcon;
+          await new NotificationServices().notificationGenerate(
+            index,
+            findBooking.user._id.toString(),
+            title,
+            description,
+            bookingNotificationIcon,
+            {
+              subject: title,
+              text: description,
+            },
+            {
+              title,
+              body: description,
+              sound: "default",
+            }
+          );
+        }
+
+        // notification end
+
         res.json({
           success: {
             message: bookingRescheduleMessage.success.createdArtist,
@@ -87,10 +201,13 @@ class BookingRescheduleController {
     next: NextFunction
   ) {
     try {
-      const { requestId, permissionBoolean } = req.body;
-      const findRequest: any = await RequestSchema.findById(requestId).populate(
-        "reschedule"
-      );
+      const { requestId, permissionBoolean, actionBy } = req.body;
+      const findRequest: any = await RequestSchema.findById(requestId)
+        .populate("reschedule")
+        .populate("senderUser")
+        .populate("receiverUser");
+      const bookingContent = new BookingContent();
+
       if (permissionBoolean) {
         //    permission accepted
         // request status accept
@@ -111,6 +228,42 @@ class BookingRescheduleController {
           await BookingRescheduleSchema.findByIdAndDelete(
             findRequest.reschedule?._id.toString()
           );
+        // notification start
+
+        const title =
+          actionBy === "artist"
+            ? bookingContent.bookingPermissionAcceptedByArtist(
+                findRequest.senderUser
+              ).subject
+            : bookingContent.bookingPermissionAcceptedByUser(
+                findRequest.senderUser
+              ).subject;
+        const description =
+          actionBy === "artist"
+            ? bookingContent.bookingPermissionAcceptedByArtist(
+                findRequest.senderUser
+              ).text
+            : bookingContent.bookingPermissionAcceptedByUser(
+                findRequest.senderUser
+              ).text;
+        await new NotificationServices().notificationGenerate(
+          findRequest.senderUser._id.toString(),
+          findRequest.receiverUser._id.toString(),
+          title,
+          description,
+          bookingRescheduleAcceptedByArtistIcon,
+          {
+            subject: title,
+            text: description,
+          },
+          {
+            title,
+            body: description,
+            sound: "default",
+          }
+        );
+
+        // notification end
 
         res.json({
           success: {
@@ -123,6 +276,40 @@ class BookingRescheduleController {
         const updateRequest = await RequestSchema.findByIdAndUpdate(requestId, {
           status: "reject",
         });
+        // notification start
+        const title =
+          actionBy === "artist"
+            ? bookingContent.bookingPermissionRejectByArtist(
+                findRequest.senderUser
+              ).subject
+            : bookingContent.bookingPermissionRejectedByUser(
+                findRequest.senderUser
+              ).subject;
+        const description =
+          actionBy === "artist"
+            ? bookingContent.bookingPermissionRejectByArtist(
+                findRequest.senderUser
+              ).text
+            : bookingContent.bookingPermissionRejectedByUser(
+                findRequest.senderUser
+              ).text;
+        await new NotificationServices().notificationGenerate(
+          findRequest.senderUser._id.toString(),
+          findRequest.receiverUser._id.toString(),
+          title,
+          description,
+          bookingRescheduleAcceptedByArtistIcon,
+          {
+            subject: title,
+            text: description,
+          },
+          {
+            title,
+            body: description,
+            sound: "default",
+          }
+        );
+        // notification end
         res.json({
           success: {
             message: bookingRescheduleMessage.success.rejected,

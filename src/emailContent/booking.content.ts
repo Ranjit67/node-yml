@@ -63,6 +63,111 @@ class BookingContent {
       Thanks`,
     };
   }
+  public bookingRescheduleByUserPendingUser(user: any) {
+    return {
+      subject: "Booking Reschedule Pending",
+      text: `Hi ${user.firstName}
+      
+      Hello, your booking reschedule request has been submitted & is currently pending. 
+      Kindly wait for the artist's confirmation. 
+      Thanks`,
+    };
+  }
+  public bookingRescheduleByUserPendingArtist(user: any) {
+    return {
+      subject: "Booking Reschedule Request",
+      text: `Hi ${user.firstName}
+      
+      You have received a booking reschedule request to new dates. 
+      Kindly check your request option to take action. 
+      Thanks`,
+    };
+  }
+  public bookingConfirmByUser(user: any) {
+    return {
+      subject: "Booking Confirmed",
+      text: `Hi ${user.firstName}
+      
+      Congratulations, your booking has been accepted by the artist. 
+      Thanks for booking with us`,
+    };
+  }
+  public bookingConfirmArtist(user: any) {
+    return {
+      subject: "Booking Confirmed",
+      text: `Hi ${user.firstName}
+      
+      Congratulations, your got one booking. 
+      Thanks`,
+    };
+  }
+  public bookingRescheduleByArtistPendingUser(user: any) {
+    return {
+      subject: "Booking Reschedule Request",
+      text: `Hi ${user.firstName}
+      
+      You have received your booking reschedule request to new dates. 
+      Kindly check your request option to take action. 
+      Thanks`,
+    };
+  }
+  public bookingRescheduleByArtistPendingArtist(user: any) {
+    return {
+      subject: "Booking Reschedule Pending",
+      text: `Hi ${user.firstName}
+      
+      Hello, your booking reschedule request has been submitted & is currently pending. 
+      Kindly wait for the customer’s confirmation. 
+      Thanks`,
+    };
+  }
+  public bookingPriceSetByArtistSendToUser(user: any) {
+    return {
+      subject: "Booking Price Received",
+      text: `Hi ${user.firstName}
+      
+      Hello, you have received your final booking price for the event which you had requested. Kindly proceed & make the payment to confirm the booking. 
+      Thanks`,
+    };
+  }
+  public bookingPermissionAcceptedByArtist(user: any) {
+    return {
+      subject: "Booking Reschedule Accepted",
+      text: `Hi ${user.firstName}
+      
+      Congratulations, your booking reschedule request has been accepted by the artist. 
+      Your booking dates have been updated to new one. 
+      Thanks`,
+    };
+  }
+  public bookingPermissionAcceptedByUser(user: any) {
+    return {
+      subject: "Booking Reschedule Accepted",
+      text: `Hi ${user.firstName}
+      
+      Congratulations, your booking reschedule request has been accepted by the customer. 
+      Your booking dates have been updated to new one. 
+      Thanks`,
+    };
+  }
+  public bookingPermissionRejectByArtist(user: any) {
+    return {
+      subject: "Booking Reschedule Rejected.",
+      text: `Hi ${user.firstName}
+      
+      We are sorry to let you know that your booking reschedule request is rejected by the artist. 
+      Thanks.`,
+    };
+  }
+  public bookingPermissionRejectedByUser(user: any) {
+    return {
+      subject: "Booking Reschedule Rejected",
+      text: `Hi ${user.firstName}
+      
+      We are sorry to let you know that your booking reschedule request is rejected by the customer. 
+      Thanks`,
+    };
+  }
 }
 
 export default BookingContent;

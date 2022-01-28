@@ -14,3 +14,13 @@ export const bookingCancelByArtistIcon =
   "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
 export const bookingRequestIcon =
   "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
+export const bookingRescheduleByUserPendingUserIcon =
+  "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
+export const bookingRescheduleByUserPendingArtistIcon =
+  "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
+export const bookingPriceReceivedByUser =
+  "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
+export const bookingRescheduleAcceptedByArtistIcon =
+  "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
+export const bookingRescheduleAcceptedByUserIcon =
+  "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
