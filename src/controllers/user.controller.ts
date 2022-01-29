@@ -246,6 +246,7 @@ class UserController {
       const { email, password } = req.body;
       const findUser = await UserSchema.findOne({ email, isDeleted: false });
       if (!findUser) throw new BadRequest("User is not found.");
+      if (!findUser.password) throw new Conflict("Your password is not set.");
       const isMatch = await new PasswordHasServices().compare(
         password,
         findUser.password
@@ -343,7 +344,7 @@ class UserController {
       const { id } = req.params;
       const deleteUser = await UserSchema.findOneAndDelete({ email: id });
       if (!deleteUser) throw new GatewayTimeout("User is not deleted.");
-      res.json({ data: "User is deleted successfully." });
+      res.json({ success: { message: "User is deleted successfully." } });
     } catch (error) {
       next(error);
     }
