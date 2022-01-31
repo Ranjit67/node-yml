@@ -13,6 +13,7 @@ export { default as PricingRoutes } from "./pricing.routes";
 export { default as ServiceRoutes } from "./service.routes";
 export { default as VisitorRoutes } from "./visitor.routes";
 export { default as LanguageRoute } from "./language.routes";
+export { default as VersionRouter } from "./version.routes";
 export { default as CategoryRoutes } from "./category.routes";
 export { default as FavoriteRoutes } from "./favorite.routes";
 export { default as PromoCodeRoutes } from "./promoCode.routes";

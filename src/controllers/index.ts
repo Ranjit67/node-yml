@@ -24,3 +24,4 @@ export { default as DayController } from "./day.controller";
 export { default as PersonalizeVideoController } from "./personalizeVideo.controller";
 export { default as BookingRescheduleController } from "./bookingReschedule.controller";
 export { default as NotificationController } from "./notification.controller";
+export { default as VersionController } from "./version.controller";

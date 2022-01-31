@@ -27,6 +27,8 @@ const requestSchema = new Schema({
       "rescheduledCustomer",
       "rescheduledArtist",
       "personalize",
+      "payment",
+      "managerRemove",
     ],
   },
   senderUser: {

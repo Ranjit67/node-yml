@@ -29,6 +29,7 @@ import {
   ReviewRoutes,
   WalletRoute,
   CrowdRoutes,
+  VersionRouter,
 } from "./routes";
 
 const object = {
@@ -41,6 +42,7 @@ const object = {
     new WalletRoute(),
     new ReviewRoutes(),
     new GenresRoutes(),
+    new VersionRouter(),
     new RequestRouter(),
     new ServiceRoutes(),
     new PricingRoutes(),
