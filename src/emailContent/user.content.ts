@@ -19,5 +19,26 @@ class UserContent {
       Thanks.`,
     };
   }
+
+  public newManagerApprove() {
+    return {
+      subject: "New Manager.",
+      text: `Hi
+          
+    A new manager has created an account on the platform & is currently under pending. 
+    Kindly visit your manage users option to take action. 
+    Thanks`,
+    };
+  }
+  public newArtistApprove() {
+    return {
+      subject: "New Artist.",
+      text: `Hi
+          
+      A new artist has created an account on the platform & is currently under pending. 
+      Kindly visit your manage users option to take action. 
+      Thanks`,
+    };
+  }
 }
 export default UserContent;

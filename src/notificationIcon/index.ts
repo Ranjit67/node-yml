@@ -40,3 +40,7 @@ export const removeManagerIcon =
   "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
 export const pastBookingCancelIcon =
   "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
+export const newArtistApprovalIcon =
+  "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
+export const newManagerApprovalIcon =
+  "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";

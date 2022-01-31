@@ -1,8 +1,17 @@
 import { Request, Response, NextFunction } from "express";
 import { EmailToken, UserSchema, userModel } from "../models";
 import { InternalServerError, NotFound } from "http-errors";
-import { JwtService, PasswordHasServices } from "../services";
+import {
+  JwtService,
+  NotificationServices,
+  PasswordHasServices,
+} from "../services";
 import { userRole } from "../types";
+import { UserContent } from "../emailContent";
+import {
+  newArtistApprovalIcon,
+  newManagerApprovalIcon,
+} from "../notificationIcon";
 type test = {
   role: userRole;
 };
@@ -43,6 +52,43 @@ class EmailTokenController {
           password: hashedPassword,
           status: "pending",
         });
+        // notification start
+        const findAdmins = await UserSchema.find({ role: "admin" }).select(
+          "_id"
+        );
+
+        const userContent = new UserContent();
+        const title =
+          findUser.role === "artist"
+            ? userContent.newArtistApprove().subject
+            : userContent.newManagerApprove().subject;
+        const description =
+          findUser.role === "artist"
+            ? userContent.newArtistApprove().text
+            : userContent.newManagerApprove().text;
+        const icon =
+          findUser.role === "artist"
+            ? newArtistApprovalIcon
+            : newManagerApprovalIcon;
+        for (let index of [...findAdmins.map((item) => item._id)]) {
+          await new NotificationServices().notificationGenerate(
+            index,
+            userId,
+            title,
+            description,
+            icon,
+            {
+              subject: title,
+              text: description,
+            },
+            {
+              title,
+              body: description,
+              sound: "default",
+            }
+          );
+        }
+        // notification end
         if (!updatePassword)
           throw new InternalServerError("Password is not updated.");
         return res.json({
