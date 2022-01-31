@@ -1,43 +1,54 @@
 import { Request, Response, NextFunction } from "express";
-import { ReviewSchema } from "../models";
+import { ReviewSchema, UserSchema } from "../models";
 import { BadRequest, NotAcceptable, NotFound } from "http-errors";
 import { reviewMessage } from "../resultMessage";
-
+import { ReviewContent } from "../emailContent";
+import { NotificationServices } from "../services";
+import { artistReviewIcon } from "../notificationIcon";
 class ReviewController {
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
       const { artistId, userId, title, description, ratings } = req.body;
       if (!artistId || !userId || !title)
         throw new BadRequest(reviewMessage.error.allField);
-      const firstUpdate = await ReviewSchema.updateOne(
-        { artist: artistId },
+      // notification common
+      const findArtist = await UserSchema.findOne({ _id: artistId });
+      if (!findArtist) throw new NotFound(reviewMessage.error.artistNotFound);
+      const emailContentTitle = new ReviewContent().newReview(
+        findArtist
+      ).subject;
+      const emailContentDescription = new ReviewContent().newReview(
+        findArtist
+      ).text;
+      await new NotificationServices().notificationGenerate(
+        artistId,
+        userId,
+        emailContentTitle,
+        emailContentDescription,
+        artistReviewIcon,
         {
-          $push: {
-            userReview: {
-              user: userId,
-              title,
-              description,
-              ratings,
-            },
-          },
+          subject: emailContentTitle,
+          text: emailContentDescription,
+        },
+        {
+          title: emailContentTitle,
+          body: emailContentDescription,
+          sound: "default",
         }
       );
-      if (firstUpdate.matchedCount)
-        return res.json({
-          success: { message: reviewMessage.success.created },
-        });
-      const newReview = new ReviewSchema({
+
+      // notification common end
+
+      const createReview = await ReviewSchema.create({
         artist: artistId,
-      });
-      newReview.userReview.push({
         user: userId,
         title,
         description,
         ratings,
         timestamp: new Date(),
+        artistID: artistId,
       });
-      const saveReview = newReview.save();
-      if (!saveReview) throw new NotAcceptable(reviewMessage.error.notSave);
+      if (!createReview) throw new NotAcceptable(reviewMessage.error.notSave);
 
       return res.json({
         success: {
@@ -55,13 +66,13 @@ class ReviewController {
   ) {
     try {
       const { artistId } = req.params;
-      const findReview: any = await ReviewSchema.findOne({
+      const findReview: any = await ReviewSchema.find({
         artist: artistId,
-      }).populate("userReview.user");
-      if (!findReview) return res.json({ success: { data: [] } });
+      }).populate("user");
+      // if (!findReview) return res.json({ success: { data: [] } });
       return res.json({
         success: {
-          data: findReview.userReview,
+          data: findReview,
         },
       });
     } catch (error) {
@@ -76,16 +87,13 @@ class ReviewController {
     try {
       const { reviewId } = req.params;
       const findReview: any = await ReviewSchema.findOne({
-        "userReview._id": reviewId,
+        _id: reviewId,
       });
       if (!findReview) throw new NotFound(reviewMessage.error.notFound);
-      const reviewDetails = findReview.userReview.find(
-        (element: any) => element._id.toString() === reviewId.toString()
-      );
-      if (!reviewDetails) throw new NotFound(reviewMessage.error.notFound);
+
       return res.json({
         success: {
-          data: reviewDetails,
+          data: findReview,
         },
       });
     } catch (error) {
@@ -96,7 +104,7 @@ class ReviewController {
   public async getAllReview(req: Request, res: Response, next: NextFunction) {
     try {
       const findReview = await ReviewSchema.find({})
-        .populate("userReview.user")
+        .populate("user")
         .populate("artist");
       res.json({ success: { data: findReview } });
     } catch (error) {
@@ -109,16 +117,11 @@ class ReviewController {
       const { artistId, reviewIds } = req.body;
       if (!artistId || !reviewIds.length)
         throw new BadRequest(reviewMessage.error.allField);
-      const deleteReview = await ReviewSchema.updateOne(
-        { artist: artistId },
-        {
-          $pull: {
-            userReview: {
-              _id: { $in: reviewIds },
-            },
-          },
-        }
-      );
+
+      const deleteReview = await ReviewSchema.deleteMany({
+        _id: { $in: reviewIds },
+        artist: artistId,
+      });
       if (!deleteReview) throw new NotAcceptable(reviewMessage.error.notDelete);
       return res.json({
         success: {

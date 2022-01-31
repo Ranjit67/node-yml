@@ -5,29 +5,32 @@ const reviewSchema = new Schema({
   artist: {
     type: Schema.Types.ObjectId,
     ref: "User",
-    unique: true,
   },
-  userReview: [
-    {
-      user: {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-      },
-      title: {
-        type: String,
-      },
-      description: {
-        type: String,
-      },
-      ratings: {
-        type: Number,
-      },
-      timestamp: {
-        type: Date,
-        default: new Date().toString(),
-      },
-    },
-  ],
+  // userReview: [
+  //   {
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
+  title: {
+    type: String,
+  },
+  description: {
+    type: String,
+  },
+  ratings: {
+    type: Number,
+  },
+  timestamp: {
+    type: Date,
+    default: new Date().toString(),
+  },
+  artistID: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
+  //   },
+  // ],
 });
 
 const ReviewSchema = model<ReviewModel>("Review", reviewSchema);
