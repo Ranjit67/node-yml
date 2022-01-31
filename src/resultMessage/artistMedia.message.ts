@@ -5,6 +5,7 @@ const artistMediaMessage = {
     photoNotCreated: "Something went wrong, Photos are not uploaded.",
     artistIdRequired: "Artist Id is required.",
     notDataFound: "No Artist's data found.",
+    noDataFoundForDelete: "No data found for delete.",
   },
   success: {
     artistMediaUpdated: "Videos are Uploaded successfully.",

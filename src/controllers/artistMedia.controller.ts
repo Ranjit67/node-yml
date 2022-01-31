@@ -183,10 +183,11 @@ class ArtistMediaController {
       const findVideos = await ArtistMediaSchema.findOne({
         artist: artistId,
       }).select("artistVideos");
-      const getVideoItems: any = findVideos?.artistVideos?.filter(
-        (element: any) =>
+      const getVideoItems: any =
+        findVideos?.artistVideos?.filter((element: any) =>
           videoIds.find((id: any) => id === element._id.toString())
-      );
+        ) || [];
+
       const awsS3 = new AwsS3Services();
       for (let a of getVideoItems) {
         const deleteVideo = await awsS3.delete(a.videoFile);
@@ -230,6 +231,8 @@ class ArtistMediaController {
         (element: any) =>
           imageDataIds.find((id: any) => id === element._id.toString())
       );
+      if (!getPhotoItems?.length)
+        throw new NotFound(artistMediaMessage.error.noDataFoundForDelete);
       const awsS3 = new AwsS3Services();
       for (let a of getPhotoItems) {
         const deletePhoto = await awsS3.delete(a.imageFile);
