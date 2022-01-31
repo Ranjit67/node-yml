@@ -2,8 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import { BadRequest, NotAcceptable } from "http-errors";
 import { SupportSchema, UserSchema } from "../models";
 import { supportMessage } from "../resultMessage";
-import EmailContent from "../emailContent";
-import { EmailService } from "../services";
+import EmailContent, { SupportContent } from "../emailContent";
+import { EmailService, NotificationServices } from "../services";
+import { newSupportMessageAddIcon } from "../notificationIcon";
 
 class SupportController {
   public async create(req: Request, res: Response, next: NextFunction) {
@@ -17,6 +18,32 @@ class SupportController {
       });
       if (!saveSupport)
         throw new NotAcceptable(supportMessage.error.dataNotAdded);
+      // notification start
+      const supportContent = new SupportContent();
+      const findAdmins = await UserSchema.find({ role: "admin" }).select("_id");
+      const title = supportContent.supportNotification().subject;
+      const description = supportContent.supportNotification().text;
+
+      for (let index of [...findAdmins.map((item) => item._id)]) {
+        await new NotificationServices().notificationGenerate(
+          index,
+          userId,
+          title,
+          description,
+          newSupportMessageAddIcon,
+          {
+            subject: title,
+            text: description,
+          },
+          {
+            title,
+            body: description,
+            sound: "default",
+          }
+        );
+      }
+
+      // notification end
       res.json({
         success: { message: supportMessage.success.supportMessageSent },
       });

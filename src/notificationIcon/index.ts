@@ -44,3 +44,5 @@ export const newArtistApprovalIcon =
   "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
 export const newManagerApprovalIcon =
   "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
+export const newSupportMessageAddIcon =
+  "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
