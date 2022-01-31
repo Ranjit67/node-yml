@@ -118,6 +118,10 @@ const bookingSchema = new Schema({
   personalizedMsgDate: {
     type: Date,
   },
+  isPayment: {
+    type: Boolean,
+    default: false,
+  },
 });
 const BookingSchema = model<BookingModels>("Booking", bookingSchema);
 export default BookingSchema;

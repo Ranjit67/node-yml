@@ -12,11 +12,11 @@ class ArtistMediaRoute {
     this.router.post("/create-video", this.artistMediaController.videoCreate);
     this.router.post("/create-photo", this.artistMediaController.photoCreate);
     this.router.get(
-      "/video/:artistId",
+      "/videos/:artistId",
       this.artistMediaController.getArtistVideo
     );
     this.router.get(
-      "/photo/:artistId",
+      "/photos/:artistId",
       this.artistMediaController.getArtistPhoto
     );
     this.router.post("/delete-video", this.artistMediaController.videoDelete);
