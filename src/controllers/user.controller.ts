@@ -353,40 +353,64 @@ class UserController {
   public async setPassword(req: Request, res: Response, next: NextFunction) {
     try {
       const { stringData } = req.params;
-      const { email } = req.body;
+      const { email, newPassword, oldPassword } = req.body;
       if (!email || !stringData)
         throw new BadRequest("All fields are required.");
       const findUser = await UserSchema.findOne({ email });
       if (!findUser) throw new BadRequest("Your email is not found.");
-      const token = await new JwtService().emailTokenGenerator(findUser?._id);
-      const updateEmailToken = await EmailToken.update(
-        { userRef: findUser?._id },
-        { emailTokenString: token },
-        { multi: false }
-      );
+      if (stringData === "changePassword") {
+        if (!email || !newPassword || !oldPassword)
+          throw new BadRequest("All fields are required.");
+        const isMatch = await new PasswordHasServices().compare(
+          oldPassword,
+          findUser.password
+        );
+        if (!isMatch) throw new BadRequest("Old password is not match.");
+        const hashedPassword = await new PasswordHasServices().hash(
+          newPassword
+        );
 
-      if (updateEmailToken?.matchedCount === 0) {
-        const saveEmailToken = await EmailToken.create({
-          userRef: findUser?._id,
-          emailTokenString: token,
+        const updateUser = await UserSchema.findOneAndUpdate(
+          { email },
+          { password: hashedPassword }
+        );
+        if (!updateUser) throw new GatewayTimeout("Password is not updated.");
+        res.json({
+          success: {
+            message: "Password is updated successfully.",
+          },
+        });
+      } else {
+        const token = await new JwtService().emailTokenGenerator(findUser?._id);
+        const updateEmailToken = await EmailToken.update(
+          { userRef: findUser?._id },
+          { emailTokenString: token },
+          { multi: false }
+        );
+
+        if (updateEmailToken?.matchedCount === 0) {
+          const saveEmailToken = await EmailToken.create({
+            userRef: findUser?._id,
+            emailTokenString: token,
+          });
+        }
+
+        const emailContent =
+          stringData === "changePassword"
+            ? new EmailContent().emailResetPassword(token)
+            : new EmailContent().emailForgetPassword(token);
+
+        const SendEmail = await new EmailService().emailSend(
+          email,
+          emailContent.subject,
+          emailContent.text
+        );
+        res.json({
+          success: {
+            message: "Check your Email.",
+          },
         });
       }
-
-      const emailContent =
-        stringData === "changePassword"
-          ? new EmailContent().emailResetPassword(token)
-          : new EmailContent().emailForgetPassword(token);
-
-      const SendEmail = await new EmailService().emailSend(
-        email,
-        emailContent.subject,
-        emailContent.text
-      );
-      res.json({
-        success: {
-          message: "Check your Email.",
-        },
-      });
     } catch (error) {
       next(error);
     }

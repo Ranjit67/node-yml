@@ -221,7 +221,7 @@ class ArtistMediaController {
   public async photoDelete(req: Request, res: Response, next: NextFunction) {
     try {
       const { imageDataIds, artistId } = req.body;
-      if (!artistId || !imageDataIds.length)
+      if (!artistId || !Array.isArray(imageDataIds))
         throw new BadRequest(artistMediaMessage.error.allField);
       const findPhotos = await ArtistMediaSchema.findOne({
         artist: artistId,
