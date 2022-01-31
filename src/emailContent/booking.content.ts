@@ -187,6 +187,31 @@ class BookingContent {
       Thanks`,
     };
   }
+  public customerConfirmPastEventArtist(user: any) {
+    return {
+      subject: "Event Successfully Completed",
+      text: `Hi ${user.firstName}
+      
+      Congratulations for successfully completing the event. We hope that the whole process was seamless. 
+      Thanks for your service`,
+    };
+  }
+  public customerCancelPastEventArtist(user: any) {
+    return {
+      subject: "Event Not Completed",
+      text: `Hi ${user.firstName}
+      
+      We are sorry to let you know that as per customer’s record the booked event was not completed by you.`,
+    };
+  }
+  public customerCancelPastEventSuperAdmin() {
+    return {
+      subject: "Event Not Completed",
+      text: `Hi
+      
+      We are sorry to let you know that as per customer’s record the booked event was not completed by you.`,
+    };
+  }
 }
 
 export default BookingContent;

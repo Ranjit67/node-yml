@@ -24,6 +24,8 @@ export interface userModel extends Document {
   location: string;
   profileImageUrl: string;
   yearsOfExperience: string;
+  inTopSearches: Boolean;
+  inTopTrending: Boolean;
 
   fcmToken: string;
   Dob: Date;
@@ -106,6 +108,14 @@ const userSchema = new Schema({
   },
   Dob: {
     type: Date,
+  },
+  inTopSearches: {
+    type: Boolean,
+    default: false,
+  },
+  inTopTrending: {
+    type: Boolean,
+    default: false,
   },
   timestamp: {
     type: Date,

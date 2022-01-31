@@ -36,3 +36,7 @@ export const assignArtistToManager =
   "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
 export const artistReviewIcon =
   "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
+export const removeManagerIcon =
+  "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
+export const pastBookingCancelIcon =
+  "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";

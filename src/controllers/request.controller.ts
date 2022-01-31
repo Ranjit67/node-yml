@@ -7,12 +7,13 @@ import {
   AssignArtistSchema,
 } from "../models";
 import { requestMessage } from "../resultMessage";
-import { BookingContent } from "../emailContent";
+import { BookingContent, RequestContent } from "../emailContent";
 import { NotificationServices } from "../services";
 import {
   bookingPriceReceivedByUser,
   bookingConfirm,
   bookingCancelByArtistIcon,
+  removeManagerIcon,
 } from "../notificationIcon";
 class RequestController {
   public async create(req: Request, res: Response, next: NextFunction) {
@@ -296,6 +297,56 @@ class RequestController {
           message: isAccept
             ? requestMessage.success.bookingAccept
             : requestMessage.success.bookingReject,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  public async createMangerRemoveRequest(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { managerId, artistId, requestDetails } = req.body;
+      const findArtist = await UserSchema.findById(artistId);
+      if (!findArtist) throw new Conflict(requestMessage.error.artistNotFound);
+      const createRequest = await RequestSchema.create({
+        senderUser: managerId,
+        receiverUser: artistId,
+        requestType: "managerRemove",
+        details: requestDetails,
+        timeStamp: new Date(),
+      });
+      if (!createRequest)
+        throw new NotAcceptable(requestMessage.error.requestNotCreated);
+      // notification send start
+      const requestContent = new RequestContent();
+      const title = requestContent.managerRemove(findArtist).subject;
+      const description = requestContent.managerRemove(findArtist).text;
+
+      await new NotificationServices().notificationGenerate(
+        artistId,
+        managerId,
+        title,
+        description,
+        removeManagerIcon,
+        {
+          subject: title,
+          text: description,
+        },
+        {
+          title,
+          body: description,
+          sound: "default",
+        }
+      );
+
+      // notification send end
+      res.json({
+        success: {
+          message: requestMessage.success.managerRequestCreate,
         },
       });
     } catch (error) {

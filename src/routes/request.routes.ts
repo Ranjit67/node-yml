@@ -26,6 +26,10 @@ class RequestRouter {
       "/payment-booking-accept-reject-artist",
       this.requestController.paymentBookingAcceptRejectArtist
     );
+    this.router.post(
+      "/manager-remove",
+      this.requestController.createMangerRemoveRequest
+    );
   }
 }
 export default RequestRouter;

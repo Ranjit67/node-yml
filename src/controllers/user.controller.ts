@@ -193,6 +193,8 @@ class UserController {
         location,
         yearsOfExperience,
         languagesId,
+        inTopSearches,
+        inTopTrending,
       } = req.body;
       const { id } = req.params;
 
@@ -228,6 +230,8 @@ class UserController {
         fcmToken: fcmToken || findUser.fcmToken || "",
         status: status || findUser.status || "",
         Dob: Dob || findUser.Dob || "",
+        inTopSearches: inTopSearches ?? findUser.inTopSearches,
+        inTopTrending: inTopTrending ?? findUser.inTopTrending,
       });
       if (!updateUser) throw new GatewayTimeout("User is not updated.");
       res.json({

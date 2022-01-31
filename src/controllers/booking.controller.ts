@@ -14,6 +14,7 @@ import {
   WalletSchema,
   WalletHistorySchema,
   NotificationSchema,
+  UserSchema,
 } from "../models";
 import { bookingMessage } from "../resultMessage";
 import { NotificationServices } from "../services";
@@ -25,6 +26,7 @@ import {
   bookingCancelByUserIcon,
   bookingCancelByArtistIcon,
   bookingRequestIcon,
+  pastBookingCancelIcon,
 } from "../notificationIcon";
 class BookingController {
   public async create(req: Request, res: Response, next: NextFunction) {
@@ -334,8 +336,69 @@ class BookingController {
       });
       if (!updateBooking)
         throw new NotAcceptable(bookingMessage.error.bookingComplete);
+      const bookingContent = new BookingContent();
+      const findBooking: any = await BookingSchema.findById(bookingId)
+        .populate("user")
+        .populate("artist");
       if (!isComplete) {
         // send notification mail to super admin
+        const superAdmin = await UserSchema.find({ role: "admin" });
+
+        for (let index of [
+          findBooking.artist._id.toString(),
+          superAdmin.map((item) => item._id),
+        ]) {
+          const title =
+            index === findBooking.artist._id.toString()
+              ? bookingContent.customerCancelPastEventArtist(findBooking.artist)
+                  .subject
+              : bookingContent.customerCancelPastEventSuperAdmin().subject;
+          const description =
+            index === findBooking.artist._id.toString()
+              ? bookingContent.customerCancelPastEventArtist(findBooking.artist)
+                  .subject
+              : bookingContent.customerCancelPastEventSuperAdmin().subject;
+          await new NotificationServices().notificationGenerate(
+            index,
+            findBooking.user._id.toString(),
+            title,
+            description,
+            pastBookingCancelIcon,
+            {
+              subject: title,
+              text: description,
+            },
+            {
+              title,
+              body: description,
+              sound: "default",
+            }
+          );
+        }
+      } else {
+        // confirm booking
+        const title = bookingContent.customerConfirmPastEventArtist(
+          findBooking.artist
+        ).subject;
+        const description = bookingContent.customerConfirmPastEventArtist(
+          findBooking.artist
+        ).text;
+        await new NotificationServices().notificationGenerate(
+          findBooking.artist._id.toString(),
+          findBooking.user._id.toString(),
+          title,
+          description,
+          pastBookingCancelIcon,
+          {
+            subject: title,
+            text: description,
+          },
+          {
+            title,
+            body: description,
+            sound: "default",
+          }
+        );
       }
       res.json({
         success: {
