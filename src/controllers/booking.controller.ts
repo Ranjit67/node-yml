@@ -95,25 +95,19 @@ class BookingController {
           const title =
             index === userId
               ? bookingContent.newBookingUser().subject
-              : isRequestSend
-              ? bookingContent.bookingRequestReceivedByArtist().subject
-              : bookingContent.newBookingArtist().subject;
+              : bookingContent.bookingRequestReceivedByArtist().subject;
+
           const description =
             index === userId
               ? bookingContent.newBookingUser().text
-              : isRequestSend
-              ? bookingContent.bookingRequestReceivedByArtist().text
-              : bookingContent.newBookingArtist().text;
+              : bookingContent.bookingRequestReceivedByArtist().text;
+
           const bookingNotificationIcon =
             index === userId
               ? newBookingUser
               : index === artistId
-              ? isRequestSend
-                ? bookingRequestIcon
-                : newBookingArtist
-              : isRequestSend
               ? bookingRequestIcon
-              : newBookingArtist;
+              : bookingRequestIcon;
           await new NotificationServices().notificationGenerate(
             index,
             userId,
@@ -247,19 +241,75 @@ class BookingController {
 
   async bookingPayment(req: Request, res: Response, next: NextFunction) {
     try {
-      const { bookingId, paymentAmount } = req.body;
-      const findBooking = await BookingSchema.findById(bookingId);
+      const { bookingId, paymentAmount, requestDetails } = req.body;
+      const findBooking: any = await BookingSchema.findById(bookingId)
+        .populate({
+          path: "user",
+        })
+        .populate({
+          path: "artist",
+        });
       if (findBooking?.bookingPrice !== +paymentAmount)
         throw new NotAcceptable(bookingMessage.error.bookingPriceNotAccept);
       const bookingStatusUpdate = await BookingSchema.findByIdAndUpdate(
         bookingId,
         {
-          status: "confirm",
+          isPayment: true,
         }
       );
       if (!bookingStatusUpdate)
         throw new InternalServerError(bookingMessage.error.statusNotUpdate);
+      // request to artist
+      const requestCreate = await RequestSchema.create({
+        requestType: "payment",
+        senderUser: findBooking.user?._id.toString(),
+        receiverUser: findBooking.artist?._id.toString(),
+        booking: findBooking._id,
+        details: requestDetails,
+        timestamp: new Date(),
+      });
+      if (!requestCreate)
+        throw new NotAcceptable(bookingMessage.error.bookingRequest);
+
       // notification start
+      const findArtistManager = await AssignArtistSchema.find({
+        "artists.artist": findBooking.artist._id.toString(),
+      }).select("manager -_id");
+      const bookingContent = new BookingContent();
+      for (let index of [
+        findBooking.user._id.toString(),
+        findBooking.artist._id.toString(),
+        ...findArtistManager.map((item) => item.manager),
+      ]) {
+        const title =
+          index === findBooking.user._id.toString()
+            ? bookingContent.newBookingUser().subject
+            : bookingContent.newBookingArtist().subject;
+        const description =
+          index === findBooking.user._id.toString()
+            ? bookingContent.newBookingUser().subject
+            : bookingContent.newBookingArtist().subject;
+        const bookingNotificationIcon =
+          index === findBooking.user._id.toString()
+            ? newBookingUser
+            : newBookingArtist;
+        await new NotificationServices().notificationGenerate(
+          index,
+          findBooking.user._id.toString(),
+          title,
+          description,
+          bookingNotificationIcon,
+          {
+            subject: title,
+            text: description,
+          },
+          {
+            title,
+            body: description,
+            sound: "default",
+          }
+        );
+      }
 
       // notification end
       res.json({

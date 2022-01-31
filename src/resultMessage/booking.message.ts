@@ -10,6 +10,7 @@ const bookingMessage = {
       "Something went wrong, Money could not added into your wallet.",
     walletHistoryNotCreated: "Something went wrong,  Wallet history.",
     bookingCancel: "Something went wrong, Your action not recorded.",
+    bookingRequest: "Something went wrong, Artist is not get your request.",
   },
   success: {
     artistBookingList: "Artist Booking List.",

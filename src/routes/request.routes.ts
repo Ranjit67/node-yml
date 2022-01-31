@@ -22,6 +22,10 @@ class RequestRouter {
       "/accept-price-set",
       this.requestController.acceptPriceSet
     );
+    this.router.post(
+      "/payment-booking-accept-reject-artist",
+      this.requestController.bookingAcceptReject
+    );
   }
 }
 export default RequestRouter;

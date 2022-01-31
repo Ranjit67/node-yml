@@ -181,5 +181,13 @@ class RequestController {
       next(error);
     }
   }
+  bookingAcceptReject(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { isAccept, requestId } = req.body;
+      res.json({ success: { message: "accept" } });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 export default RequestController;

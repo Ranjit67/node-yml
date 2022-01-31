@@ -45,6 +45,7 @@ export interface BookingModels extends Document {
   OtherDetails: string;
   eventType: ObjectId;
   personalizedMsgDate: Date;
+  isPayment: Boolean;
 }
 const bookingSchema = new Schema({
   eventDate: {

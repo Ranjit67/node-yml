@@ -151,7 +151,7 @@ class ArtistMediaController {
         throw new BadRequest(artistMediaMessage.error.artistIdRequired);
       const findData = await ArtistMediaSchema.findOne({
         artist: artistId,
-      }).select("artistVideos youtubeVideos");
+      }).select("artistVideos youtubeVideos -_id");
       if (!findData) throw new NotFound(artistMediaMessage.error.notDataFound);
       return res.json({ success: { data: findData } });
     } catch (error) {
@@ -165,7 +165,7 @@ class ArtistMediaController {
         throw new BadRequest(artistMediaMessage.error.artistIdRequired);
       const findData = await ArtistMediaSchema.findOne({
         artist: artistId,
-      }).select("artistPhotos");
+      }).select("artistPhotos -_id");
       if (!findData) throw new NotFound(artistMediaMessage.error.notDataFound);
       return res.json({
         success: { data: findData },
