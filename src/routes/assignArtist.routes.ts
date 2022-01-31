@@ -11,11 +11,11 @@ class AssignArtistRoutes {
     this.router.post("/create", this.assignArtist.assignArtist);
     this.router.put("/remove-artist", this.assignArtist.removeArtist);
     this.router.get(
-      "/all-assign-artist/manager/:managerId",
+      "/managed-artist/:managerId",
       this.assignArtist.managerUnderArtist
     );
     this.router.get(
-      "/all-assign-artist/artist/:artistId",
+      "/assign-manager/:artistId",
       this.assignArtist.getManagerByArtist
     );
   }
