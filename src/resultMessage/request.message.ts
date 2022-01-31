@@ -9,6 +9,8 @@ const requestMessage = {
   success: {
     created: "Request data created successfully.",
     acceptPriceSet: "Request price set successfully.",
+    bookingAccept: "Booking accepted successfully.",
+    bookingReject: "Booking rejected successfully.",
   },
 };
 export default requestMessage;

@@ -8,6 +8,16 @@ class BookingContent {
       Thanks`,
     };
   }
+  public bookingRequestSubmit() {
+    return {
+      subject: "Booking Request Submitted Successfully",
+      text: `Hi
+      Your booking request has been submitted successfully to the artist. 
+      Kindly wait for a reply from the artist. 
+      Thanks`,
+    };
+  }
+
   public newBookingArtist() {
     return {
       subject: "New Booking Received.",
@@ -15,6 +25,15 @@ class BookingContent {
       You have received a new booking. 
       Kindly check in your booking option to take action. 
       Thanks`,
+    };
+  }
+  public bookingConfirmUser(user: any) {
+    return {
+      subject: "Booking Confirmed.",
+      text: `Hi ${user.firstName}
+
+      Congratulations, your booking has been accepted by the artist. 
+      Thanks for booking with us.`,
     };
   }
   public bookingCancelArtist(user: any) {
@@ -26,6 +45,14 @@ class BookingContent {
       Thanks`,
     };
   }
+  public bookingCancelNotifyToSuperAdmin() {
+    return {
+      subject: "Booking Cancelled By Artist.",
+      text: `Hi
+      The artist has cancelled the booked event due to certain reasons. 100% refund has been initiated to the customer for the same. 
+      Thanks.`,
+    };
+  }
   public bookingCancelByUser(artist: any) {
     return {
       subject: "Booking Cancelled By Customer.",
@@ -35,15 +62,7 @@ class BookingContent {
       Thanks`,
     };
   }
-  public bookingCancelByUserSelf(user: any) {
-    return {
-      subject: "Booking Cancelled.",
-      text: `Hi ${user.firstName}
 
-      We are sorry to let you know that the customer has cancelled his booking due to certain reasons. 
-      Thanks`,
-    };
-  }
   public bookingCancelByArtistSelf(user: any) {
     return {
       subject: "Booking Cancelled",

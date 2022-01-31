@@ -9,7 +9,11 @@ import {
 import { requestMessage } from "../resultMessage";
 import { BookingContent } from "../emailContent";
 import { NotificationServices } from "../services";
-import { bookingPriceReceivedByUser } from "../notificationIcon";
+import {
+  bookingPriceReceivedByUser,
+  bookingConfirm,
+  bookingCancelByArtistIcon,
+} from "../notificationIcon";
 class RequestController {
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
@@ -181,10 +185,119 @@ class RequestController {
       next(error);
     }
   }
-  bookingAcceptReject(req: Request, res: Response, next: NextFunction) {
+  async paymentBookingAcceptRejectArtist(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { isAccept, requestId } = req.body;
-      res.json({ success: { message: "accept" } });
+      if (!requestId) throw new BadRequest(requestMessage.error.allField);
+      const findRequest: any = await RequestSchema.findById(requestId)
+        .populate("senderUser")
+        .populate("receiverUser");
+      const bookingContent = new BookingContent();
+      if (!findRequest)
+        throw new Conflict(requestMessage.error.requestNotFound);
+      if (isAccept) {
+        const updateRequest = await RequestSchema.findByIdAndUpdate(requestId, {
+          status: "accept",
+        });
+        const bookingUpdate = await BookingSchema.findByIdAndUpdate(
+          findRequest.booking.toString(),
+          {
+            status: "confirm",
+          }
+        );
+        // notification start
+        const findArtistManager = await AssignArtistSchema.find({
+          "artists.artist": findRequest.receiverUser._id.toString(),
+        }).select("manager -_id");
+
+        const title = bookingContent.bookingConfirmUser(
+          findRequest.senderUser
+        ).subject;
+
+        const description = bookingContent.bookingConfirmUser(
+          findRequest.senderUser
+        ).text;
+        // bookingConfirm
+        await new NotificationServices().notificationGenerate(
+          findRequest.senderUser._id.toString(),
+          findRequest.receiverUser._id.toString(),
+          title,
+          description,
+          bookingConfirm,
+          {
+            subject: title,
+            text: description,
+          },
+          {
+            title,
+            body: description,
+            sound: "default",
+          }
+        );
+
+        // notification end
+      } else {
+        // reject
+
+        const updateRequest = await RequestSchema.findByIdAndUpdate(requestId, {
+          status: "reject",
+        });
+        const bookingUpdate = await BookingSchema.findByIdAndUpdate(
+          findRequest.booking.toString(),
+          {
+            status: "cancel",
+            cancelBy: "artist",
+          }
+        );
+        const findSuperAdmin = await UserSchema.find({ role: "admin" }).select(
+          "_id"
+        );
+        for (let index of [
+          findRequest.senderUser._id.toString(),
+          ...findSuperAdmin.map((item) => item._id),
+        ]) {
+          const title =
+            index === findRequest.senderUser._id.toString()
+              ? bookingContent.bookingCancelArtist(findRequest.senderUser)
+                  .subject
+              : bookingContent.bookingCancelNotifyToSuperAdmin().subject;
+          const description =
+            index === findRequest.senderUser._id.toString()
+              ? bookingContent.bookingCancelArtist(findRequest.senderUser).text
+              : bookingContent.bookingCancelNotifyToSuperAdmin().text;
+          const cancelIcon =
+            index === findRequest.senderUser._id.toString()
+              ? bookingCancelByArtistIcon
+              : bookingCancelByArtistIcon;
+          await new NotificationServices().notificationGenerate(
+            index,
+            findRequest.receiverUser._id.toString(),
+            title,
+            description,
+            cancelIcon,
+            {
+              subject: title,
+              text: description,
+            },
+            {
+              title,
+              body: description,
+              sound: "default",
+            }
+          );
+        }
+      }
+      res.json({
+        success: {
+          message: isAccept
+            ? requestMessage.success.bookingAccept
+            : requestMessage.success.bookingReject,
+        },
+      });
     } catch (error) {
       next(error);
     }

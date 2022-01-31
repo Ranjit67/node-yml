@@ -21,6 +21,7 @@
 import { Document, Schema, model, ObjectId } from "mongoose";
 
 type bookingStatus = "pending" | "confirm" | "cancel" | "past";
+type cancelBy = "artist" | "user";
 type bookingType = "personalizedMessage" | "other";
 export interface BookingModels extends Document {
   eventDate: {
@@ -46,6 +47,7 @@ export interface BookingModels extends Document {
   eventType: ObjectId;
   personalizedMsgDate: Date;
   isPayment: Boolean;
+  cancelBy: cancelBy;
 }
 const bookingSchema = new Schema({
   eventDate: {
@@ -122,6 +124,10 @@ const bookingSchema = new Schema({
   isPayment: {
     type: Boolean,
     default: false,
+  },
+  cancelBy: {
+    enum: ["artist", "user"],
+    type: String,
   },
 });
 const BookingSchema = model<BookingModels>("Booking", bookingSchema);

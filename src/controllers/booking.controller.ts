@@ -94,12 +94,12 @@ class BookingController {
         ]) {
           const title =
             index === userId
-              ? bookingContent.newBookingUser().subject
+              ? bookingContent.bookingRequestSubmit().subject
               : bookingContent.bookingRequestReceivedByArtist().subject;
 
           const description =
             index === userId
-              ? bookingContent.newBookingUser().text
+              ? bookingContent.bookingRequestSubmit().text
               : bookingContent.bookingRequestReceivedByArtist().text;
 
           const bookingNotificationIcon =
@@ -287,8 +287,8 @@ class BookingController {
             : bookingContent.newBookingArtist().subject;
         const description =
           index === findBooking.user._id.toString()
-            ? bookingContent.newBookingUser().subject
-            : bookingContent.newBookingArtist().subject;
+            ? bookingContent.newBookingUser().text
+            : bookingContent.newBookingArtist().text;
         const bookingNotificationIcon =
           index === findBooking.user._id.toString()
             ? newBookingUser
@@ -378,6 +378,7 @@ class BookingController {
         bookingId,
         {
           status: "cancel",
+          cancelBy: cancelBy,
         }
       );
       const firstWalletUpdate = await WalletSchema.updateOne(
@@ -412,32 +413,22 @@ class BookingController {
         const bookingContent = new BookingContent();
         if (cancelBy === "user") {
           for (let index of [
-            findBooking.user._id.toString(),
             findBooking.artist._id.toString(),
             ...findArtistManager.map((item) => item.manager),
           ]) {
-            const title =
-              index === findBooking.user._id.toString()
-                ? bookingContent.bookingCancelByUserSelf(findBooking.user)
-                    .subject
-                : bookingContent.bookingCancelByUser(findBooking.artist)
-                    .subject;
-            const description =
-              index === findBooking.user._id.toString()
-                ? bookingContent.bookingCancelByUserSelf(findBooking.user).text
-                : bookingContent.bookingCancelByUser(findBooking.artist).text;
-            const bookingNotificationIcon =
-              index === findBooking.user._id.toString()
-                ? bookingCancelByUserIcon
-                : index === findBooking.artist._id.toString()
-                ? bookingCancelByUserIcon
-                : bookingCancelByUserIcon;
+            const title = bookingContent.bookingCancelByUser(
+              findBooking.artist
+            ).subject;
+            const description = bookingContent.bookingCancelByUser(
+              findBooking.artist
+            ).text;
+
             await new NotificationServices().notificationGenerate(
               index,
               findBooking.user._id.toString(),
               title,
               description,
-              bookingNotificationIcon,
+              bookingCancelByUserIcon,
               {
                 subject: title,
                 text: description,
@@ -524,32 +515,23 @@ class BookingController {
         const bookingContent = new BookingContent();
         if (cancelBy === "user") {
           for (let index of [
-            findBooking.user._id.toString(),
+            // findBooking.user._id.toString(),
             findBooking.artist._id.toString(),
             findArtistManager.map((item) => item.manager),
           ]) {
-            const title =
-              index === findBooking.user._id.toString()
-                ? bookingContent.bookingCancelByUserSelf(findBooking.user)
-                    .subject
-                : bookingContent.bookingCancelByUser(findBooking.artist)
-                    .subject;
-            const description =
-              index === findBooking.user._id.toString()
-                ? bookingContent.bookingCancelByUserSelf(findBooking.user).text
-                : bookingContent.bookingCancelByUser(findBooking.artist).text;
-            const bookingNotificationIcon =
-              index === findBooking.user._id.toString()
-                ? bookingCancelByUserIcon
-                : index === findBooking.artist._id.toString()
-                ? bookingCancelByUserIcon
-                : bookingCancelByUserIcon;
+            const title = bookingContent.bookingCancelByUser(
+              findBooking.artist
+            ).subject;
+            const description = bookingContent.bookingCancelByUser(
+              findBooking.artist
+            ).text;
+
             await new NotificationServices().notificationGenerate(
               index,
               findBooking.user._id.toString(),
               title,
               description,
-              bookingNotificationIcon,
+              bookingCancelByUserIcon,
               {
                 subject: title,
                 text: description,
@@ -620,7 +602,7 @@ class BookingController {
     try {
       const { bookingId, amount, cancelBy } = req.body;
       // cancelBy- user/artist
-      if (!bookingId || !amount)
+      if (!bookingId || !amount || !cancelBy)
         throw new BadRequest(bookingMessage.error.allField);
       const updateRequest = await RequestSchema.updateOne(
         { booking: bookingId, status: "pending" },
@@ -632,6 +614,7 @@ class BookingController {
         bookingId,
         {
           status: "cancel",
+          cancelBy: cancelBy,
         }
       );
       if (!changeBookingStatus)
@@ -645,30 +628,22 @@ class BookingController {
       const bookingContent = new BookingContent();
       if (cancelBy === "user") {
         for (let index of [
-          findBooking.user._id.toString(),
           findBooking.artist._id.toString(),
           findArtistManager.map((item) => item.manager),
         ]) {
-          const title =
-            index === findBooking.user._id.toString()
-              ? bookingContent.bookingCancelByUserSelf(findBooking.user).subject
-              : bookingContent.bookingCancelByUser(findBooking.artist).subject;
-          const description =
-            index === findBooking.user._id.toString()
-              ? bookingContent.bookingCancelByUserSelf(findBooking.user).text
-              : bookingContent.bookingCancelByUser(findBooking.artist).text;
-          const bookingNotificationIcon =
-            index === findBooking.user._id.toString()
-              ? bookingCancelByUserIcon
-              : index === findBooking.artist._id.toString()
-              ? bookingCancelByUserIcon
-              : bookingCancelByUserIcon;
+          const title = bookingContent.bookingCancelByUser(
+            findBooking.artist
+          ).subject;
+          const description = bookingContent.bookingCancelByUser(
+            findBooking.artist
+          ).text;
+          bookingCancelByUserIcon;
           await new NotificationServices().notificationGenerate(
             index,
             findBooking.user._id.toString(),
             title,
             description,
-            bookingNotificationIcon,
+            bookingCancelByUserIcon,
             {
               subject: title,
               text: description,

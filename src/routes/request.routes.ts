@@ -24,7 +24,7 @@ class RequestRouter {
     );
     this.router.post(
       "/payment-booking-accept-reject-artist",
-      this.requestController.bookingAcceptReject
+      this.requestController.paymentBookingAcceptRejectArtist
     );
   }
 }
