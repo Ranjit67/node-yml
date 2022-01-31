@@ -74,6 +74,8 @@ class FavoriteController {
         path: "favorites.user",
         select: "-password",
       });
+      if (!findFavoriteArtist?.favorites?.length)
+        return res.json({ success: { data: [] } });
       res.json({
         success: {
           data: findFavoriteArtist.favorites,
@@ -94,10 +96,16 @@ class FavoriteController {
         match: { status: { $eq: "active" } },
         select: "-password",
       });
+      if (!findArtistsUserMakeFavorite?.length)
+        return res.json({
+          success: {
+            data: [],
+          },
+        });
       const removeNullField = findArtistsUserMakeFavorite.filter(
         (item: any) => item.artist !== null
       );
-      res.json({ success: { data: removeNullField } });
+      return res.json({ success: { data: removeNullField } });
     } catch (error) {
       next(error);
     }
