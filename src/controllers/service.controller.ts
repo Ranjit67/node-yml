@@ -138,7 +138,10 @@ class ServiceController {
           message: "Services are deleted successfully.",
         },
       });
-    } catch (error) {
+    } catch (error: any) {
+      if (error.path === "_id") {
+        error.message = "No Services are found.";
+      }
       next(error);
     }
   }

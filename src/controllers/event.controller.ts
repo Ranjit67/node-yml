@@ -117,6 +117,7 @@ class EventController {
 
       if (!ids?.length) throw new BadRequest("Event is not found.");
       const findEvent = await EventSchema.find({ _id: { $in: ids } });
+      console.log(findEvent);
       if (!findEvent?.length) throw new BadRequest("Event is not found.");
       const awsS3 = new AwsS3Services();
       for (let item of findEvent) {
@@ -135,7 +136,11 @@ class EventController {
           message: "Events are deleted successfully.",
         },
       });
-    } catch (error) {
+    } catch (error: any) {
+      if (error.path === "_id") {
+        error.message = "No Events are found.";
+      }
+
       next(error);
     }
   }
