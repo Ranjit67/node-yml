@@ -16,7 +16,7 @@ class GenresRoutes {
       this.genresController.genresUnderSubCategory
     );
     this.router.put("/update", this.genresController.update);
-    // this.router.delete("/delete", this.genresController.delete);
+    this.router.delete("/delete", this.genresController.delete);
   }
 }
 export default GenresRoutes;

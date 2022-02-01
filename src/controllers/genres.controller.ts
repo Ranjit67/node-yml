@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { BadRequest, InternalServerError, NotAcceptable } from "http-errors";
 import { genresMessage } from "../resultMessage";
-import { GenresSchema, SubCategorySchema } from "../models";
+import { GenresSchema, SubCategorySchema, UserSchema } from "../models";
 import { AwsS3Services } from "../services";
 class GenresController {
   public async create(req: any, res: Response, next: NextFunction) {
@@ -111,6 +111,38 @@ class GenresController {
       next(error);
     }
   }
-  // public async delete(req: any, res: Response, next: NextFunction) {}
+  public async delete(req: any, res: Response, next: NextFunction) {
+    try {
+      const { ids } = req.body;
+      if (!ids?.length) throw new BadRequest(genresMessage.error.allField);
+      const findGenres = await GenresSchema.find({ _id: { $in: ids } });
+      if (!findGenres?.length)
+        throw new NotAcceptable(genresMessage.error.noGenresFound);
+      const aws3 = new AwsS3Services();
+      for (let item of findGenres) {
+        const deletePreviousIcon = item?.iconFile
+          ? await aws3.delete(item?.iconFile)
+          : "";
+      }
+      const removeSubcategory = await SubCategorySchema.updateMany(
+        { genres: { $in: ids } },
+        { $pull: { genres: { $in: ids } } }
+      );
+      const removeFromUser = await UserSchema.updateMany(
+        { genres: { $in: ids } },
+        { $pull: { genres: { $in: ids } } }
+      );
+      const deleteGenres = await GenresSchema.deleteMany({ _id: { $in: ids } });
+      if (!deleteGenres)
+        throw new NotAcceptable(genresMessage.error.notDeleted);
+      res.json({
+        success: {
+          message: genresMessage.success.deleted,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 export default GenresController;
