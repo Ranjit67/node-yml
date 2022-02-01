@@ -200,6 +200,7 @@ class CategoryController {
           }
         );
       }
+      const deleteCategory = await CategorySchema.findByIdAndDelete(id);
       res.json({
         success: {
           message: categoryMessage.success.categoryDeleted,

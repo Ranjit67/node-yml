@@ -16,7 +16,7 @@ class CategoryRoutes {
       this.categoryController.getOne
     );
     this.router.put("/update", this.categoryController.update);
-    // this.router.delete("/delete", this.categoryController.delete);
+    this.router.delete("/delete", this.categoryController.delete);
   }
 }
 export default CategoryRoutes;
