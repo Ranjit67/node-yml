@@ -1,8 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import { BadRequest, InternalServerError, NotAcceptable } from "http-errors";
 import { subCategoryMessage } from "../resultMessage";
-import { SubCategorySchema, CategorySchema } from "../models";
+import {
+  SubCategorySchema,
+  CategorySchema,
+  UserSchema,
+  GenresSchema,
+} from "../models";
 import { AwsS3Services } from "../services";
+import { isDayjs } from "dayjs";
 
 class subCategoryController {
   public async create(req: any, res: Response, next: NextFunction) {
@@ -119,6 +125,86 @@ class subCategoryController {
         res.json({
           success: {
             message: subCategoryMessage.success.updated,
+          },
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+  async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { ids } = req.body;
+      if (!ids) throw new BadRequest(subCategoryMessage.error.allField);
+      const awsS3 = new AwsS3Services();
+      const findSubCategories = await SubCategorySchema.findOne({ _id: ids });
+      if (!findSubCategories)
+        throw new NotAcceptable(subCategoryMessage.error.noSubCategory);
+      const genresArray = findSubCategories?.genres ?? [];
+      if (genresArray.length) {
+        const findGenres = await GenresSchema.find({
+          _id: { $in: genresArray },
+        });
+        for (let item of findGenres) {
+          const deleteGenre = item.iconFile
+            ? await awsS3.delete(item.iconFile)
+            : "";
+        }
+        const removeSubCategoryFromCategory = await CategorySchema.updateOne(
+          { subcategories: findSubCategories?._id },
+          { $pull: { subcategories: findSubCategories?._id } }
+        );
+        const deleteGenres = await GenresSchema.deleteMany({
+          _id: { $in: genresArray },
+        });
+
+        // user delete subcategory and genres
+        const deleteFromUser = await UserSchema.updateMany(
+          {
+            genres: { $in: genresArray },
+            subcategories: findSubCategories?._id,
+          },
+          {
+            $pull: {
+              genres: { $in: genresArray },
+              subcategories: findSubCategories?._id,
+            },
+          }
+        );
+        if (findSubCategories?.iconFile) {
+          const deleteIcon = await awsS3.delete(findSubCategories.iconFile);
+        }
+        const deleteSubCategory = await SubCategorySchema.findByIdAndDelete(
+          ids
+        );
+        if (!deleteSubCategory)
+          throw new NotAcceptable(subCategoryMessage.error.notDeleted);
+        res.json({
+          success: {
+            message: subCategoryMessage.success.deleted,
+          },
+        });
+      } else {
+        // if does not have genres
+        const removeSubCategoryFromUser = await UserSchema.updateMany(
+          { subcategories: ids },
+          { $pull: { subcategories: ids } }
+        );
+        const removeSubCategoryFromCategory = await CategorySchema.updateMany(
+          { subcategories: ids },
+          { $pull: { subcategories: ids } }
+        );
+        const deleteSubCategory = await SubCategorySchema.findByIdAndDelete(
+          ids
+        );
+        if (findSubCategories?.iconFile) {
+          const deleteIcon = await awsS3.delete(findSubCategories.iconFile);
+        }
+        if (!deleteSubCategory)
+          throw new NotAcceptable(subCategoryMessage.error.notDeleted);
+        res.json({
+          success: {
+            message: subCategoryMessage.success.deleted,
           },
         });
       }

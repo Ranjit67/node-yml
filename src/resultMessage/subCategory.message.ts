@@ -9,10 +9,13 @@ const subCategoryMessage = {
     notUpdated: "SubCategory not updated.",
     iconImageUploadFail: "Icon Image Upload Fail.",
     iconImageDeleteFail: "Previous Icon could not be replaced.",
+    noSubCategory: "No SubCategory found for delete.",
+    notDeleted: "Something went wrong, SubCategory not deleted.",
   },
   success: {
     created: "SubCategory is created successfully.",
     updated: "SubCategory is updated successfully.",
+    deleted: "SubCategory is deleted successfully.",
   },
 };
 export default subCategoryMessage;

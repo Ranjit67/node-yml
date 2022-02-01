@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { BadRequest, GatewayTimeout } from "http-errors";
-import { LanguageSchema } from "../models";
+import { BadRequest, GatewayTimeout, NotAcceptable } from "http-errors";
+import { LanguageSchema, UserSchema } from "../models";
 import { languageMessage } from "../resultMessage";
 class LanguageController {
   public async create(req: Request, res: Response, next: NextFunction) {
@@ -81,6 +81,12 @@ class LanguageController {
         });
         if (!deleteLanguage)
           throw new GatewayTimeout("Language is not deleted.");
+        const deleteFromUser = await UserSchema.updateMany(
+          { languages: { $in: language_idsOrId } },
+          { $pull: { languages: { $in: language_idsOrId } } }
+        );
+        if (!deleteFromUser)
+          throw new NotAcceptable("Language is not deleted from user.");
         res.json({
           success: {
             message: "Languages are deleted successfully.",
@@ -92,6 +98,12 @@ class LanguageController {
         });
         if (!deleteLanguage)
           throw new GatewayTimeout("Language is not deleted.");
+        const deleteFromUser = await UserSchema.updateMany(
+          { languages: { $in: [language_idsOrId] } },
+          { $pull: { languages: { $in: [language_idsOrId] } } }
+        );
+        if (!deleteFromUser)
+          throw new NotAcceptable("Language is not deleted from user.");
         res.json({
           success: {
             message: "Language is deleted successfully.",

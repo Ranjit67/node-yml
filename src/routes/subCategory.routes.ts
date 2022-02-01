@@ -18,7 +18,7 @@ class SubCategoryRouter {
     );
     this.router.put("/update", this.userController.update);
 
-    // this.router.delete("/delete/:id", this.userController.delete);
+    this.router.delete("/delete", this.userController.delete);
   }
 }
 export default SubCategoryRouter;
