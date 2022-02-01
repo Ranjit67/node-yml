@@ -8,8 +8,8 @@ import { notificationMessage } from "../resultMessage";
 class NotificationController {
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const { sendToId, selfId, title, description } = req.body;
-      if (!sendToId || !selfId || !title || !description)
+      const { sendToId, selfId, title, description, iconUrl } = req.body;
+      if (!sendToId || !selfId || !title || !description || !iconUrl)
         throw new BadRequest(notificationMessage.error.allField);
 
       const sendNotification =
@@ -18,7 +18,7 @@ class NotificationController {
           selfId,
           title,
           description,
-          superAdminSendToUserIcon,
+          iconUrl,
           {
             subject: title,
             text: description,

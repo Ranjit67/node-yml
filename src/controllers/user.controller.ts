@@ -37,6 +37,11 @@ class UserController {
       } = req.body;
       const check = await UserSchema.findOne({ email });
       if (check) throw new Conflict(userMessage.error.duplicateEmail);
+      if (
+        ["admin", "user", "artist", "manager"].indexOf(role.toLowerCase()) ===
+        -1
+      )
+        throw new BadRequest(userMessage.error.invalidRole);
       const profilePicture = req?.files?.profilePicture;
       if (profilePicture) {
         const awsS3 = new AwsS3Services();
@@ -52,7 +57,7 @@ class UserController {
           phoneNumber,
           firstName,
           lastName,
-          role,
+          role: role.toLowerCase(),
           gender,
           location,
           yearsOfExperience,

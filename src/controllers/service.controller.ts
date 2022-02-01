@@ -113,14 +113,29 @@ class ServiceController {
   public async delete(req: Request, res: Response, next: NextFunction) {
     try {
       const { ids } = req.body;
-      if (!ids.length) throw new BadRequest("Service is not found.");
-      // const findOneAndDeleteService=await ServiceSchema.findByIdAndDelete(ids)
-      // if(!findOneAndDeleteService) throw new InternalServerError("Service is not deleted.")
-      // res.json({data:"Service is deleted successfully."})
+      if (!ids?.length) throw new BadRequest("Service is not found.");
+      const findAllService = await ServiceSchema.find({ _id: { $in: ids } });
+      if (!findAllService?.length)
+        throw new BadRequest("Services are not found.");
+      const awsS3 = new AwsS3Services();
+      for (let data of findAllService) {
+        const deleteOlder = data?.iconFile
+          ? await awsS3.delete(data?.iconFile)
+          : "";
+        const deleteOlder2 = data?.imageFile
+          ? await awsS3.delete(data?.imageFile)
+          : "";
+      }
+
+      const deleteService = await ServiceSchema.deleteMany({
+        _id: { $in: ids },
+      });
+      if (!deleteService)
+        throw new InternalServerError("Services are not deleted.");
+
       res.json({
         success: {
-          message:
-            "Your logic is same but Event logic will be write when user schema ready.",
+          message: "Services are deleted successfully.",
         },
       });
     } catch (error) {

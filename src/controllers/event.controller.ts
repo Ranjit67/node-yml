@@ -113,18 +113,26 @@ class EventController {
   }
   public async delete(req: Request, res: Response, next: NextFunction) {
     try {
-      const { ids } = req.params;
-      //   const findEvent = await EventSchema.findById(id);
-      if (!ids.length) throw new BadRequest("Event is not found.");
-      //   const findOneAndDeleteEvent = await EventSchema.findByIdAndDelete(id);
-      //   if (!findOneAndDeleteEvent)
-      //     throw new InternalServerError("Event is not deleted.");
-      //   res.json({ data: "Event is deleted successfully." });
-      //   res.json({ data: "Event is deleted successfully." });
+      const { ids } = req.body;
+
+      if (!ids?.length) throw new BadRequest("Event is not found.");
+      const findEvent = await EventSchema.find({ _id: { $in: ids } });
+      if (!findEvent?.length) throw new BadRequest("Event is not found.");
+      const awsS3 = new AwsS3Services();
+      for (let item of findEvent) {
+        const deleteOlder = item?.iconFile
+          ? await awsS3.delete(item.iconFile)
+          : "";
+        const deleteOlder2 = item?.imageFile
+          ? await awsS3.delete(item.imageFile)
+          : "";
+      }
+      const deleteEvent = await EventSchema.deleteMany({ _id: { $in: ids } });
+      if (!deleteEvent)
+        throw new InternalServerError("Events are not deleted.");
       res.json({
         success: {
-          message:
-            "Your logic is same but Event logic will be write when user schema ready.",
+          message: "Events are deleted successfully.",
         },
       });
     } catch (error) {

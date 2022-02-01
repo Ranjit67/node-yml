@@ -18,7 +18,8 @@ import {
 class RequestController {
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const { requestType, receiverUserId, senderUserId, details } = req.body;
+      const { requestType, receiverUserId, senderUserId, details, reason } =
+        req.body;
       if (!receiverUserId || !senderUserId || !requestType)
         throw new BadRequest(requestMessage.error.allField);
       const createRequest = await RequestSchema.create({
@@ -26,6 +27,7 @@ class RequestController {
         receiverUser: receiverUserId,
         senderUser: senderUserId,
         details,
+        reason,
         timestamp: new Date(),
       });
       if (!createRequest)
