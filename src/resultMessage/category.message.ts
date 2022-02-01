@@ -5,6 +5,7 @@ const categoryMessage = {
     dataNotFound: "Category not found.",
     notUpdated: "Something went wrong, Data not updated.",
     iconImageUploadFail: "Icon image upload fail.",
+    noDataFoundForDelete: "No data found for delete.",
   },
   success: {
     categoryCreates: "Category created Successfully.",

@@ -4,7 +4,7 @@ import { userStatus, userRole, gender } from "../types";
 export interface userModel extends Document {
   profileImageRef: string;
   artistPastEvent: ObjectId;
-  eventTypes: ObjectId[];
+  events: ObjectId[];
   //
   category: ObjectId;
   genres: ObjectId[];
@@ -35,7 +35,12 @@ export interface userModel extends Document {
 const userSchema = new Schema({
   profileImageRef: String,
   // artistPastEvent: ObjectId;
-  // eventTypes: ObjectId[];
+  events: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Event",
+    },
+  ],
 
   subcategories: [
     {

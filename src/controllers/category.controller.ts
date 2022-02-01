@@ -1,6 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { BadRequest, NotAcceptable, NotFound } from "http-errors";
-import { CategorySchema, SubCategorySchema, UserSchema } from "../models";
+import {
+  CategorySchema,
+  GenresSchema,
+  SubCategorySchema,
+  UserSchema,
+} from "../models";
 import { categoryMessage } from "../resultMessage";
 import { AwsS3Services } from "../services";
 class CategoryController {
@@ -125,13 +130,56 @@ class CategoryController {
   public async delete(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.body;
+      if (!id) throw new BadRequest(categoryMessage.error.allField);
       const findCategory = await CategorySchema.findById(id);
-      if (!findCategory) throw new BadRequest(categoryMessage.error.allField);
+      if (!findCategory)
+        throw new NotFound(categoryMessage.error.noDataFoundForDelete);
       const awsS3 = new AwsS3Services();
       if (findCategory?.subcategories.length) {
         // have subcategories
         const findSubcategories =
           (await SubCategorySchema.find({ parentId: id })) ?? [];
+        const genresUnArrange = findSubcategories.map(
+          (subcategory) => subcategory?.genres ?? []
+        );
+        const genresArray = genresUnArrange.flat();
+        const genreData =
+          (await GenresSchema.find({ _id: { $in: genresArray } })) ?? [];
+
+        // genre delete
+        for (let element of genreData) {
+          const deleteGenreIcon = element?.iconFile
+            ? await awsS3.delete(element?.iconFile)
+            : "";
+        }
+        const deleteGenre = await GenresSchema.deleteMany({
+          _id: { $in: genresArray },
+        });
+        // subcategory delete
+        for (let element of findSubcategories) {
+          const deleteGenreIcon = element?.iconFile
+            ? await awsS3.delete(element?.iconFile)
+            : "";
+        }
+        const deleteSubCategory = await SubCategorySchema.deleteMany({
+          parentId: id,
+        });
+        // category delete
+        const deleteIcon = findCategory?.iconFile
+          ? await awsS3.delete(findCategory?.iconFile)
+          : "";
+        const deleteImage = findCategory?.imageFile
+          ? await awsS3.delete(findCategory?.imageFile)
+          : "";
+
+        const cleanUser = await UserSchema.updateMany(
+          { category: findCategory._id },
+          {
+            category: null,
+            subcategories: [],
+            genres: [],
+          }
+        );
 
         // not complete
       } else {
@@ -142,10 +190,13 @@ class CategoryController {
         const deleteImage = findCategory?.imageFile
           ? await awsS3.delete(findCategory?.imageFile)
           : "";
-        const deleteFromUser = await UserSchema.updateMany(
+
+        const cleanUser = await UserSchema.updateMany(
           { category: findCategory._id },
           {
             category: null,
+            subcategories: [],
+            genres: [],
           }
         );
       }

@@ -172,8 +172,10 @@ class UserController {
         })
         .populate("category")
         .populate("genres")
-        .select("-password")
-        .select("-__v");
+        .populate("languages")
+        .populate("events")
+        .select("-password -__v");
+
       res.json({
         success: {
           data: findOneUser,
@@ -203,6 +205,7 @@ class UserController {
         languagesId,
         inTopSearches,
         inTopTrending,
+        events,
       } = req.body;
       const { id } = req.params;
 
@@ -234,6 +237,7 @@ class UserController {
         languages: Array.isArray(languagesId)
           ? languagesId
           : findUser?.languages || [],
+        events: Array.isArray(events) ? events : findUser?.events || [],
         // other tags credentials
         fcmToken: fcmToken || findUser.fcmToken || "",
         status: status || findUser.status || "",
