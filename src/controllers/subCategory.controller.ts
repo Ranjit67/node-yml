@@ -134,7 +134,7 @@ class subCategoryController {
   }
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
-      const { ids } = req.body;
+      const { id: ids } = req.body;
       if (!ids) throw new BadRequest(subCategoryMessage.error.allField);
       const awsS3 = new AwsS3Services();
       const findSubCategories = await SubCategorySchema.findOne({ _id: ids });

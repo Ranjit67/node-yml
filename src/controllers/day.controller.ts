@@ -6,7 +6,7 @@ class DayController {
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
       const { num } = req.body;
-      if (num < 1) throw new BadRequest(dayMessage.error.num);
+      if (num < 1 || !num) throw new BadRequest(dayMessage.error.num);
       const findData: any = await DaySchema.findOne();
       if (!findData) {
         const day = new DaySchema({

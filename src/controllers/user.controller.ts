@@ -183,7 +183,6 @@ class UserController {
       if (error.path === "_id") {
         error.message = userMessage.error.invalidUserId;
       }
-      // res.json({ data: error });
       next(error);
     }
   }

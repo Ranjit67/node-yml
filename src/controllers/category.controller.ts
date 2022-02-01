@@ -122,5 +122,22 @@ class CategoryController {
       next(error);
     }
   }
+  public async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.body;
+      const findCategory = await CategorySchema.findById(id);
+      if (!findCategory) throw new BadRequest(categoryMessage.error.allField);
+      const awsS3 = new AwsS3Services();
+      if (findCategory?.subcategories.length) {
+      } else {
+        // not have any subcategory
+        const deleteOlder = findCategory?.iconFile
+          ? await awsS3.delete(findCategory?.iconFile)
+          : "";
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 export default CategoryController;
