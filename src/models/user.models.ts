@@ -26,7 +26,7 @@ export interface userModel extends Document {
   yearsOfExperience: string;
   inTopSearches: Boolean;
   inTopTrending: Boolean;
-
+  bio: String;
   fcmToken: string;
   Dob: Date;
   timestamp: Date;
@@ -79,6 +79,9 @@ const userSchema = new Schema({
     type: String,
   },
   lastName: {
+    type: String,
+  },
+  bio: {
     type: String,
   },
   email: {

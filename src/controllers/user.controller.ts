@@ -206,6 +206,7 @@ class UserController {
         inTopSearches,
         inTopTrending,
         events,
+        bio,
       } = req.body;
       const { id } = req.params;
 
@@ -244,6 +245,7 @@ class UserController {
         Dob: Dob || findUser.Dob || "",
         inTopSearches: inTopSearches ?? findUser.inTopSearches,
         inTopTrending: inTopTrending ?? findUser.inTopTrending,
+        bio: bio ?? findUser.bio,
       });
       if (!updateUser) throw new GatewayTimeout("User is not updated.");
       res.json({
