@@ -8,16 +8,20 @@ class CategoryController {
     try {
       const { categoryName } = req.body;
       const iconPicture = req?.files?.icon;
-      if (!categoryName || !iconPicture)
+      const imagePicture = req?.files?.image;
+      if (!categoryName || !iconPicture || !imagePicture)
         throw new BadRequest(categoryMessage.error.allField);
       const awsS3 = new AwsS3Services();
       const iconImage = await awsS3.upload(iconPicture);
+      const image = await awsS3.upload(imagePicture);
       if (!iconImage)
         throw new NotAcceptable(categoryMessage.error.iconImageUploadFail);
       const saveCategory = await CategorySchema.create({
         title: categoryName,
         iconUrl: iconImage?.Location,
         iconFile: iconImage?.key,
+        imageFile: image.key,
+        imageUrl: image.Location,
       });
       if (!saveCategory)
         throw new NotAcceptable(categoryMessage.error.notCreated);

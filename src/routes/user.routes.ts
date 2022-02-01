@@ -112,7 +112,7 @@ class UserRoutes {
     );
     this.router.get(
       "/accounts/:id",
-      new ProtectedMiddleware().protected,
+      // new ProtectedMiddleware().protected,
       this.userController.getOne
     );
 

@@ -7,6 +7,8 @@ export interface CategoryModels extends Document {
   timestamp: Date;
   iconUrl: string;
   iconFile: string;
+  imageUrl: string;
+  imageFile: string;
 }
 
 const categorySchema = new Schema({
@@ -33,6 +35,12 @@ const categorySchema = new Schema({
       ref: "Genre",
     },
   ],
+  imageUrl: {
+    type: String,
+  },
+  imageFile: {
+    type: String,
+  },
   timestamp: {
     type: Date,
     default: new Date().toString(),
