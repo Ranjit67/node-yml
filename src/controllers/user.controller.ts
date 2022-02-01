@@ -6,7 +6,12 @@ import {
   NotAcceptable,
   Conflict,
 } from "http-errors";
-import { UserSchema, EmailToken } from "../models";
+import {
+  UserSchema,
+  EmailToken,
+  SupportSchema,
+  NotificationSchema,
+} from "../models";
 import {
   EmailService,
   JwtService,
@@ -18,7 +23,43 @@ import EmailContent, { UserContent } from "../emailContent";
 import { userMessage } from "../resultMessage";
 import { userBlockIcon, userUnblockIcon } from "../notificationIcon";
 
-class UserController {
+class DeleteOperation {
+  artistDelete(res: Response, userData: any) {
+    return res.json({ success: { message: "Artist deleted successfully." } });
+  }
+  userDelete(res: Response, userData: any) {
+    return res.json({ success: { message: "User deleted successfully." } });
+  }
+  async managerDelete(res: Response, userData: any) {
+    const deleteSupport = await SupportSchema.deleteMany({
+      user: userData._id,
+    });
+    const deleteNotification = await NotificationSchema.deleteMany({
+      user: userData._id,
+    });
+    // con
+    return res.json({ success: { message: "Manager deleted successfully." } });
+  }
+}
+class UserController extends DeleteOperation {
+  public async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const findUserData = await UserSchema.findById(id);
+      if (!findUserData)
+        throw new NotAcceptable(userMessage.error.userNotFound);
+      if (findUserData.role === "artist") {
+        return super.artistDelete(res, findUserData);
+      } else if (findUserData.role === "manager") {
+        return super.managerDelete(res, findUserData);
+      } else if (findUserData.role === "user") {
+        return super.userDelete(res, findUserData);
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+
   public async create(req: any, res: Response, next: NextFunction) {
     try {
       //   languagesId = is the array of languages id
@@ -131,9 +172,12 @@ class UserController {
 
   public async getAll(req: any, res: Response, next: NextFunction) {
     try {
-      const findAllUser = await UserSchema.find({ isDeleted: false }).select(
-        "-password"
-      );
+      const findAllUser = await UserSchema.find({ isDeleted: false })
+        .populate("category")
+        .populate("genres")
+        .populate("languages")
+        .populate("events")
+        .select("-password -__v");
       res.json({
         success: {
           data: findAllUser,
@@ -357,16 +401,6 @@ class UserController {
     }
   }
 
-  public async delete(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { id } = req.params;
-      const deleteUser = await UserSchema.findOneAndDelete({ email: id });
-      if (!deleteUser) throw new GatewayTimeout("User is not deleted.");
-      res.json({ success: { message: "User is deleted successfully." } });
-    } catch (error) {
-      next(error);
-    }
-  }
   //
   public async setPassword(req: Request, res: Response, next: NextFunction) {
     try {

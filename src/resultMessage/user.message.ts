@@ -6,6 +6,7 @@ const userMessage = {
     duplicatePhone: "This phone number is already registered.",
     invalidRole: "Invalid role You have enter.",
     invalidUserId: "Invalid user id.",
+    userNotFound: "No user found.",
   },
   success: {
     userBlocked: "User is blocked successfully.",
