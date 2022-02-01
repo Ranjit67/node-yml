@@ -9,7 +9,9 @@ class FavoriteRoute {
     this.routes();
   }
   private routes() {
-    this.router.post("/create", this.favoriteController.create);
+    this.router.post("/add", this.favoriteController.addFavorite);
+    this.router.post("/remove", this.favoriteController.favoriteRemove);
+
     this.router.get(
       "/all-favorite-artist/:artistId",
       this.favoriteController.viewUserList

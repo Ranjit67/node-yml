@@ -10,27 +10,33 @@ import { FavoriteSchema, UserSchema } from "../models";
 import { favoriteMessage } from "../resultMessage";
 
 class FavoriteController {
-  public async create(req: Request, res: Response, next: NextFunction) {
+  public async addFavorite(req: Request, res: Response, next: NextFunction) {
     try {
       const { userId, artistId } = req.body;
       if (!userId || !artistId)
         throw new BadRequest(favoriteMessage.error.allField);
-      const firstUpdate = await FavoriteSchema.updateOne(
-        { artist: artistId, "favorites.user": userId },
-        {
-          $pull: {
-            favorites: {
-              user: userId,
-            },
-          },
-        }
-      );
-      if (firstUpdate.matchedCount)
-        return res.json({
-          success: {
-            message: favoriteMessage.success.removeFavorite,
-          },
-        });
+      // const firstUpdate = await FavoriteSchema.updateOne(
+      //   { artist: artistId, "favorites.user": userId },
+      //   {
+      //     $pull: {
+      //       favorites: {
+      //         user: userId,
+      //       },
+      //     },
+      //   }
+      // );
+      // if (firstUpdate.matchedCount)
+      //   return res.json({
+      //     success: {
+      //       message: favoriteMessage.success.removeFavorite,
+      //     },
+      //   });
+      const checkAddedOrNot = await FavoriteSchema.findOne({
+        artist: artistId,
+        "favorites.user": userId,
+      });
+      if (checkAddedOrNot)
+        throw new Conflict(favoriteMessage.error.alreadyFavorite);
       const secondUpdate = await FavoriteSchema.updateOne(
         { artist: artistId },
         {
@@ -49,17 +55,44 @@ class FavoriteController {
 
       if (findArtist.role !== "artist")
         throw new NotFound(favoriteMessage.error.notArtist);
-      const favorite = new FavoriteSchema({
+      const createFavorite = await FavoriteSchema.create({
         artist: artistId,
+        favorites: [
+          {
+            user: userId,
+            timestamp: new Date(),
+          },
+        ],
       });
-      favorite.favorites.push({
-        user: userId,
-        timestamp: new Date(),
-      });
-      const saveFavorite = await favorite.save();
-      if (!saveFavorite)
+
+      if (!createFavorite)
         throw new NotAcceptable(favoriteMessage.error.addFavorite);
       res.json({ success: { message: favoriteMessage.success.addFavorite } });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async favoriteRemove(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { userId, artistId } = req.body;
+      const firstUpdate = await FavoriteSchema.updateOne(
+        { artist: artistId, "favorites.user": userId },
+        {
+          $pull: {
+            favorites: {
+              user: userId,
+            },
+          },
+        }
+      );
+      if (!firstUpdate.matchedCount)
+        throw new NotFound(favoriteMessage.error.noFavoriteAdded);
+
+      return res.json({
+        success: {
+          message: favoriteMessage.success.removeFavorite,
+        },
+      });
     } catch (error) {
       next(error);
     }
