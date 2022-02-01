@@ -152,7 +152,15 @@ class ArtistMediaController {
       const findData = await ArtistMediaSchema.findOne({
         artist: artistId,
       }).select("artistVideos youtubeVideos -_id");
-      if (!findData) throw new NotFound(artistMediaMessage.error.notDataFound);
+      if (!findData)
+        return res.json({
+          success: {
+            data: {
+              artistVideos: [],
+              youtubeVideos: [],
+            },
+          },
+        });
       return res.json({ success: { data: findData } });
     } catch (error) {
       next(error);
@@ -166,9 +174,9 @@ class ArtistMediaController {
       const findData = await ArtistMediaSchema.findOne({
         artist: artistId,
       }).select("artistPhotos -_id");
-      if (!findData) throw new NotFound(artistMediaMessage.error.notDataFound);
+      if (!findData?.artistPhotos) return res.json({ success: { data: [] } });
       return res.json({
-        success: { data: findData },
+        success: { data: findData.artistPhotos },
       });
     } catch (error) {
       next(error);

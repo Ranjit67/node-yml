@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { BadRequest, NotAcceptable, NotFound } from "http-errors";
-import { CategorySchema } from "../models";
+import { CategorySchema, SubCategorySchema, UserSchema } from "../models";
 import { categoryMessage } from "../resultMessage";
 import { AwsS3Services } from "../services";
 class CategoryController {
@@ -129,12 +129,31 @@ class CategoryController {
       if (!findCategory) throw new BadRequest(categoryMessage.error.allField);
       const awsS3 = new AwsS3Services();
       if (findCategory?.subcategories.length) {
+        // have subcategories
+        const findSubcategories =
+          (await SubCategorySchema.find({ parentId: id })) ?? [];
+
+        // not complete
       } else {
         // not have any subcategory
-        const deleteOlder = findCategory?.iconFile
+        const deleteIcon = findCategory?.iconFile
           ? await awsS3.delete(findCategory?.iconFile)
           : "";
+        const deleteImage = findCategory?.imageFile
+          ? await awsS3.delete(findCategory?.imageFile)
+          : "";
+        const deleteFromUser = await UserSchema.updateMany(
+          { category: findCategory._id },
+          {
+            category: null,
+          }
+        );
       }
+      res.json({
+        success: {
+          message: categoryMessage.success.categoryDeleted,
+        },
+      });
     } catch (error) {
       next(error);
     }

@@ -9,6 +9,7 @@ const categoryMessage = {
   success: {
     categoryCreates: "Category created Successfully.",
     categoryUpdated: "Category Updated Successfully.",
+    categoryDeleted: "Categories Deleted Successfully.",
   },
 };
 export default categoryMessage;
