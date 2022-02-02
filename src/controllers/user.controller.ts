@@ -37,7 +37,15 @@ class DeleteOperation {
     const deleteNotification = await NotificationSchema.deleteMany({
       user: userData._id,
     });
-    // con
+    // const notificationUpdate = await NotificationSchema.updateMany({
+    //   "notification.receiveFrom": userData._id,
+    // },{
+    //   $pull:{
+    //     notification:{
+    //       receiveFrom:userData._id
+    //     }
+    //   }
+    // })
     return res.json({ success: { message: "Manager deleted successfully." } });
   }
 }

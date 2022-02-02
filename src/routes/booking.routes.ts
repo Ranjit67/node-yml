@@ -10,12 +10,13 @@ class BookingRouter {
   }
   private routes() {
     this.router.post("/create", this.bookingController.create);
+    this.router.get("/all-booking", this.bookingController.getAllBooking);
     this.router.get(
-      "/list-of-bookings-artist/:artistId",
+      "/all-booking/artist/:artistId",
       this.bookingController.getAllBookingArtist
     );
     this.router.get(
-      "/list-of-bookings-user/:userId",
+      "/all-booking/user/:userId",
       this.bookingController.getAllBookingUser
     );
     this.router.post("/booking-payment", this.bookingController.bookingPayment);

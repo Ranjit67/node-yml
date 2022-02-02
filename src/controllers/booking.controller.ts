@@ -768,6 +768,20 @@ class BookingController {
       next(error);
     }
   }
+  async getAllBooking(req: Request, res: Response, next: NextFunction) {
+    try {
+      const allBooking = await BookingSchema.find({}).populate(
+        "artist user eventType serviceType"
+      );
+      res.json({
+        success: {
+          data: allBooking,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default BookingController;
