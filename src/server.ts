@@ -30,6 +30,7 @@ import {
   WalletRoute,
   CrowdRoutes,
   VersionRouter,
+  EmailTestRoute,
 } from "./routes";
 import { SchedulerService } from "./services";
 import { BookingSchedule } from "./scheduleJob";
@@ -64,6 +65,7 @@ const object = {
     new ArtistBlockDateRoutes(),
     new PersonalizeVideoRoute(),
     new BookingRescheduleRoute(),
+    new EmailTestRoute(),
   ],
   topMiddleware: [new TopMiddleware().allowCrossDomain],
   bottomMiddleware: [

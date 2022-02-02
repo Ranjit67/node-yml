@@ -26,3 +26,4 @@ export { default as WalletHistoryRoute } from "./walletHistory.routes";
 export { default as ArtistBlockDateRoutes } from "./artistBlockDate.routes";
 export { default as PersonalizeVideoRoute } from "./personalizeVideo.routes";
 export { default as BookingRescheduleRoute } from "./bookingReschedule.routes";
+export { default as EmailTestRoute } from "./emailTest.routes";

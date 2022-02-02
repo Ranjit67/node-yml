@@ -25,3 +25,4 @@ export { default as PersonalizeVideoController } from "./personalizeVideo.contro
 export { default as BookingRescheduleController } from "./bookingReschedule.controller";
 export { default as NotificationController } from "./notification.controller";
 export { default as VersionController } from "./version.controller";
+export { default as EmailController } from "./email.controller";

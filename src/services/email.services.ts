@@ -1,10 +1,10 @@
 import nodemailer from "nodemailer";
 import { email, password } from "../config";
 class EmailService {
-  public emailSend(email: string, subject: string, message: string): any {
+  public emailSend(emails: string, subject: string, message: string): any {
     const emailCredentials = {
       from: "noreply.skyrisecelebrity@gmail.com",
-      to: email,
+      to: emails,
       subject: subject,
       text: `${message}`,
     };
