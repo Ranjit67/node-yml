@@ -5,6 +5,9 @@ import swaggerDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import log from "./logger";
 
+// import schedule from "node-schedule";
+// const schedule = require("node-schedule");
+
 // app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 class App {
   public app: Application;
@@ -13,6 +16,8 @@ class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(fileUpload());
+    // scheduler
+
     //
     const option = {
       swaggerDefinition: {

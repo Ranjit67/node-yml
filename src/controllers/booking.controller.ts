@@ -27,6 +27,7 @@ import {
   bookingCancelByArtistIcon,
   bookingRequestIcon,
   pastBookingCancelIcon,
+  pastBookingConfirmIcon,
 } from "../notificationIcon";
 class BookingController {
   public async create(req: Request, res: Response, next: NextFunction) {
@@ -388,7 +389,7 @@ class BookingController {
           findBooking.user._id.toString(),
           title,
           description,
-          pastBookingCancelIcon,
+          pastBookingConfirmIcon,
           {
             subject: title,
             text: description,
@@ -773,6 +774,20 @@ class BookingController {
       const allBooking = await BookingSchema.find({}).populate(
         "artist user eventType serviceType"
       );
+      res.json({
+        success: {
+          data: allBooking,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async bookingTest(req: Request, res: Response, next: NextFunction) {
+    try {
+      const allBooking = await BookingSchema.find({
+        "eventDate.end": { $gt: new Date("2022-02-04T07:47:24.000Z") },
+      }).select("-__v");
       res.json({
         success: {
           data: allBooking,

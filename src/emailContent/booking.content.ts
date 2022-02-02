@@ -212,6 +212,16 @@ class BookingContent {
       We are sorry to let you know that as per customer’s record the booked event was not completed by you.`,
     };
   }
+  public eventDateCross(user: any) {
+    return {
+      subject: "Confirm Your Event",
+      text: `Hi ${user.firstName}
+      
+      Hi, we hope that your event was conducted successfully. 
+      Kindly confirm if the artist performed in your event or not by going to your request option. You have 14 days to confirm otherwise the past 14 days it will be automatically recorded as confirmed. 
+      Thanks.`,
+    };
+  }
 }
 
 export default BookingContent;

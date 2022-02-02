@@ -32,6 +32,7 @@ class BookingRouter {
       "/booking-cancel-bank",
       this.bookingController.bookingCancelBankAccount
     );
+    this.router.get("/booking-test", this.bookingController.bookingTest);
   }
 }
 export default BookingRouter;

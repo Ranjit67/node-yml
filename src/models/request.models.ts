@@ -11,6 +11,7 @@ export interface RequestModel extends Document {
   isCancel: boolean;
   status: requestStatus;
   reason: string;
+  deletedUsers: ObjectId[];
 }
 
 const requestSchema = new Schema({
@@ -59,6 +60,12 @@ const requestSchema = new Schema({
   reason: {
     type: String,
   },
+  deletedUsers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
   timestamp: {
     type: Date,
   },

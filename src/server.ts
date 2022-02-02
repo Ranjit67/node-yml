@@ -31,6 +31,8 @@ import {
   CrowdRoutes,
   VersionRouter,
 } from "./routes";
+import { SchedulerService } from "./services";
+import { BookingSchedule } from "./scheduleJob";
 
 const object = {
   controllers: [
@@ -71,5 +73,10 @@ const object = {
 };
 
 const app = new App();
+const job = async () => {
+  await new BookingSchedule().checkEventExpire();
+  await new BookingSchedule().afterEndEventLongDays();
+};
+new SchedulerService(job);
 
 app.listen(object);
