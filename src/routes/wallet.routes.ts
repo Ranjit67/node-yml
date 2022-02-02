@@ -14,6 +14,7 @@ class WalletRoute {
       "/get-wallet-balance/:userId",
       this.walletController.getWallet
     );
+    this.router.put("/update", this.walletController.walletUpdate);
     // this.router.get("/all-wallet/:userId", this.getAllWallet);
     // this.router.get("/all-wallet-details/:walletId", this.getWalletDetails);
     // this.router.put("/delete", this.delete);

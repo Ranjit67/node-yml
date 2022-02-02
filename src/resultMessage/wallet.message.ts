@@ -6,6 +6,7 @@ const walletMessage = {
   },
   success: {
     created: "Wallet created successfully.",
+    updated: "Wallet updated successfully.",
   },
 };
 export default walletMessage;

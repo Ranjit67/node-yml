@@ -7,11 +7,13 @@ const userMessage = {
     invalidRole: "Invalid role You have enter.",
     invalidUserId: "Invalid user id.",
     userNotFound: "No user found.",
+    notDelete: "User is not deleted.",
   },
   success: {
     userBlocked: "User is blocked successfully.",
     userUnblocked: "User is active successfully.",
     userPendingToActive: "User request accepted Successfully.",
+    managerDelete: "Manager is deleted successfully.",
   },
 };
 export default userMessage;

@@ -6,7 +6,7 @@ import { WalletSchema, WalletHistorySchema } from "../models";
 class WalletController {
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const { userId, balance, spent } = req.body;
+      const { userId, balance, spent, transactionType } = req.body;
       if (!userId) throw new BadRequest(walletMessage.error.allField);
       const walletSave = await WalletSchema.create({
         user: userId,
@@ -18,7 +18,7 @@ class WalletController {
         user: userId,
       });
       walletHistory.transactionHistory.push({
-        type: "Credit",
+        type: transactionType,
         amount: balance ?? 0,
         title: "Add money",
         description: "Add money in wallet.",
@@ -46,6 +46,43 @@ class WalletController {
       if (!findWallet)
         return res.json({ success: { data: { balance: 0, spent: 0 } } });
       return res.json({ success: { data: findWallet } });
+    } catch (error) {
+      next(error);
+    }
+  }
+  public async walletUpdate(req: Request, res: Response, next: NextFunction) {
+    try {
+      const {
+        userId,
+        balance,
+        spent,
+        transactionAmount,
+        transactionType,
+        title,
+        description,
+      } = req.body;
+      if (!userId) throw new BadRequest(walletMessage.error.allField);
+      const findWalletAndUpdate = await WalletSchema.findOneAndUpdate(
+        { user: userId },
+        {
+          balance: balance,
+          spent: spent,
+        }
+      );
+      const updateWalletHistory = await WalletHistorySchema.findOneAndUpdate(
+        { user: userId },
+        {
+          $push: {
+            transactionHistory: {
+              type: transactionType,
+              amount: transactionAmount,
+              title: title,
+              description: description,
+            },
+          },
+        }
+      );
+      res.json({ success: { message: walletMessage.success.updated } });
     } catch (error) {
       next(error);
     }

@@ -11,6 +11,10 @@ import {
   EmailToken,
   SupportSchema,
   NotificationSchema,
+  RequestSchema,
+  VisitorSchema,
+  FavoriteSchema,
+  AssignArtistSchema,
 } from "../models";
 import {
   EmailService,
@@ -37,16 +41,49 @@ class DeleteOperation {
     const deleteNotification = await NotificationSchema.deleteMany({
       user: userData._id,
     });
-    // const notificationUpdate = await NotificationSchema.updateMany({
-    //   "notification.receiveFrom": userData._id,
-    // },{
-    //   $pull:{
-    //     notification:{
-    //       receiveFrom:userData._id
-    //     }
-    //   }
-    // })
-    return res.json({ success: { message: "Manager deleted successfully." } });
+    const notificationUpdate = await NotificationSchema.updateMany(
+      {
+        "notification.receiveFrom": userData._id,
+      },
+      {
+        $pull: {
+          notification: {
+            receiveFrom: { $eq: userData._id },
+          },
+        },
+      }
+    );
+    const removeFromRequest = await RequestSchema.deleteMany({
+      $or: [{ senderUser: userData._id }, { receiverUser: userData._id }],
+    });
+    const removeFromVisitors = await VisitorSchema.updateMany(
+      { "users.user": userData._id },
+      {
+        $pull: {
+          users: {
+            user: userData._id,
+          },
+        },
+      }
+    );
+    const removeFromFavorites = await FavoriteSchema.updateMany(
+      { "favorites.user": userData._id },
+      {
+        $pull: {
+          favorites: {
+            user: userData._id,
+          },
+        },
+      }
+    );
+    const removeAssignArtist = await AssignArtistSchema.findOneAndDelete({
+      manager: userData._id,
+    });
+    const deleteUser = await UserSchema.findByIdAndDelete(userData._id);
+    if (!deleteUser) throw new NotAcceptable(userMessage.error.notDelete);
+    return res.json({
+      success: { message: userMessage.success.managerDelete },
+    });
   }
 }
 class UserController extends DeleteOperation {
