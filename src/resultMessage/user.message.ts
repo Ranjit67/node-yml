@@ -14,6 +14,8 @@ const userMessage = {
     userUnblocked: "User is active successfully.",
     userPendingToActive: "User request accepted Successfully.",
     managerDelete: "Manager is deleted successfully.",
+    userDelete: "User is deleted successfully.",
+    artistDelete: "Artist is deleted successfully.",
   },
 };
 export default userMessage;

@@ -7,6 +7,8 @@ export interface PersonalizeModel extends Document {
   videoUrl: string;
   videoFile: string;
   timestamp: Date;
+  userCopy: Object;
+  artistCopy: Object;
 }
 
 const personalizeSchema = new Schema({
@@ -17,6 +19,12 @@ const personalizeSchema = new Schema({
   artist: {
     type: Schema.Types.ObjectId,
     ref: "User",
+  },
+  userCopy: {
+    type: Object,
+  },
+  artistCopy: {
+    type: Object,
   },
   booking: {
     type: Schema.Types.ObjectId,

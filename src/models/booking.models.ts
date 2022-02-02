@@ -48,6 +48,8 @@ export interface BookingModels extends Document {
   personalizedMsgDate: Date;
   isPayment: Boolean;
   cancelBy: cancelBy;
+  userCopy: ObjectId;
+  artistCopy: ObjectId;
 }
 const bookingSchema = new Schema({
   eventDate: {
@@ -86,9 +88,15 @@ const bookingSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
+  artistCopy: {
+    type: Object,
+  },
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
+  },
+  userCopy: {
+    type: Object,
   },
   personalizedVideo: {
     type: Schema.Types.ObjectId,

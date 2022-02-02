@@ -92,7 +92,7 @@ class BookingController {
         for (let index of [
           userId,
           artistId,
-          findArtistManager.map((item) => item.manager),
+          ...findArtistManager.map((item) => item.manager),
         ]) {
           const title =
             index === userId
@@ -141,7 +141,7 @@ class BookingController {
         for (let index of [
           userId,
           artistId,
-          findArtistManager.map((item) => item.manager),
+          ...findArtistManager.map((item) => item.manager),
         ]) {
           const title =
             index === userId

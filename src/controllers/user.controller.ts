@@ -15,6 +15,14 @@ import {
   VisitorSchema,
   FavoriteSchema,
   AssignArtistSchema,
+  WalletSchema,
+  WalletHistorySchema,
+  ReviewSchema,
+  BookingSchema,
+  PersonalizeVideoSchema,
+  PricingSchema,
+  ArtistBlockDateSchema,
+  ArtistMediaSchema,
 } from "../models";
 import {
   EmailService,
@@ -28,44 +36,117 @@ import { userMessage } from "../resultMessage";
 import { userBlockIcon, userUnblockIcon } from "../notificationIcon";
 
 class DeleteOperation {
-  artistDelete(res: Response, userData: any) {
-    return res.json({ success: { message: "Artist deleted successfully." } });
-  }
-  userDelete(res: Response, userData: any) {
-    return res.json({ success: { message: "User deleted successfully." } });
-  }
-  async managerDelete(res: Response, userData: any) {
-    const deleteSupport = await SupportSchema.deleteMany({
-      user: userData._id,
+  async artistDelete(res: Response, userData: any) {
+    // artist delete start
+    const removePricing = await PricingSchema.findOneAndDelete({
+      artist: userData._id,
     });
-    const deleteNotification = await NotificationSchema.deleteMany({
-      user: userData._id,
+    const deleteFavorites = await FavoriteSchema.findOneAndDelete({
+      artist: userData._id,
     });
-    const notificationUpdate = await NotificationSchema.updateMany(
-      {
-        "notification.receiveFrom": userData._id,
-      },
+    const deleteVisitor = await VisitorSchema.findOneAndDelete({
+      artist: userData._id,
+    });
+    const removeAssignArtist = await AssignArtistSchema.updateMany(
+      { "artists.artist": userData._id },
       {
         $pull: {
-          notification: {
-            receiveFrom: { $eq: userData._id },
+          artists: {
+            artist: userData._id,
           },
         },
       }
     );
-    const removeFromRequest = await RequestSchema.deleteMany({
-      $or: [{ senderUser: userData._id }, { receiverUser: userData._id }],
+    const deleteReview = await ReviewSchema.deleteMany({
+      artist: userData._id,
     });
-    const removeFromVisitors = await VisitorSchema.updateMany(
-      { "users.user": userData._id },
+    const deleteBlockData = await ArtistBlockDateSchema.findOneAndDelete({
+      artist: userData._id,
+    });
+    const bookingUpdate = await BookingSchema.updateMany(
+      { artist: userData._id },
+      {
+        artist: null,
+        artistCopy: userData,
+      }
+    );
+    const updatePersonalizeMessage = await PersonalizeVideoSchema.updateMany(
+      { artist: userData._id },
+      {
+        artistCopy: userData,
+        artist: null,
+      }
+    );
+    // media delete start
+    const findArtistMedia = await ArtistMediaSchema.findOne({
+      artist: userData._id,
+    });
+    if (findArtistMedia) {
+      const awsS3 = new AwsS3Services();
+      if (findArtistMedia?.artistVideos?.length) {
+        for (let element of findArtistMedia.artistVideos) {
+          await awsS3.delete(element.videoFile);
+        }
+      }
+      if (findArtistMedia?.artistPhotos?.length) {
+        for (let element of findArtistMedia.artistPhotos) {
+          await awsS3.delete(element.imageFile);
+        }
+      }
+      const deleteArtistMedia = await ArtistMediaSchema.findOneAndDelete({
+        artist: userData._id,
+      });
+    }
+    // media delete end
+    const deleteUser = await UserSchema.findByIdAndDelete(userData._id);
+    if (!deleteUser) throw new NotAcceptable(userMessage.error.notDelete);
+    // artist delete end
+    return res.json({ success: { message: userMessage.success.artistDelete } });
+  }
+  async userDelete(res: Response, userData: any) {
+    // user delete
+    const deleteWallet = await WalletSchema.findOneAndDelete({
+      user: userData._id,
+    });
+    const deleteWalletHistory = await WalletHistorySchema.findOneAndDelete({
+      user: userData._id,
+    });
+    const deleteReviews = await ReviewSchema.deleteMany({ user: userData._id });
+    const removeFromFavorites = await FavoriteSchema.updateMany(
+      { "favorites.user": userData._id },
       {
         $pull: {
-          users: {
+          favorites: {
             user: userData._id,
           },
         },
       }
     );
+    const updateBooking = await BookingSchema.updateMany(
+      {
+        user: userData._id,
+      },
+      {
+        user: null,
+        userCopy: userData,
+      }
+    );
+    const updatePersonalizeVideo = await PersonalizeVideoSchema.updateMany(
+      {
+        user: userData._id,
+      },
+      {
+        userCopy: userData,
+        user: null,
+      }
+    );
+    const deleteUser = await UserSchema.findByIdAndDelete(userData._id);
+    if (!deleteUser) throw new NotAcceptable(userMessage.error.notDelete);
+    // USER DELETE end
+    return res.json({ success: { message: userMessage.success.userDelete } });
+  }
+
+  async managerDelete(res: Response, userData: any) {
     const removeFromFavorites = await FavoriteSchema.updateMany(
       { "favorites.user": userData._id },
       {
@@ -93,6 +174,42 @@ class UserController extends DeleteOperation {
       const findUserData = await UserSchema.findById(id);
       if (!findUserData)
         throw new NotAcceptable(userMessage.error.userNotFound);
+      const deleteSupport = await SupportSchema.deleteMany({
+        user: findUserData._id,
+      });
+      const deleteNotification = await NotificationSchema.deleteMany({
+        user: findUserData._id,
+      });
+      const notificationUpdate = await NotificationSchema.updateMany(
+        {
+          "notification.receiveFrom": findUserData._id,
+        },
+        {
+          $pull: {
+            notification: {
+              receiveFrom: { $eq: findUserData._id },
+            },
+          },
+        }
+      );
+      const removeFromRequest = await RequestSchema.deleteMany({
+        $or: [
+          { senderUser: findUserData._id },
+          { receiverUser: findUserData._id },
+        ],
+      });
+      if (findUserData.role !== "artist") {
+        const removeFromVisitors = await VisitorSchema.updateMany(
+          { "users.user": findUserData._id },
+          {
+            $pull: {
+              users: {
+                user: findUserData._id,
+              },
+            },
+          }
+        );
+      }
       if (findUserData.role === "artist") {
         return super.artistDelete(res, findUserData);
       } else if (findUserData.role === "manager") {
