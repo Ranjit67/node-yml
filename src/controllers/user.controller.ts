@@ -336,10 +336,11 @@ class UserController extends DeleteOperation {
     try {
       const findAllUser = await UserSchema.find({ isDeleted: false })
         .populate("category")
+        .populate("subcategories")
         .populate("genres")
         .populate("languages")
         .populate("events")
-        .select("-password -__v");
+        .select("-password -__v -fcmToken -profileImageRef");
       res.json({
         success: {
           data: findAllUser,

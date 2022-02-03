@@ -32,6 +32,7 @@ import {
   VersionRouter,
   EmailTestRoute,
 } from "./routes";
+import { PaymentRoutes } from "./payment";
 import { SchedulerService } from "./services";
 import { BookingSchedule } from "./scheduleJob";
 
@@ -66,6 +67,7 @@ const object = {
     new PersonalizeVideoRoute(),
     new BookingRescheduleRoute(),
     new EmailTestRoute(),
+    new PaymentRoutes(),
   ],
   topMiddleware: [new TopMiddleware().allowCrossDomain],
   bottomMiddleware: [
