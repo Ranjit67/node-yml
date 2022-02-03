@@ -4,7 +4,6 @@ class EmailController {
   async sendEmail(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, subject, text } = req.body;
-      //   console.log(email, subject, text);
       const SendEmail = await new EmailService().emailSend(
         email,
         subject,

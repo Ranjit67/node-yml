@@ -85,44 +85,42 @@ class CategoryController {
       const { categoryId, categoryName } = req.body;
       if (!categoryId) throw new BadRequest(categoryMessage.error.allField);
       const iconPicture = req?.files?.icon;
+      const imagePicture = req?.files?.image;
+      let imageData: any;
+      let iconData: any;
       const findCategory = await CategorySchema.findById(categoryId);
       if (!findCategory) throw new NotFound(categoryMessage.error.dataNotFound);
-      if (iconPicture) {
-        const awsS3 = new AwsS3Services();
-        const deleteOlder = await awsS3.delete(findCategory?.iconFile);
-        const iconImage = await awsS3.upload(iconPicture);
-        if (!iconImage)
-          throw new NotAcceptable(categoryMessage.error.iconImageUploadFail);
-        const updateCategory = await CategorySchema.findByIdAndUpdate(
-          categoryId,
-          {
-            title: categoryName ?? findCategory.title,
-            iconUrl: iconImage?.Location,
-            iconFile: iconImage?.key,
-          },
-          { new: true }
-        );
-        if (!updateCategory)
-          throw new NotAcceptable(categoryMessage.error.notUpdated);
-        res.json({
-          success: {
-            message: categoryMessage.success.categoryUpdated,
-          },
-        });
-      } else {
-        const updateCategory = await CategorySchema.findByIdAndUpdate(
-          categoryId,
-          { title: categoryName },
-          { new: true }
-        );
-        if (!updateCategory)
-          throw new NotAcceptable(categoryMessage.error.notUpdated);
-        res.json({
-          success: {
-            message: categoryMessage.success.categoryUpdated,
-          },
-        });
+      const awsS3 = new AwsS3Services();
+      if (imagePicture) {
+        const deleteOlder = await awsS3.delete(findCategory?.imageFile);
+        imageData = await awsS3.upload(imagePicture);
+        if (!imageData)
+          throw new NotAcceptable(categoryMessage.error.imageUploadFail);
       }
+      if (iconPicture) {
+        const deleteOlder = await awsS3.delete(findCategory?.iconFile);
+        iconData = await awsS3.upload(iconPicture);
+        if (!iconData)
+          throw new NotAcceptable(categoryMessage.error.iconImageUploadFail);
+      }
+      const updateCategory = await CategorySchema.findByIdAndUpdate(
+        categoryId,
+        {
+          title: categoryName,
+          imageFile: imageData?.key ?? findCategory?.imageFile,
+          imageUrl: imageData?.Location ?? findCategory?.imageUrl,
+          iconFile: iconData?.key ?? findCategory?.iconFile,
+          iconUrl: iconData?.Location ?? findCategory?.iconUrl,
+        },
+        { new: true }
+      );
+      if (!updateCategory)
+        throw new NotAcceptable(categoryMessage.error.notUpdated);
+      res.json({
+        success: {
+          message: categoryMessage.success.categoryUpdated,
+        },
+      });
     } catch (error) {
       next(error);
     }

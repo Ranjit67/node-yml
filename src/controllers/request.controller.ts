@@ -51,6 +51,7 @@ class RequestController {
       if (!receiverUserId) throw new BadRequest(requestMessage.error.allField);
       const requestReceiver = await RequestSchema.find({
         receiverUser: receiverUserId,
+        deletedUsers: { $ne: receiverUserId },
       })
         .populate("senderUser")
         .populate("booking")
@@ -69,6 +70,7 @@ class RequestController {
         const requestArtistReceiver = await RequestSchema.find({
           receiverUser: { $in: mapArtist },
           requestType: { $ne: "manager" },
+          deletedUsers: { $ne: receiverUserId },
         })
           .populate("senderUser")
           .populate("receiverUser");
@@ -104,6 +106,7 @@ class RequestController {
       if (!senderUserId) throw new BadRequest(requestMessage.error.allField);
       const requestSender = await RequestSchema.find({
         senderUser: senderUserId,
+        deletedUsers: { $ne: senderUserId },
       })
         .populate("receiverUser")
         .populate("booking")
@@ -349,6 +352,30 @@ class RequestController {
       res.json({
         success: {
           message: requestMessage.success.managerRequestCreate,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  public async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { requestIds, userId } = req.body;
+      if (!Array.isArray(requestIds))
+        throw new BadRequest(requestMessage.error.requestIdIsArray);
+      const updateRequest = await RequestSchema.updateMany(
+        { _id: { $in: requestIds } },
+        {
+          $addToSet: {
+            deletedUsers: userId,
+          },
+        }
+      );
+      if (updateRequest.matchedCount === 0)
+        throw new NotAcceptable(requestMessage.error.requestNotDeleted);
+      res.json({
+        success: {
+          message: requestMessage.success.requestDeleted,
         },
       });
     } catch (error) {
