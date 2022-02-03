@@ -1,1 +1,6 @@
-export { paymentBaseUrl, merchantID, merchantKey } from "./payment.config";
+export {
+  paymentBaseUrl,
+  passphrase,
+  merchantID,
+  merchantKey,
+} from "./payment.config";

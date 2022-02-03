@@ -1,12 +1,18 @@
-import { paymentBaseUrl, merchantID, merchantKey } from "../config";
+import { paymentBaseUrl, merchantID, merchantKey, passphrase } from "../config";
 import { Request, Response, NextFunction } from "express";
 import axios from "axios";
-
+import md5 from "md5";
+// console.log(
+//   "PaymentRoutes",
+//   md5("merchant-id=10000100&passphrase=​passphrase&..&version=v1")
+// );
 class PaymentController {
   async makePayment(req: Request, res: Response, next: NextFunction) {
     try {
       const { return_url, cancel_url, notify_url, amount, item_name } =
         req.body;
+      //   const string = `email_address=`
+      const signature = `merchant-id=${merchantID}&passphrase=​passphrase&..&version=v1`;
       const body = {
         merchant_id: merchantID,
         merchant_key: merchantKey,
