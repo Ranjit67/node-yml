@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { BadRequest, NotAcceptable, NotFound } from "http-errors";
 import { artistMediaMessage } from "../resultMessage";
 import { AwsS3Services } from "../services";
-import { ArtistMediaSchema } from "../models";
+import { ArtistMediaSchema, UserSchema } from "../models";
 
 class ArtistMediaController {
   public async videoCreate(req: any, res: Response, next: NextFunction) {
@@ -59,6 +59,12 @@ class ArtistMediaController {
         });
         if (!saveData)
           throw new NotAcceptable(artistMediaMessage.error.notCreated);
+        // user update
+        const userUpdate = await UserSchema.findByIdAndUpdate(artistId, {
+          artistMedia: saveData._id,
+        });
+
+        // user update end
         res.json({
           success: {
             message: artistMediaMessage.success.artistMediaUpdated,
@@ -86,6 +92,11 @@ class ArtistMediaController {
         });
         if (!saveData)
           throw new NotAcceptable(artistMediaMessage.error.notCreated);
+        // user update
+        const userUpdate = await UserSchema.findByIdAndUpdate(artistId, {
+          artistMedia: saveData._id,
+        });
+        // user update end
         return res.json({
           success: {
             message: artistMediaMessage.success.artistMediaUpdated,
@@ -134,6 +145,11 @@ class ArtistMediaController {
       });
       if (!saveData)
         throw new NotAcceptable(artistMediaMessage.error.photoNotCreated);
+      // user update
+      const userUpdate = await UserSchema.findByIdAndUpdate(artistId, {
+        artistMedia: saveData._id,
+      });
+      // user update end
       return res.json({
         success: {
           message: artistMediaMessage.success.artistPhotoUpdated,

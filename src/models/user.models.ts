@@ -3,7 +3,7 @@ import { userStatus, userRole, gender } from "../types";
 
 export interface userModel extends Document {
   profileImageRef: string;
-  artistPastEvent: ObjectId;
+  artistMedia: ObjectId;
   events: ObjectId[];
   //
   category: ObjectId;
@@ -34,7 +34,10 @@ export interface userModel extends Document {
 
 const userSchema = new Schema({
   profileImageRef: String,
-  // artistPastEvent: ObjectId;
+  artistMedia: {
+    type: Schema.Types.ObjectId,
+    ref: "ArtistMedia",
+  },
   events: [
     {
       type: Schema.Types.ObjectId,

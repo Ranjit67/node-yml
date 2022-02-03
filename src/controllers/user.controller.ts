@@ -340,6 +340,10 @@ class UserController extends DeleteOperation {
         .populate("genres")
         .populate("languages")
         .populate("events")
+        .populate({
+          path: "artistMedia",
+          select: "artistVideos artistPhotos youtubeVideos",
+        })
         .select("-password -__v -fcmToken -profileImageRef");
       res.json({
         success: {
@@ -414,6 +418,7 @@ class UserController extends DeleteOperation {
         inTopTrending,
         events,
         bio,
+        artistMedia,
       } = req.body;
       const { id } = req.params;
 
@@ -453,6 +458,7 @@ class UserController extends DeleteOperation {
         inTopSearches: inTopSearches ?? findUser.inTopSearches,
         inTopTrending: inTopTrending ?? findUser.inTopTrending,
         bio: bio ?? findUser.bio,
+        artistMedia: artistMedia ?? findUser.artistMedia,
       });
       if (!updateUser) throw new GatewayTimeout("User is not updated.");
       res.json({
