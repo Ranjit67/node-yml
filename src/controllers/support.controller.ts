@@ -9,12 +9,32 @@ import { newSupportMessageAddIcon } from "../notificationIcon";
 class SupportController {
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const { userId, message } = req.body;
-      if (!userId || !message)
+      const {
+        message,
+        firstName,
+        lastName,
+        phoneNumber,
+        countryCode,
+        email,
+        userId,
+      } = req.body;
+      if (
+        !firstName ||
+        !message ||
+        !lastName ||
+        !phoneNumber ||
+        !countryCode ||
+        !email
+      )
         throw new BadRequest(supportMessage.error.allField);
       const saveSupport = await SupportSchema.create({
-        user: userId,
+        firstName,
+        lastName,
+        phoneNumber,
+        countryCode,
+        email,
         message,
+        user: userId,
       });
       if (!saveSupport)
         throw new NotAcceptable(supportMessage.error.dataNotAdded);
@@ -73,7 +93,7 @@ class SupportController {
       if (!supportId) throw new BadRequest(supportMessage.error.allField);
       const support = await SupportSchema.findById(supportId).populate({
         path: "user",
-        select: "-password",
+        select: "-password -fcmToken -__v",
       });
       if (!support) throw new NotAcceptable(supportMessage.error.dataNotFound);
       res.json({ success: { data: support } });
