@@ -224,7 +224,31 @@ class BookingController {
       const bookingListUser = await BookingSchema.find({
         user: userId,
       })
-        .populate("artist")
+        .populate({
+          path: "artist",
+          populate: [
+            {
+              path: "category",
+              model: "Category",
+            },
+            {
+              path: "subcategories",
+              model: "SubCategory",
+            },
+            {
+              path: "genres",
+              model: "Genres",
+            },
+            {
+              path: "languages",
+              model: "Language",
+            },
+            {
+              path: "events",
+              model: "Event",
+            },
+          ],
+        })
         .populate("eventType")
         .populate("serviceType")
         .populate({
