@@ -9,9 +9,9 @@ const categoryMessage = {
     imageUploadFail: "Image upload fail.",
   },
   success: {
-    categoryCreates: "Category created Successfully.",
-    categoryUpdated: "Category Updated Successfully.",
-    categoryDeleted: "Categories Deleted Successfully.",
+    categoryCreates: "Category created successfully.",
+    categoryUpdated: "Category updated successfully.",
+    categoryDeleted: "Categories deleted successfully.",
   },
 };
 export default categoryMessage;
