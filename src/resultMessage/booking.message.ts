@@ -22,6 +22,7 @@ const bookingMessage = {
       "Booking Cancel Successfully and Amount will credited in your wallet shortly.",
     bookingCancel:
       "Booking Cancel Successfully.Amount will be credited in your bank account shortly.",
+    removeBooking: "Bookings deleted successfully.",
   },
 };
 export default bookingMessage;

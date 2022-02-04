@@ -35,6 +35,10 @@ export interface BookingModels extends Document {
   bookingType: bookingType;
   bookingReschedule: ObjectId;
   bookingPrice: number;
+  bankAmount: number;
+  walletAmount: number;
+  promoCodeAmount: number;
+  promoCodeData: Object;
   status: bookingStatus;
   artist: ObjectId;
   user: ObjectId;
@@ -50,6 +54,7 @@ export interface BookingModels extends Document {
   cancelBy: cancelBy;
   userCopy: ObjectId;
   artistCopy: ObjectId;
+  isDeletesId: ObjectId[];
 }
 const bookingSchema = new Schema({
   eventDate: {
@@ -79,6 +84,18 @@ const bookingSchema = new Schema({
   },
   bookingPrice: {
     type: Number,
+  },
+  bankAmount: {
+    type: Number,
+  },
+  walletAmount: {
+    type: Number,
+  },
+  promoCodeAmount: {
+    type: Number,
+  },
+  promoCodeData: {
+    type: Object,
   },
   status: {
     enum: ["pending", "confirm", "cancel", "past"],
@@ -133,6 +150,12 @@ const bookingSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  isDeletesId: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
   cancelBy: {
     enum: ["artist", "user"],
     type: String,

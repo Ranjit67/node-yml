@@ -15,6 +15,7 @@ import {
   WalletHistorySchema,
   NotificationSchema,
   UserSchema,
+  PromoCodeSchema,
 } from "../models";
 import { bookingMessage } from "../resultMessage";
 import { NotificationServices } from "../services";
@@ -50,7 +51,15 @@ class BookingController {
         personalizedMsgDate,
         isRequestSend,
         requestDetails,
+        bankAmount,
+        walletAmount,
+        promoCodeAmount,
+        promoCodeId,
       } = req.body;
+      let promoCodeData;
+      if (promoCodeId) {
+        promoCodeData = await PromoCodeSchema.findOne({ _id: promoCodeId });
+      }
       const createBooking = await BookingSchema.create({
         eventDate: {
           start: eventStartDate,
@@ -70,6 +79,10 @@ class BookingController {
         eventType: eventId,
         personalizedMsgDate,
         timestamp: new Date(),
+        promoCodeData,
+        bankAmount,
+        walletAmount,
+        promoCodeAmount,
         bookingType: personalizedMessage ? "personalizedMessage" : "other",
       });
       if (!createBooking)
@@ -195,6 +208,7 @@ class BookingController {
       const { artistId } = req.params;
       const bookingListArtist = await BookingSchema.find({
         artist: artistId,
+        isDeletesId: { $ne: artistId },
       })
         .populate("user")
         .populate("eventType")
@@ -223,6 +237,7 @@ class BookingController {
       const { userId } = req.params;
       const bookingListUser = await BookingSchema.find({
         user: userId,
+        isDeletesId: { $ne: userId },
       })
         .populate({
           path: "artist",
@@ -268,7 +283,15 @@ class BookingController {
 
   async bookingPayment(req: Request, res: Response, next: NextFunction) {
     try {
-      const { bookingId, paymentAmount, requestDetails } = req.body;
+      const {
+        bookingId,
+        paymentAmount,
+        requestDetails,
+        bankAmount,
+        walletAmount,
+        promoCodeAmount,
+        promoCodeId,
+      } = req.body;
       const findBooking: any = await BookingSchema.findById(bookingId)
         .populate({
           path: "user",
@@ -276,12 +299,20 @@ class BookingController {
         .populate({
           path: "artist",
         });
+      let promoCodeData;
+      if (promoCodeId) {
+        promoCodeData = await PromoCodeSchema.findById(promoCodeId);
+      }
       if (findBooking?.bookingPrice !== +paymentAmount)
         throw new NotAcceptable(bookingMessage.error.bookingPriceNotAccept);
       const bookingStatusUpdate = await BookingSchema.findByIdAndUpdate(
         bookingId,
         {
           isPayment: true,
+          promoCodeData: promoCodeData ?? {},
+          bankAmount: bankAmount ?? findBooking.bookingPrice,
+          walletAmount: walletAmount ?? 0,
+          promoCodeAmount: promoCodeAmount ?? 0,
         }
       );
       if (!bookingStatusUpdate)
@@ -815,6 +846,28 @@ class BookingController {
       res.json({
         success: {
           data: allBooking,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async removeBooking(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { userId, bookingsIds } = req.body;
+      if (!userId || !Array.isArray(bookingsIds))
+        throw new BadRequest(bookingMessage.error.allField);
+      const updateBookings = await BookingSchema.updateMany(
+        { _id: { $in: bookingsIds } },
+        {
+          $addToSet: {
+            isDeletesId: userId,
+          },
+        }
+      );
+      res.json({
+        success: {
+          message: bookingMessage.success.removeBooking,
         },
       });
     } catch (error) {
