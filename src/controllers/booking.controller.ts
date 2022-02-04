@@ -266,6 +266,7 @@ class BookingController {
         })
         .populate("eventType")
         .populate("serviceType")
+        .populate("bookingReschedule")
         .populate({
           path: "personalizedVideo",
           select: "-__v -booking -artist -user -booking -videoFile ",
@@ -880,7 +881,40 @@ class BookingController {
   async bookingDetails(req: Request, res: Response, next: NextFunction) {
     try {
       const { bookingId } = req.params;
-      const bookingDetails = await BookingSchema.findById(bookingId);
+      const bookingDetails = await BookingSchema.findById(bookingId)
+        .populate({
+          path: "artist",
+          populate: [
+            {
+              path: "category",
+              model: "Category",
+            },
+            {
+              path: "subcategories",
+              model: "SubCategory",
+            },
+            {
+              path: "genres",
+              model: "Genres",
+            },
+            {
+              path: "languages",
+              model: "Language",
+            },
+            {
+              path: "events",
+              model: "Event",
+            },
+          ],
+        })
+        .populate("eventType")
+        .populate("serviceType")
+        .populate("bookingReschedule")
+        .populate("user")
+        .populate({
+          path: "personalizedVideo",
+          select: "-__v -booking -artist -user -booking -videoFile ",
+        });
       res.json({
         success: {
           data: bookingDetails,

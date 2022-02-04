@@ -208,6 +208,7 @@ class BookingRescheduleController {
       next(error);
     }
   }
+
   public async ReschedulePermission(
     req: Request,
     res: Response,
@@ -235,6 +236,7 @@ class BookingRescheduleController {
               start: findRequest.reschedule?.rescheduleDate?.start ?? null,
               end: findRequest.reschedule?.rescheduleDate?.ending ?? null,
             },
+            bookingReschedule: null,
             personalizedMsgDate: findRequest.personalizedMsgDate ?? null,
           }
         );
@@ -311,6 +313,12 @@ class BookingRescheduleController {
       } else {
         //    permission rejected
         // request status reject only
+        const updateBooking = await BookingSchema.findByIdAndUpdate(
+          findRequest.reschedule?.booking?.toString(),
+          {
+            bookingReschedule: null,
+          }
+        );
         const updateRequest = await RequestSchema.findByIdAndUpdate(requestId, {
           status: "reject",
         });
