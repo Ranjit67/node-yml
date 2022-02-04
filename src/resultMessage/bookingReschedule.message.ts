@@ -2,6 +2,8 @@ const bookingRescheduleMessage = {
   error: {
     bookingNotFound: "No booking is found.",
     notCreated: "Booking reschedule is not created.",
+    bookingRescheduleAlreadyExist:
+      "Your booking reschedule is already pending.",
     //   requestNotCreated: "Request is Not crated.",
     //   bookingPriceNotAccept: "Booking price Not acceptable.",
     //   statusNotUpdate: "Something went wrong, Booking is not confirm.",
@@ -12,6 +14,7 @@ const bookingRescheduleMessage = {
     createdArtist: "Booking reschedule is request send to artist successfully.",
     accepted: "Booking reschedule is accepted successfully.",
     rejected: "Booking reschedule is rejected successfully.",
+
     //   artistBookingList: "Artist Booking List.",
     //   userBookingList: "User Booking List.",
     //   bookingCreated: "Booking is created successfully.",

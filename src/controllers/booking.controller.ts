@@ -877,6 +877,19 @@ class BookingController {
       next(error);
     }
   }
+  async bookingDetails(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { bookingId } = req.params;
+      const bookingDetails = await BookingSchema.findById(bookingId);
+      res.json({
+        success: {
+          data: bookingDetails,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default BookingController;

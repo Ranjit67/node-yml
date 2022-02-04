@@ -7,10 +7,6 @@ class PaymentRoutes {
   private paymentController = new PaymentController();
 
   constructor() {
-    // console.log(
-    //   "PaymentRoutes",
-    //   md5("merchant-id=10000100&passphrase=​passphrase&..&version=v1")
-    // );
     this.routes();
   }
   routes() {

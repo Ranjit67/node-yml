@@ -32,6 +32,10 @@ class BookingRouter {
       "/booking-cancel-bank",
       this.bookingController.bookingCancelBankAccount
     );
+    this.router.get(
+      "/booking-details/:bookingId",
+      this.bookingController.bookingDetails
+    );
     this.router.put("/delete", this.bookingController.removeBooking);
     this.router.get("/booking-test", this.bookingController.bookingTest);
   }

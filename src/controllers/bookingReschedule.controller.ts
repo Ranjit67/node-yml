@@ -33,6 +33,13 @@ class BookingRescheduleController {
         rescheduleBy,
         requestDetails,
       } = req.body;
+      const checkRescheduledBooking = await BookingRescheduleSchema.findOne({
+        booking: bookingId,
+      });
+      if (checkRescheduledBooking)
+        throw new Conflict(
+          bookingRescheduleMessage.error.bookingRescheduleAlreadyExist
+        );
       const findBooking: any = await BookingSchema.findById(bookingId)
         .populate("artist")
         .populate("user");
@@ -50,7 +57,9 @@ class BookingRescheduleController {
         personalizedMsgDate,
         timestamp: new Date(),
       });
-
+      const updateBooking = await BookingSchema.findByIdAndUpdate(bookingId, {
+        bookingReschedule: createReschedule._id,
+      });
       const findArtistManager = await AssignArtistSchema.find({
         "artists.artist": findBooking.artist._id.toString(),
       }).select("manager -_id");
