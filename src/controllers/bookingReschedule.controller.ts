@@ -138,11 +138,11 @@ class BookingRescheduleController {
             bookingRescheduleMessage.error.notCreated
           );
         // notification start
-
+        // console.log("hit-1");
         for (let index of [
           findBooking.user._id.toString(),
           findBooking.artist._id.toString(),
-          findArtistManager.map((item) => item.manager),
+          ...findArtistManager.map((item) => item.manager),
         ]) {
           const title =
             index === findBooking.user._id.toString()
@@ -194,6 +194,8 @@ class BookingRescheduleController {
         // booking reschedule by user
       }
     } catch (error) {
+      // console.log(error);
+      // res.json({ data: error });
       next(error);
     }
   }
