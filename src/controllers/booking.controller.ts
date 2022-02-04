@@ -473,6 +473,7 @@ class BookingController {
         refundAmount,
         walletHistoryTitle,
         walletHistoryDescription,
+        OtherDetails,
         cancelBy,
       } = req.body;
       if (
@@ -498,6 +499,7 @@ class BookingController {
         {
           status: "cancel",
           cancelBy: cancelBy,
+          OtherDetails,
         }
       );
       const firstWalletUpdate = await WalletSchema.updateOne(
@@ -719,7 +721,7 @@ class BookingController {
     next: NextFunction
   ) {
     try {
-      const { bookingId, amount, cancelBy } = req.body;
+      const { bookingId, amount, cancelBy, OtherDetails } = req.body;
       // cancelBy- user/artist
       if (!bookingId || !amount || !cancelBy)
         throw new BadRequest(bookingMessage.error.allField);
@@ -734,6 +736,7 @@ class BookingController {
         {
           status: "cancel",
           cancelBy: cancelBy,
+          OtherDetails,
         }
       );
       if (!changeBookingStatus)
