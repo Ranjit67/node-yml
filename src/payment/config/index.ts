@@ -3,4 +3,5 @@ export {
   passphrase,
   merchantID,
   merchantKey,
+  version,
 } from "./payment.config";

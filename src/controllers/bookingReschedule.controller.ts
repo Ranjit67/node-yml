@@ -29,6 +29,7 @@ class BookingRescheduleController {
         bookingId,
         rescheduleStartDate,
         rescheduleEndDate,
+        personalizedMsgDate,
         rescheduleBy,
         requestDetails,
       } = req.body;
@@ -46,6 +47,7 @@ class BookingRescheduleController {
           start: rescheduleStartDate,
           ending: rescheduleEndDate,
         },
+        personalizedMsgDate,
         timestamp: new Date(),
       });
 

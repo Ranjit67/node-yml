@@ -1,4 +1,10 @@
-import { paymentBaseUrl, merchantID, merchantKey, passphrase } from "../config";
+import {
+  paymentBaseUrl,
+  merchantID,
+  merchantKey,
+  passphrase,
+  version,
+} from "../config";
 import { Request, Response, NextFunction } from "express";
 import axios from "axios";
 import md5 from "md5";
@@ -9,26 +15,24 @@ import md5 from "md5";
 class PaymentController {
   async makePayment(req: Request, res: Response, next: NextFunction) {
     try {
-      const { return_url, cancel_url, notify_url, amount, item_name } =
-        req.body;
-      //   const string = `email_address=`
-      const signature = `merchant-id=${merchantID}&passphrase=​passphrase&..&version=v1`;
-      const body = {
-        merchant_id: merchantID,
-        merchant_key: merchantKey,
-        // return_url,
-        // cancel_url,
-        // notify_url,
-        amount,
-        item_name,
-      };
-      const headers = {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      };
-      const result = await axios.post(paymentBaseUrl + "/eng/process", body, {
-        headers,
-      });
+      const signature = md5(
+        `merchant-id=${`19020314`}&passphrase=${passphrase}&..&version=${"v1"}`
+      );
+      const token = new Date().getTime();
+      console.log("signature", signature);
+
+      const result = await axios.get(
+        `https://api.payfast.co.za/ping?testing=true`,
+
+        {
+          headers: {
+            "merchant-id": "19020314",
+            version: "v1",
+            timestamp: new Date().toISOString(),
+            signature,
+          },
+        }
+      );
       console.log(result);
       res.json({
         success: {
@@ -36,8 +40,9 @@ class PaymentController {
         },
       });
     } catch (error) {
-      console.log(error);
-      next(error);
+      res.status(400).json({
+        error,
+      });
     }
   }
 }
