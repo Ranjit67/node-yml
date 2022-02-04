@@ -216,13 +216,15 @@ class BookingRescheduleController {
         const updateRequest = await RequestSchema.findByIdAndUpdate(requestId, {
           status: "accept",
         });
+        // findRequest.personalizedMsgDate
         const bookingUpdate = await BookingSchema.findByIdAndUpdate(
           findRequest.reschedule?.booking.toString(),
           {
             eventDate: {
-              start: findRequest.reschedule?.rescheduleDate.start,
-              end: findRequest.reschedule?.rescheduleDate.ending,
+              start: findRequest.reschedule?.rescheduleDate?.start ?? null,
+              end: findRequest.reschedule?.rescheduleDate?.ending ?? null,
             },
+            personalizedMsgDate: findRequest.personalizedMsgDate ?? null,
           }
         );
         // delete reschedule
