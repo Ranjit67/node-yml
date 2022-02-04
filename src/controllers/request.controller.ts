@@ -197,7 +197,7 @@ class RequestController {
     next: NextFunction
   ) {
     try {
-      const { isAccept, requestId } = req.body;
+      const { isAccept, requestId, reason } = req.body;
       if (!requestId) throw new BadRequest(requestMessage.error.allField);
       const findRequest: any = await RequestSchema.findById(requestId)
         .populate("senderUser")
@@ -251,6 +251,7 @@ class RequestController {
 
         const updateRequest = await RequestSchema.findByIdAndUpdate(requestId, {
           status: "reject",
+          reason,
         });
         const bookingUpdate = await BookingSchema.findByIdAndUpdate(
           findRequest.booking.toString(),
