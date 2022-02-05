@@ -25,8 +25,6 @@ class NotificationServices {
   ): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        console.log(sendTo);
-
         const firstUpdateNotification = await NotificationSchema.updateOne(
           { user: sendTo },
           {

@@ -84,7 +84,7 @@ class BookingRescheduleController {
         for (let index of [
           findBooking.user._id.toString(),
           findBooking.artist._id.toString(),
-          findArtistManager.map((item) => item.manager),
+          ...findArtistManager.map((item) => item.manager),
         ]) {
           const title =
             index === findBooking.artist._id.toString()
