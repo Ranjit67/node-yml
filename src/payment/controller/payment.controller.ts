@@ -32,7 +32,7 @@ class PaymentController {
       //   notify_url: "www.instagram.com",
       //   name_first: "Ranok",
       //   name_last: "Saha",
-      //   email_address: "sahooranjit519@gmail.com",
+      //   email_address: "sahooranjit5B19@gmail.com",
       //   m_payment_id: "123456789",
       //   amount: 11,
       //   item_name: "mona brata",

@@ -36,9 +36,12 @@ class EmailTokenController {
       if (!userId) throw new NotFound("User is not found.");
       const hashedPassword = await new PasswordHasServices().hash(password);
       const findUser: any = await UserSchema.findById(userId);
-      await EmailToken.findOneAndDelete({
+
+      const deleteData = await EmailToken.findOneAndDelete({
         userRef: userId,
       });
+      if (!deleteData) throw new NotFound("Your token has expired.");
+      // console.log("deleteData", deleteData);
       if (findUser.role === "user") {
         const updatePassword = await UserSchema.findByIdAndUpdate(userId, {
           password: hashedPassword,
