@@ -4,6 +4,7 @@ const bookingRescheduleMessage = {
     notCreated: "Booking reschedule is not created.",
     bookingRescheduleAlreadyExist:
       "Your booking reschedule is already pending.",
+    actionDenied: "Request action has attempted, So you can not attempt again.",
     //   requestNotCreated: "Request is Not crated.",
     //   bookingPriceNotAccept: "Booking price Not acceptable.",
     //   statusNotUpdate: "Something went wrong, Booking is not confirm.",
