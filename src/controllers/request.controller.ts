@@ -54,7 +54,23 @@ class RequestController {
         deletedUsers: { $ne: receiverUserId },
       })
         .populate("senderUser")
-        .populate("booking")
+        .populate({
+          path: "booking",
+          populate: [
+            {
+              path: "serviceType",
+              module: "Service",
+            },
+            {
+              path: "personalizedVideo",
+              module: "PersonalizeVideo",
+            },
+            {
+              path: "eventType",
+              module: "Event",
+            },
+          ],
+        })
         .populate({
           path: "reschedule",
           select: "rescheduleDate rescheduleBy",
@@ -109,7 +125,23 @@ class RequestController {
         deletedUsers: { $ne: senderUserId },
       })
         .populate("receiverUser")
-        .populate("booking")
+        .populate({
+          path: "booking",
+          populate: [
+            {
+              path: "serviceType",
+              module: "Service",
+            },
+            {
+              path: "personalizedVideo",
+              module: "PersonalizeVideo",
+            },
+            {
+              path: "eventType",
+              module: "Event",
+            },
+          ],
+        })
         .populate({
           path: "reschedule",
           select: "rescheduleDate rescheduleBy",
