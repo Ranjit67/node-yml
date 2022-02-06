@@ -3,7 +3,7 @@ import { ObjectId, Schema, Document, model } from "mongoose";
 export interface VisitorModel extends Document {
   users: [
     {
-      spentTime: string;
+      spentTime: number;
       lastTimeVisit: Date;
       user: ObjectId;
       count: number;
@@ -20,8 +20,8 @@ const visitorSchema = new Schema({
         ref: "User",
       },
       spentTime: {
-        type: String,
-        default: "0 min",
+        type: Number,
+        default: 1,
       },
       lastTimeVisit: {
         type: Date,

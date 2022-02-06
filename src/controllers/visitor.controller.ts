@@ -43,16 +43,18 @@ class VisitorController {
         !visitorSecondUpdate.modifiedCount
       )
         throw new NotAcceptable(visitorMessage.error.notUpdated);
-      const visitor = new VisitorSchema({
+
+      const saveVisitor = await VisitorSchema.create({
         artist: artistId,
+        users: [
+          {
+            user: userId,
+            spentTime,
+            lastTimeVisit: new Date(),
+            count: 1,
+          },
+        ],
       });
-      visitor.users.push({
-        user: userId,
-        spentTime,
-        lastTimeVisit: new Date(),
-        count: 1,
-      });
-      const saveVisitor = await visitor.save();
       if (!saveVisitor)
         throw new NotAcceptable(visitorMessage.error.notUpdated);
       res.json({ success: { message: visitorMessage.success.visitorAdded } });

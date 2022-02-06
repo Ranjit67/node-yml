@@ -33,7 +33,7 @@ const bookingRescheduleSchema = new Schema({
     start: {
       type: Date,
     },
-    ending: {
+    end: {
       type: Date,
     },
   },

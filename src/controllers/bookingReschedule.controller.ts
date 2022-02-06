@@ -203,8 +203,6 @@ class BookingRescheduleController {
         // booking reschedule by user
       }
     } catch (error) {
-      // console.log(error);
-      // res.json({ data: error });
       next(error);
     }
   }
@@ -391,6 +389,15 @@ class BookingRescheduleController {
     } catch (error) {
       next(error);
     }
+  }
+  async updateBooking(req: Request, res: Response, next: NextFunction) {
+    const { rescheduleEndDate, id } = req.body;
+    const update = await BookingRescheduleSchema.findByIdAndUpdate(id, {
+      rescheduleDate: {
+        end: rescheduleEndDate,
+      },
+    });
+    res.json({ data: "Update Successfully" });
   }
 }
 export default BookingRescheduleController;
