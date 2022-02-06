@@ -52,7 +52,7 @@ class BookingRescheduleController {
         booking: findBooking._id.toString(),
         rescheduleDate: {
           start: rescheduleStartDate,
-          ending: rescheduleEndDate,
+          end: rescheduleEndDate,
         },
         personalizedMsgDate,
         timestamp: new Date(),
@@ -234,7 +234,7 @@ class BookingRescheduleController {
           {
             eventDate: {
               start: findRequest.reschedule?.rescheduleDate?.start ?? null,
-              end: findRequest.reschedule?.rescheduleDate?.ending ?? null,
+              end: findRequest.reschedule?.rescheduleDate?.end ?? null,
             },
             bookingReschedule: null,
             personalizedMsgDate: findRequest.personalizedMsgDate ?? null,

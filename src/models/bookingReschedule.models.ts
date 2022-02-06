@@ -7,7 +7,7 @@ export interface BookingReschedule extends Document {
   booking: ObjectId;
   rescheduleDate: {
     start: Date;
-    ending: Date;
+    end: Date;
   };
   personalizedMsgDate: Date;
   timestamp: Date;

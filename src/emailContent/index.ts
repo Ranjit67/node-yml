@@ -3,16 +3,22 @@ interface emailStructureObject {
   text: string;
 }
 class EmailContent {
-  public emailOnSelfVerification(token: string): emailStructureObject {
+  public emailOnSelfVerification(
+    baseUrl: string,
+    token: string
+  ): emailStructureObject {
     return {
       subject: `Email verification.`,
-      text: `Go to the dome url http://localhost:3000/verifyEmail/${token}`,
+      text: `Go to the dome url ${baseUrl}/password-reset/${token}`,
     };
   }
-  public emailForgetPassword(token: string): emailStructureObject {
+  public emailForgetPassword(
+    baseUrl: string,
+    token: string
+  ): emailStructureObject {
     return {
       subject: `Forget Password.`,
-      text: `Go to the dome url http://localhost:3000/verifyEmail/${token}`,
+      text: `Go to the dome url ${baseUrl}/verifyEmail/${token}`,
     };
   }
   public emailResetPassword(token: string): emailStructureObject {

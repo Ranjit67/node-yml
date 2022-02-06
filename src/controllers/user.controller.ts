@@ -237,6 +237,7 @@ class UserController extends DeleteOperation {
         yearsOfExperience,
         languagesId,
         Dob,
+        baseUrl,
       } = req.body;
       const check = await UserSchema.findOne({ email });
       if (check) throw new Conflict(userMessage.error.duplicateEmail);
@@ -276,7 +277,10 @@ class UserController extends DeleteOperation {
         });
         if (!saveEmailToken)
           throw new InternalServerError("Email token is not created.");
-        const emailContent = new EmailContent().emailOnSelfVerification(token);
+        const emailContent = new EmailContent().emailOnSelfVerification(
+          baseUrl,
+          token
+        );
         const SendEmail = await new EmailService().emailSend(
           userSave?.email,
           emailContent.subject,
@@ -314,7 +318,10 @@ class UserController extends DeleteOperation {
         });
         if (!saveEmailToken)
           throw new InternalServerError("Email token is not created.");
-        const emailContent = new EmailContent().emailOnSelfVerification(token);
+        const emailContent = new EmailContent().emailOnSelfVerification(
+          baseUrl,
+          token
+        );
         const SendEmail = await new EmailService().emailSend(
           userSave?.email,
           emailContent.subject,
@@ -574,7 +581,7 @@ class UserController extends DeleteOperation {
   public async setPassword(req: Request, res: Response, next: NextFunction) {
     try {
       const { stringData } = req.params;
-      const { email, newPassword, oldPassword } = req.body;
+      const { email, newPassword, oldPassword, baseUrl } = req.body;
       if (!email || !stringData)
         throw new BadRequest("All fields are required.");
       const findUser = await UserSchema.findOne({ email });
@@ -619,7 +626,7 @@ class UserController extends DeleteOperation {
         const emailContent =
           stringData === "changePassword"
             ? new EmailContent().emailResetPassword(token)
-            : new EmailContent().emailForgetPassword(token);
+            : new EmailContent().emailForgetPassword(baseUrl, token);
 
         const SendEmail = await new EmailService().emailSend(
           email,
