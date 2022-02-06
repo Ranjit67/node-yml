@@ -54,6 +54,7 @@ export interface BookingModels extends Document {
   cancelBy: cancelBy;
   userCopy: ObjectId;
   artistCopy: ObjectId;
+  reason: string;
   isDeletesId: ObjectId[];
 }
 const bookingSchema = new Schema({
@@ -158,6 +159,9 @@ const bookingSchema = new Schema({
   ],
   cancelBy: {
     enum: ["artist", "user"],
+    type: String,
+  },
+  reason: {
     type: String,
   },
 });

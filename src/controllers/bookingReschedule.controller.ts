@@ -213,19 +213,22 @@ class BookingRescheduleController {
     next: NextFunction
   ) {
     try {
-      const { requestId, permissionBoolean, actionBy } = req.body;
+      const { requestId, permissionBoolean, actionBy, reason } = req.body;
       const findRequest: any = await RequestSchema.findById(requestId)
         .populate("reschedule")
         .populate("senderUser")
         .populate("receiverUser");
       const bookingContent = new BookingContent();
-
       if (permissionBoolean) {
         //    permission accepted
         // request status accept
         const updateRequest = await RequestSchema.findByIdAndUpdate(requestId, {
           status: "accept",
         });
+        if (!findRequest.reschedule)
+          throw new InternalServerError(
+            bookingRescheduleMessage.error.actionDenied
+          );
         // findRequest.personalizedMsgDate
         const bookingUpdate = await BookingSchema.findByIdAndUpdate(
           findRequest.reschedule?.booking.toString(),
@@ -235,7 +238,9 @@ class BookingRescheduleController {
               end: findRequest.reschedule?.rescheduleDate?.end ?? null,
             },
             bookingReschedule: null,
-            personalizedMsgDate: findRequest.personalizedMsgDate ?? null,
+            reason: reason,
+            personalizedMsgDate:
+              findRequest?.reschedule?.personalizedMsgDate ?? null,
           }
         );
         // delete reschedule
@@ -315,6 +320,7 @@ class BookingRescheduleController {
           findRequest.reschedule?.booking?.toString(),
           {
             bookingReschedule: null,
+            reason: reason,
           }
         );
         const updateRequest = await RequestSchema.findByIdAndUpdate(requestId, {
@@ -387,6 +393,7 @@ class BookingRescheduleController {
         });
       }
     } catch (error) {
+      console.log(error);
       next(error);
     }
   }
