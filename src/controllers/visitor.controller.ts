@@ -12,8 +12,8 @@ class VisitorController {
       const visitorFirstUpdate = await VisitorSchema.updateOne(
         { artist: artistId, users: { $elemMatch: { user: userId } } },
         {
-          "users.$.spentTime": spentTime,
           $inc: {
+            "users.$.spentTime": spentTime,
             "users.$.count": 1,
           },
           "users.$.lastTimeVisit": new Date().toString(),
