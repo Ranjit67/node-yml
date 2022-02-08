@@ -16,6 +16,7 @@ import {
   NotificationSchema,
   UserSchema,
   PromoCodeSchema,
+  OrderSchema,
 } from "../models";
 import { bookingMessage } from "../resultMessage";
 import { NotificationServices } from "../services";
@@ -55,11 +56,14 @@ class BookingController {
         walletAmount,
         promoCodeAmount,
         promoCodeId,
+        orderId,
+        paymentStatus,
       } = req.body;
       let promoCodeData;
       if (promoCodeId) {
         promoCodeData = await PromoCodeSchema.findOne({ _id: promoCodeId });
       }
+
       const createBooking = await BookingSchema.create({
         eventDate: {
           start: eventStartDate,
@@ -84,6 +88,9 @@ class BookingController {
         walletAmount,
         promoCodeAmount,
         bookingType: personalizedMessage ? "personalizedMessage" : "other",
+      });
+      const orderCreate = await OrderSchema.create({
+        booking: createBooking._id,
       });
       if (!createBooking)
         throw new InternalServerError(bookingMessage.error.notCreated);
@@ -267,6 +274,7 @@ class BookingController {
         .populate("eventType")
         .populate("serviceType")
         .populate("bookingReschedule")
+        .populate("orderId")
         .populate({
           path: "personalizedVideo",
           select: "-__v -booking -artist -user -booking -videoFile ",
@@ -844,12 +852,13 @@ class BookingController {
   }
   async bookingTest(req: Request, res: Response, next: NextFunction) {
     try {
-      const allBooking = await BookingSchema.find({
-        "eventDate.end": { $gt: new Date("2022-02-04T07:47:24.000Z") },
-      }).select("-__v");
+      const { id, date } = req.body;
+      const update = await BookingSchema.findByIdAndUpdate(id, {
+        timestamp: date,
+      });
       res.json({
         success: {
-          data: allBooking,
+          data: update,
         },
       });
     } catch (error) {
@@ -906,11 +915,13 @@ class BookingController {
               model: "Event",
             },
           ],
+          select: "-password -fcmToken",
         })
         .populate("eventType")
         .populate("serviceType")
         .populate("bookingReschedule")
-        .populate("user")
+        .populate({ path: "user", select: "-password -fcmToken" })
+        .populate("orderId")
         .populate({
           path: "personalizedVideo",
           select: "-__v -booking -artist -user -booking -videoFile ",
@@ -918,6 +929,83 @@ class BookingController {
       res.json({
         success: {
           data: bookingDetails,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async bookingFail(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { bookingId, paymentId, newPaymentId, orderId, paymentStatus } =
+        req.body;
+      if (!orderId) throw new BadRequest("All field are require.");
+
+      const updateBookingData = await BookingSchema.findOneAndUpdate(
+        { _id: bookingId, orderId: { $exists: false } },
+        {
+          paymentId,
+          paymentStatus: paymentStatus ?? "fail",
+          orderId,
+        }
+      );
+      if (!updateBookingData) {
+        const updateOrderData = await BookingSchema.findOneAndUpdate(
+          { orderId, paymentId },
+          {
+            paymentStatus: paymentStatus ?? "fail",
+            paymentId: newPaymentId,
+          }
+        );
+        if (!updateOrderData) throw new BadRequest("Token is not valid.");
+        res.json({
+          success: {
+            message: "Payment Fail",
+          },
+        });
+      } else {
+        res.json({
+          success: {
+            message: "Payment Fail2",
+          },
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+  async bookingPaymentConfirm(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { bookingId, orderId, paymentId, newPaymentId } = req.body;
+      // if (!orderId) throw new BadRequest(bookingMessage.error.allField);
+      if (paymentId) {
+        const findBooking = await BookingSchema.findOne({ paymentId });
+        if (findBooking?.paymentStatus !== "fail")
+          throw new BadRequest("Wrong token.");
+        const updateBookingData = await BookingSchema.findOneAndUpdate(
+          { paymentId },
+          {
+            paymentId: newPaymentId,
+            paymentStatus: "success",
+          }
+        );
+      } else {
+        const findBookingFirst = await BookingSchema.findOne({
+          _id: bookingId,
+        });
+        if (findBookingFirst?.orderId) throw new BadRequest("Wrong token.");
+        const updateBookingData = await BookingSchema.findOneAndUpdate(
+          { _id: bookingId },
+          {
+            orderId,
+            paymentStatus: "success",
+          }
+        );
+      }
+
+      res.json({
+        success: {
+          message: "booking is success update.",
         },
       });
     } catch (error) {

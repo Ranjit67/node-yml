@@ -1,28 +1,9 @@
-// const bookingArtistInitialState = {
-//     eventType: {
-//       eventTypeId: 0,
-//       eventTypeName: "",
-//     },
-//     serviceType: "",
-//     eventDate: {
-//       start: moment().toLocaleString(),
-//       end: moment().add(1, "day").toLocaleString(),
-//     },
-//     eventTime: moment().toLocaleString(),
-//     eventDuration: "",
-//     crowedSize: "",
-//     eventLocation: "",
-//     cityName: "",
-//     otherDetails: "",
-//     personalizedMessage: "",
-//     personalizedMsgDate: moment().toLocaleString(),
-//   }
-
 import { Document, Schema, model, ObjectId } from "mongoose";
 
 type bookingStatus = "pending" | "confirm" | "cancel" | "past";
 type cancelBy = "artist" | "user";
 type bookingType = "personalizedMessage" | "other";
+type paymentStatus = "fail" | "success";
 export interface BookingModels extends Document {
   eventDate: {
     start: Date;
@@ -55,6 +36,10 @@ export interface BookingModels extends Document {
   userCopy: ObjectId;
   artistCopy: ObjectId;
   reason: string;
+  paymentStatus: paymentStatus;
+  // orderId: ObjectId;
+  orderId: String;
+  paymentId: String;
   isDeletesId: ObjectId[];
 }
 const bookingSchema = new Schema({
@@ -159,6 +144,17 @@ const bookingSchema = new Schema({
   ],
   cancelBy: {
     enum: ["artist", "user"],
+    type: String,
+  },
+
+  orderId: {
+    type: String,
+  },
+  paymentId: {
+    type: String,
+  },
+  paymentStatus: {
+    enum: ["fail", "success"],
     type: String,
   },
   reason: {

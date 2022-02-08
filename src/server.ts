@@ -31,6 +31,7 @@ import {
   CrowdRoutes,
   VersionRouter,
   EmailTestRoute,
+  OrderRoutes,
 } from "./routes";
 import { PaymentRoutes } from "./payment";
 import { SchedulerService } from "./services";
@@ -66,6 +67,7 @@ const object = {
     new ArtistBlockDateRoutes(),
     new PersonalizeVideoRoute(),
     new BookingRescheduleRoute(),
+    new OrderRoutes(),
     new EmailTestRoute(),
     new PaymentRoutes(),
   ],

@@ -37,7 +37,12 @@ class BookingRouter {
       this.bookingController.bookingDetails
     );
     this.router.put("/delete", this.bookingController.removeBooking);
-    this.router.get("/booking-test", this.bookingController.bookingTest);
+    this.router.put(
+      "/booking-confirm",
+      this.bookingController.bookingPaymentConfirm
+    );
+    this.router.put("/booking-fail", this.bookingController.bookingFail);
+    this.router.post("/booking-test", this.bookingController.bookingTest);
   }
 }
 export default BookingRouter;
