@@ -1,19 +1,19 @@
 import nodemailer from "nodemailer";
-import { email, password } from "../config";
-// import templet from "../emailTempleat";
-const templet = require("../emailTempleat");
+import { email, password, host } from "../config";
+const template = require("../emailTempleat");
 class EmailService {
   public emailSend(emails: string, subject: string, message: string): any {
     const emailCredentials = {
-      from: "noreply.skyrisecelebrity@gmail.com",
+      from: "support@skyrisecelebrity.com",
       to: emails,
       subject: subject,
-      // text: `${message}`,
-      html: templet.normalMailBody(message),
+      html: template.normalMailBody(message),
     };
     return new Promise((resolve, reject) => {
       const transport = nodemailer.createTransport({
-        service: "gmail",
+        host,
+        port: 465,
+        secure: true,
         auth: {
           user: email,
           pass: password,

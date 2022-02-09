@@ -59,6 +59,7 @@ class ReviewController {
       next(error);
     }
   }
+
   public async getArtistReview(
     req: Request,
     res: Response,
