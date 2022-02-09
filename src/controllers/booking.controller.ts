@@ -975,16 +975,17 @@ class BookingController {
             paymentId: newPaymentId,
           }
         );
-        if (!updateOrderData) throw new BadRequest("Token is not valid.");
+        if (!updateOrderData)
+          throw new BadRequest(bookingMessage.error.bookingTokenFail);
         res.json({
           success: {
-            message: "Payment Fail",
+            message: bookingMessage.success.paymentFailed,
           },
         });
       } else {
         res.json({
           success: {
-            message: "Payment Fail2",
+            message: bookingMessage.success.paymentFailed,
           },
         });
       }
@@ -1015,7 +1016,7 @@ class BookingController {
       if (paymentId) {
         const findBooking: any = await BookingSchema.findOne({ paymentId });
         if (findBooking?.paymentStatus !== "fail")
-          throw new BadRequest("Wrong token.");
+          throw new BadRequest(bookingMessage.error.bookingTokenFail);
         const updateBookingData = await BookingSchema.findOneAndUpdate(
           { paymentId },
           {
@@ -1029,7 +1030,7 @@ class BookingController {
           }
         );
         if (!updateBookingData)
-          throw new GatewayTimeout("Something went wrong.");
+          throw new GatewayTimeout(bookingMessage.error.somethingWrong);
         // request to artist
         const requestCreate = await RequestSchema.create({
           requestType: "payment",
@@ -1084,7 +1085,8 @@ class BookingController {
         const findBookingFirst: any = await BookingSchema.findOne({
           _id: bookingId,
         });
-        if (findBookingFirst?.orderId) throw new BadRequest("Wrong token.");
+        if (findBookingFirst?.orderId)
+          throw new BadRequest(bookingMessage.error.bookingTokenFail);
         const updateBookingData = await BookingSchema.findOneAndUpdate(
           { _id: bookingId },
           {
@@ -1098,7 +1100,7 @@ class BookingController {
           }
         );
         if (!updateBookingData)
-          throw new GatewayTimeout("Something went wrong.");
+          throw new GatewayTimeout(bookingMessage.error.somethingWrong);
         // request to artist
         const requestCreate = await RequestSchema.create({
           requestType: "payment",
@@ -1155,7 +1157,7 @@ class BookingController {
 
       res.json({
         success: {
-          message: "booking is success update.",
+          message: bookingMessage.success.paymentSuccess,
         },
       });
     } catch (error) {

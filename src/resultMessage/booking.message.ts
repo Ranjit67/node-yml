@@ -11,6 +11,8 @@ const bookingMessage = {
     walletHistoryNotCreated: "Something went wrong,  Wallet history.",
     bookingCancel: "Something went wrong, Your action not recorded.",
     bookingRequest: "Something went wrong, Artist is not get your request.",
+    bookingTokenFail: "Something went wrong, Token is not valid.",
+    somethingWrong: "Something went wrong, Please try again later.",
   },
   success: {
     artistBookingList: "Artist Booking List.",
@@ -23,6 +25,8 @@ const bookingMessage = {
     bookingCancel:
       "Booking Cancel Successfully.Amount will be credited in your bank account shortly.",
     removeBooking: "Bookings deleted successfully.",
+    paymentFailed: "Sorry, Your payment has failed.",
+    paymentSuccess: "Your booking payment is success.",
   },
 };
 export default bookingMessage;
