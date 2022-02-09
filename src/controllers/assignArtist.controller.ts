@@ -9,13 +9,14 @@ import { AssignArtistSchema, UserSchema, RequestSchema } from "../models";
 import { NotificationServices } from "../services";
 import { AssignArtistContent } from "../emailContent";
 import { assignArtistToManager } from "../notificationIcon";
+import { assignArtistMessage } from "../resultMessage";
 class AssignArtistController {
   public async assignArtist(req: Request, res: Response, next: NextFunction) {
     try {
       const { managerId, artistId } = req.body;
 
       if (!managerId || !artistId)
-        throw new BadRequest("All fields are required.");
+        throw new BadRequest(assignArtistMessage.error.allField);
 
       const findManager = await UserSchema.find({
         _id: { $in: [artistId, managerId] },
@@ -43,7 +44,7 @@ class AssignArtistController {
 
       // notification credentials end
       if (!findArtistData || !findManagerData)
-        throw new BadRequest("Invalid user id.");
+        throw new BadRequest(assignArtistMessage.error.invalidUser);
 
       const updateAssignArtist = await AssignArtistSchema.findOneAndUpdate(
         {
@@ -79,7 +80,7 @@ class AssignArtistController {
       // notification end
       if (updateAssignArtist)
         return res.json({
-          success: { message: "Artist is assigned successfully." },
+          success: { message: assignArtistMessage.success.assignArtist },
         });
 
       const assignArtist = new AssignArtistSchema({
@@ -91,7 +92,7 @@ class AssignArtistController {
       }); // here Error handling throw middleware.
       const saveAssignArtist = await assignArtist.save();
       if (!saveAssignArtist)
-        throw new InternalServerError("Artist is not assigned.");
+        throw new InternalServerError(assignArtistMessage.error.notAssign);
       // notification start  only send to manager
 
       await new NotificationServices().notificationGenerate(
@@ -112,7 +113,9 @@ class AssignArtistController {
       );
 
       // notification end
-      res.json({ success: { message: "Artist is assigned successfully." } });
+      res.json({
+        success: { message: assignArtistMessage.success.assignArtist },
+      });
     } catch (error) {
       next(error);
     }
@@ -121,7 +124,7 @@ class AssignArtistController {
     try {
       const { managerId, artistId } = req.body;
       if (!managerId || !artistId)
-        throw new BadRequest("All fields are required.");
+        throw new BadRequest(assignArtistMessage.error.allField);
       const findAndUpdate = await AssignArtistSchema.updateOne(
         { manager: managerId },
         {
@@ -133,9 +136,9 @@ class AssignArtistController {
         }
       );
       if (!findAndUpdate.matchedCount)
-        throw new NotFound("Manager is not found.");
+        throw new NotFound(assignArtistMessage.error.managerNotFound);
       if (!findAndUpdate.modifiedCount)
-        throw new Conflict("Artist is not assign to this Manager .");
+        throw new Conflict(assignArtistMessage.error.artistNotAssignManger);
       const findManger = await UserSchema.findOne({ _id: managerId });
       const assignArtistContent = new AssignArtistContent();
       const title =
@@ -160,7 +163,9 @@ class AssignArtistController {
         }
       );
 
-      res.json({ success: { message: "Artist is remove from manager" } });
+      res.json({
+        success: { message: assignArtistMessage.success.artistRemove },
+      });
     } catch (error) {
       next(error);
     }
@@ -173,7 +178,7 @@ class AssignArtistController {
   ) {
     try {
       const { managerId } = req.params;
-      if (!managerId) throw new BadRequest("All fields are required.");
+      if (!managerId) throw new BadRequest(assignArtistMessage.error.allField);
       const findManagerData = await AssignArtistSchema.findOne({
         manager: managerId,
       }).populate("artists.artist");
@@ -189,7 +194,7 @@ class AssignArtistController {
   ) {
     try {
       const { artistId } = req.params;
-      if (!artistId) throw new BadRequest("All fields are required.");
+      if (!artistId) throw new BadRequest(assignArtistMessage.error.allField);
       const findManagerData = await AssignArtistSchema.find({
         "artists.artist": artistId,
       })
