@@ -1,11 +1,8 @@
-import { Document, Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 
-export interface languageModel extends Document {
-  languageName: string;
-  timestamp: Date;
-}
+import { LanguageModel } from "../types";
 
-const languageSchema = new Schema({
+const languageSchema = new Schema<LanguageModel>({
   languageName: {
     type: String,
     required: true,
@@ -16,5 +13,5 @@ const languageSchema = new Schema({
   },
 });
 
-const LanguageSchema = model<languageModel>("Language", languageSchema);
+const LanguageSchema = model<LanguageModel>("Language", languageSchema);
 export default LanguageSchema;

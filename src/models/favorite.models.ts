@@ -1,14 +1,5 @@
 import { Document, Schema, model, ObjectId } from "mongoose";
-
-export interface FavoritesModel extends Document {
-  artist: ObjectId;
-  favorites: [
-    {
-      timestamp: Date;
-      user: ObjectId;
-    }
-  ];
-}
+import { FavoritesModel } from "../types";
 
 const FavoritesSchema = new Schema({
   artist: {

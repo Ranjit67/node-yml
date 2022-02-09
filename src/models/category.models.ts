@@ -1,15 +1,5 @@
-import { Document, Schema, model, ObjectId } from "mongoose";
-
-export interface CategoryModels extends Document {
-  title: string;
-  subcategories: ObjectId[];
-  genres: ObjectId[];
-  timestamp: Date;
-  iconUrl: string;
-  iconFile: string;
-  imageUrl: string;
-  imageFile: string;
-}
+import { Schema, model } from "mongoose";
+import { CategoryModels } from "../types";
 
 const categorySchema = new Schema({
   title: {

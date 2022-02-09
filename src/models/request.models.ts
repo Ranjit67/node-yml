@@ -1,20 +1,7 @@
 import { Document, Schema, model, ObjectId } from "mongoose";
-import { requestType, requestStatus } from "../types";
-export interface RequestModel extends Document {
-  reschedule: ObjectId;
-  requestType: requestType;
-  senderUser: ObjectId;
-  receiverUser: ObjectId;
-  booking: ObjectId;
-  details: object;
-  timestamp: Date;
-  isCancel: boolean;
-  status: requestStatus;
-  reason: string;
-  deletedUsers: ObjectId[];
-}
+import { RequestModel } from "../types";
 
-const requestSchema = new Schema({
+const requestSchema = new Schema<RequestModel>({
   reschedule: {
     type: Schema.Types.ObjectId,
 

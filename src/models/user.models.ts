@@ -1,38 +1,7 @@
-import { Document, Schema, model, ObjectId } from "mongoose";
-import { userStatus, userRole, gender } from "../types";
+import { Schema, model } from "mongoose";
+import { UserModel } from "../types";
 
-export interface userModel extends Document {
-  profileImageRef: string;
-  artistMedia: ObjectId;
-  events: ObjectId[];
-  //
-  category: ObjectId;
-  genres: ObjectId[];
-  subcategories: ObjectId[];
-  //
-
-  languages: ObjectId[];
-  countryCode: string;
-  phoneNumber: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  role: userRole;
-  status: userStatus;
-  gender: gender;
-  location: string;
-  profileImageUrl: string;
-  yearsOfExperience: string;
-  inTopSearches: Boolean;
-  inTopTrending: Boolean;
-  bio: String;
-  fcmToken: string;
-  Dob: Date;
-  timestamp: Date;
-}
-
-const userSchema = new Schema({
+const userSchema = new Schema<UserModel>({
   profileImageRef: String,
   artistMedia: {
     type: Schema.Types.ObjectId,
@@ -130,9 +99,9 @@ const userSchema = new Schema({
   },
   timestamp: {
     type: Date,
-    default: new Date().toString(),
+    default: new Date(),
   },
 });
 
-const UserSchema = model<userModel>("User", userSchema);
+const UserSchema = model<UserModel>("User", userSchema);
 export default UserSchema;

@@ -1,13 +1,5 @@
 import { Document, Schema, model } from "mongoose";
-
-export interface eventModel extends Document {
-  eventName: string;
-  timestamp: Date;
-  iconUrl: string;
-  iconFile: string;
-  imageUrl: string;
-  imageFile: string;
-}
+import { EventModel } from "../types";
 
 const eventSchema = new Schema({
   eventName: {
@@ -33,5 +25,5 @@ const eventSchema = new Schema({
     default: new Date().toString(),
   },
 });
-const EventSchema = model<eventModel>("Event", eventSchema);
+const EventSchema = model<EventModel>("Event", eventSchema);
 export default EventSchema;

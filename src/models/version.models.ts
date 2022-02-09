@@ -1,14 +1,8 @@
-import { Document, Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 
-export interface serviceModel extends Document {
-  title: string;
-  timestamp: Date;
-  description: string;
-  version: number;
-  isDismissible: boolean;
-}
+import { VersionModel } from "../types";
 
-const versionSchema = new Schema({
+const versionSchema = new Schema<VersionModel>({
   title: {
     type: String,
     required: true,
@@ -30,5 +24,5 @@ const versionSchema = new Schema({
     type: Boolean,
   },
 });
-const VersionSchema = model<serviceModel>("Version", versionSchema);
+const VersionSchema = model<VersionModel>("Version", versionSchema);
 export default VersionSchema;

@@ -1,17 +1,7 @@
-import { ObjectId, Schema, Document, model } from "mongoose";
+import { Schema, model } from "mongoose";
+import { SupportModel } from "../types";
 
-export interface SupportModel extends Document {
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  countryCode: string;
-  email: string;
-  message: string;
-  timestamp: Date;
-  user: ObjectId;
-}
-
-const supportSchema = new Schema({
+const supportSchema = new Schema<SupportModel>({
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
@@ -39,7 +29,7 @@ const supportSchema = new Schema({
   },
   timestamp: {
     type: Date,
-    default: new Date().toString(),
+    default: new Date(),
   },
 });
 const SupportSchema = model<SupportModel>("Support", supportSchema);

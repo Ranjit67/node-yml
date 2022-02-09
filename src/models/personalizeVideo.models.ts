@@ -1,15 +1,5 @@
-import { Document, Schema, model, ObjectId } from "mongoose";
-
-export interface PersonalizeModel extends Document {
-  user: ObjectId;
-  artist: ObjectId;
-  booking: ObjectId;
-  videoUrl: string;
-  videoFile: string;
-  timestamp: Date;
-  userCopy: Object;
-  artistCopy: Object;
-}
+import { Schema, model } from "mongoose";
+import { PersonalizeModel } from "../types";
 
 const personalizeSchema = new Schema({
   user: {

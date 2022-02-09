@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 import { GenresModels } from "../types";
 
-const genresSchema = new Schema({
+const genresSchema = new Schema<GenresModels>({
   title: {
     type: String,
     required: true,
@@ -19,7 +19,7 @@ const genresSchema = new Schema({
   },
   timestamp: {
     type: Date,
-    default: new Date().toString(),
+    default: new Date(),
   },
 });
 const GenresSchema = model<GenresModels>("Genres", genresSchema);

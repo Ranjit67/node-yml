@@ -1,14 +1,7 @@
-import { Document, Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
+import { ServiceModel } from "../types";
 
-export interface serviceModel extends Document {
-  serviceName: string;
-  timestamp: Date;
-  iconUrl: string;
-  iconFile: string;
-  imageUrl: string;
-  imageFile: string;
-}
-const serviceSchema = new Schema({
+const serviceSchema = new Schema<ServiceModel>({
   serviceName: {
     type: String,
     required: true,
@@ -30,8 +23,8 @@ const serviceSchema = new Schema({
 
   timestamp: {
     type: Date,
-    default: new Date().toString(),
+    default: new Date(),
   },
 });
-const ServiceSchema = model<serviceModel>("Service", serviceSchema);
+const ServiceSchema = model<ServiceModel>("Service", serviceSchema);
 export default ServiceSchema;

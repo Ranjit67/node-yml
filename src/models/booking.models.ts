@@ -1,47 +1,7 @@
-import { Document, Schema, model, ObjectId } from "mongoose";
+import { Schema, model } from "mongoose";
 
-type bookingStatus = "pending" | "confirm" | "cancel" | "past";
-type cancelBy = "artist" | "user";
-type bookingType = "personalizedMessage" | "other";
-type paymentStatus = "fail" | "success";
-export interface BookingModels extends Document {
-  eventDate: {
-    start: Date;
-    end: Date;
-  };
-  cityName: string;
-  eventLocation: string;
-  crowdSize: number;
-  serviceType: ObjectId;
-  bookingType: bookingType;
-  bookingReschedule: ObjectId;
-  bookingPrice: number;
-  bankAmount: number;
-  walletAmount: number;
-  promoCodeAmount: number;
-  promoCodeData: Object;
-  status: bookingStatus;
-  artist: ObjectId;
-  user: ObjectId;
-  personalizedVideo: ObjectId;
-  //   requestType: string;
-  personalizedMessage: string;
-  eventDuration: string;
-  isComplete: Boolean;
-  OtherDetails: string;
-  eventType: ObjectId;
-  personalizedMsgDate: Date;
-  isPayment: Boolean;
-  cancelBy: cancelBy;
-  userCopy: ObjectId;
-  artistCopy: ObjectId;
-  reason: string;
-  paymentStatus: paymentStatus;
-  // orderId: ObjectId;
-  orderId: String;
-  paymentId: String;
-  isDeletesId: ObjectId[];
-}
+import { BookingModels } from "../types";
+
 const bookingSchema = new Schema({
   eventDate: {
     start: Date,

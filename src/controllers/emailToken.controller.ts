@@ -1,22 +1,18 @@
 import { Request, Response, NextFunction } from "express";
-import { EmailToken, UserSchema, userModel } from "../models";
+import { EmailToken, UserSchema } from "../models";
 import { InternalServerError, NotFound } from "http-errors";
 import {
   JwtService,
   NotificationServices,
   PasswordHasServices,
 } from "../services";
-import { userRole } from "../types";
 import { UserContent } from "../emailContent";
 import {
   newArtistApprovalIcon,
   newManagerApprovalIcon,
 } from "../notificationIcon";
 import { emailTokenMessage } from "../resultMessage";
-type test = {
-  role: userRole;
-};
-type userData = userModel | test;
+
 class EmailTokenController {
   private jwtServices = new JwtService();
   public async getAll(req: Request, res: Response, next: NextFunction) {

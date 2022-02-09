@@ -1,14 +1,6 @@
-import { Document, Schema, model, ObjectId } from "mongoose";
+import { Schema, model } from "mongoose";
 
-export interface ArtistBlockDateModel extends Document {
-  artist: ObjectId;
-  blockedDates: [
-    {
-      date: number;
-      timestamp: Date;
-    }
-  ];
-}
+import { ArtistBlockDateModel } from "../types";
 
 const artistBlockDateSchema = new Schema({
   artist: {

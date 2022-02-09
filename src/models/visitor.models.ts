@@ -1,18 +1,8 @@
 import { ObjectId, Schema, Document, model } from "mongoose";
 
-export interface VisitorModel extends Document {
-  users: [
-    {
-      spentTime: number;
-      lastTimeVisit: Date;
-      user: ObjectId;
-      count: number;
-    }
-  ];
-  artist: ObjectId;
-}
+import { VisitorModel } from "../types";
 
-const visitorSchema = new Schema({
+const visitorSchema = new Schema<VisitorModel>({
   users: [
     {
       user: {

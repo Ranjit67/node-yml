@@ -1,9 +1,5 @@
-import { Document, Schema, model, ObjectId } from "mongoose";
-
-export interface emailTokenModel extends Document {
-  userRef: ObjectId;
-  emailTokenString: string;
-}
+import { Schema, model } from "mongoose";
+import { EmailTokenModel } from "../types";
 
 const emailTokenSchema = new Schema({
   userRef: {
@@ -14,6 +10,6 @@ const emailTokenSchema = new Schema({
     type: String,
   },
 });
-const EmailToken = model<emailTokenModel>("EmailToken", emailTokenSchema);
+const EmailToken = model<EmailTokenModel>("EmailToken", emailTokenSchema);
 
 export default EmailToken;

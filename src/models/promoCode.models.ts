@@ -1,30 +1,7 @@
-import { Document, Schema, model, ObjectId } from "mongoose";
+import { Schema, model } from "mongoose";
+import { PromoCodeModel } from "../types";
 
-export interface PromoCodeModel extends Document {
-  // isExpired: boolean;
-  numberOfTimeUsed: string;
-  secretString: string;
-  percentage: string;
-  maxCashBack: string;
-  minimumOrder: string;
-  startingDate: Date;
-  endingDate: Date;
-  dedicatedSomeOne: ObjectId;
-  timestamp: Date;
-  appliedUser: [
-    {
-      user: ObjectId;
-      numberOfTimeUsed: [
-        {
-          date: Date;
-          benefitAmount: string;
-        }
-      ];
-    }
-  ];
-}
-
-const promoCodeSchema = new Schema({
+const promoCodeSchema = new Schema<PromoCodeModel>({
   numberOfTimeUsed: {
     type: String,
   },

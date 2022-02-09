@@ -1,18 +1,8 @@
-import { Document, Schema, model, ObjectId, SchemaType } from "mongoose";
-type rescheduleBy = "artist" | "user";
-export interface BookingReschedule extends Document {
-  artist: ObjectId;
-  user: ObjectId;
-  rescheduleBy: rescheduleBy;
-  booking: ObjectId;
-  rescheduleDate: {
-    start: Date;
-    end: Date;
-  };
-  personalizedMsgDate: Date;
-  timestamp: Date;
-}
-const bookingRescheduleSchema = new Schema({
+import { Schema, model } from "mongoose";
+import { BookingRescheduleModule } from "types";
+("../types");
+
+const bookingRescheduleSchema = new Schema<BookingRescheduleModule>({
   artist: {
     type: Schema.Types.ObjectId,
     ref: "User",
@@ -45,7 +35,7 @@ const bookingRescheduleSchema = new Schema({
   },
 });
 
-const BookingRescheduleSchema = model<BookingReschedule>(
+const BookingRescheduleSchema = model<BookingRescheduleModule>(
   "BookingReschedule",
   bookingRescheduleSchema
 );

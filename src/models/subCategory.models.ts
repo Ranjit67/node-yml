@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 import { SubCategoryModels } from "../types";
 
-const subCategorySchema = new Schema({
+const subCategorySchema = new Schema<SubCategoryModels>({
   title: {
     type: String,
     required: true,
@@ -25,7 +25,7 @@ const subCategorySchema = new Schema({
   ],
   timestamp: {
     type: Date,
-    default: new Date().toString(),
+    default: new Date(),
   },
 });
 

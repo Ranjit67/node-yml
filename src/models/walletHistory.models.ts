@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 import { WalletHistoryModel } from "../types";
 
-const walletHistorySchema = new Schema({
+const walletHistorySchema = new Schema<WalletHistoryModel>({
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",

@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 import { PricingModel } from "../types";
 
-const pricingSchema = new Schema({
+const pricingSchema = new Schema<PricingModel>({
   artist: {
     type: Schema.Types.ObjectId,
     ref: "User",
@@ -16,7 +16,7 @@ const pricingSchema = new Schema({
       location: String,
       timestamp: {
         type: Date,
-        default: new Date().toString(),
+        default: new Date(),
       },
     },
   ],

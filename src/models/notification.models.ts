@@ -1,21 +1,8 @@
-import { Document, Schema, model, ObjectId } from "mongoose";
+import { Schema, model } from "mongoose";
 
-type notificationType = "newBooking" | "bookingRequest";
-export interface NotificationModel extends Document {
-  user: ObjectId;
-  notification: [
-    {
-      iconUrl: string;
-      receiveFrom: ObjectId;
-      description: string;
-      title: string;
-      isRead: boolean;
-      timestamp: Date;
-    }
-  ];
-}
+import { NotificationModel } from "../types";
 
-const notificationSchema = new Schema({
+const notificationSchema = new Schema<NotificationModel>({
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",

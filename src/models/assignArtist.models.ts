@@ -1,14 +1,6 @@
-import { Document, Schema, model, ObjectId } from "mongoose";
+import { Schema, model } from "mongoose";
+import { AssignArtistModel } from "../types";
 
-export interface assignArtistModel extends Document {
-  manager: ObjectId;
-  artists: [
-    {
-      artist: ObjectId;
-      timestamp: Date;
-    }
-  ];
-}
 const assignArtistSchema = new Schema({
   manager: {
     type: Schema.Types.ObjectId,
@@ -31,7 +23,7 @@ const assignArtistSchema = new Schema({
   ],
 });
 
-const AssignArtistSchema = model<assignArtistModel>(
+const AssignArtistSchema = model<AssignArtistModel>(
   "AssignArtist",
   assignArtistSchema
 );
