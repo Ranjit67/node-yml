@@ -269,14 +269,15 @@ class UserController extends DeleteOperation {
           Dob,
         });
         const userSave = await user.save();
-        if (!userSave) throw new InternalServerError("User is not created.");
+        if (!userSave)
+          throw new InternalServerError(userMessage.error.notCreated);
         const token = await new JwtService().emailTokenGenerator(userSave?._id);
         const saveEmailToken = await EmailToken.create({
           userRef: userSave?._id,
           emailTokenString: token,
         });
         if (!saveEmailToken)
-          throw new InternalServerError("Email token is not created.");
+          throw new InternalServerError(userMessage.error.emailToken);
         const emailContent = new EmailContent().emailOnSelfVerification(
           baseUrl,
           token
@@ -288,8 +289,8 @@ class UserController extends DeleteOperation {
         );
         res.json({
           success: {
-            message:
-              "User is created successfully. Email send to user mail for verification.",
+            message: userMessage.success.mailVerification,
+
             data: "",
           },
         });
@@ -309,7 +310,8 @@ class UserController extends DeleteOperation {
           Dob,
         });
         const userSave = await user.save();
-        if (!userSave) throw new InternalServerError("User is not created.");
+        if (!userSave)
+          throw new InternalServerError(userMessage.error.notCreated);
 
         const token = await new JwtService().emailTokenGenerator(userSave?._id);
         const saveEmailToken = await EmailToken.create({
@@ -317,7 +319,7 @@ class UserController extends DeleteOperation {
           emailTokenString: token,
         });
         if (!saveEmailToken)
-          throw new InternalServerError("Email token is not created.");
+          throw new InternalServerError(userMessage.error.emailToken);
         const emailContent = new EmailContent().emailOnSelfVerification(
           baseUrl,
           token
@@ -329,8 +331,7 @@ class UserController extends DeleteOperation {
         );
         res.json({
           success: {
-            message:
-              "User is created successfully. Email send to user mail for verification.",
+            message: userMessage.success.mailVerification,
           },
         });
       }
@@ -429,16 +430,16 @@ class UserController extends DeleteOperation {
       } = req.body;
       const { id } = req.params;
 
-      if (!id) throw new BadRequest("All fields are required.");
+      if (!id) throw new BadRequest(userMessage.error.allFieldsRequired);
       const findUser = await UserSchema.findById(id);
-      if (!findUser) throw new BadRequest("User is not found.");
+      if (!findUser) throw new BadRequest(userMessage.error.invalidUserId);
       const profilePicture = req?.files?.profilePicture;
       let profileImage;
       if (profilePicture) {
         const awsS3 = new AwsS3Services();
         profileImage = await awsS3.upload(profilePicture);
         if (!profileImage)
-          throw new InternalServerError("Profile image is not uploaded.");
+          throw new InternalServerError(userMessage.error.profileImage);
       }
 
       const updateUser = await UserSchema.findByIdAndUpdate(id, {
@@ -467,10 +468,10 @@ class UserController extends DeleteOperation {
         bio: bio ?? findUser.bio,
         artistMedia: artistMedia ?? findUser.artistMedia,
       });
-      if (!updateUser) throw new GatewayTimeout("User is not updated.");
+      if (!updateUser) throw new GatewayTimeout(userMessage.error.notUpdate);
       res.json({
         success: {
-          message: "User is updated successfully.",
+          message: userMessage.success.update,
         },
       });
     } catch (error) {
@@ -483,15 +484,17 @@ class UserController extends DeleteOperation {
     try {
       const { email, password } = req.body;
       const findUser = await UserSchema.findOne({ email, isDeleted: false });
-      if (!findUser) throw new BadRequest("User is not found.");
-      if (!findUser.password) throw new Conflict("Your password is not set.");
+      if (!findUser) throw new BadRequest(userMessage.error.userNotFound);
+      if (!findUser.password)
+        throw new Conflict(userMessage.error.passwordNotSet);
       const isMatch = await new PasswordHasServices().compare(
         password,
         findUser.password
       );
-      if (!isMatch) throw new BadRequest("Password is not match.");
+      if (!isMatch) throw new BadRequest(userMessage.error.wrongPassword);
       const token = await new JwtService().accessTokenGenerator(findUser?._id);
-      if (!token) throw new InternalServerError("Token is not generated.");
+      if (!token)
+        throw new InternalServerError(userMessage.error.tokenGenerate);
 
       res.json({
         success: {
@@ -583,17 +586,17 @@ class UserController extends DeleteOperation {
       const { stringData } = req.params;
       const { email, newPassword, oldPassword, baseUrl } = req.body;
       if (!email || !stringData)
-        throw new BadRequest("All fields are required.");
+        throw new BadRequest(userMessage.error.allFieldsRequired);
       const findUser = await UserSchema.findOne({ email });
-      if (!findUser) throw new BadRequest("Your email is not found.");
+      if (!findUser) throw new BadRequest(userMessage.error.userNotFound);
       if (stringData === "changePassword") {
         if (!email || !newPassword || !oldPassword)
-          throw new BadRequest("All fields are required.");
+          throw new BadRequest(userMessage.error.allFieldsRequired);
         const isMatch = await new PasswordHasServices().compare(
           oldPassword,
           findUser.password
         );
-        if (!isMatch) throw new BadRequest("Old password is not match.");
+        if (!isMatch) throw new BadRequest(userMessage.error.oldPassword);
         const hashedPassword = await new PasswordHasServices().hash(
           newPassword
         );
@@ -602,10 +605,11 @@ class UserController extends DeleteOperation {
           { email },
           { password: hashedPassword }
         );
-        if (!updateUser) throw new GatewayTimeout("Password is not updated.");
+        if (!updateUser)
+          throw new GatewayTimeout(userMessage.error.passwordNotMatch);
         res.json({
           success: {
-            message: "Password is updated successfully.",
+            message: userMessage.success.passwordSet,
           },
         });
       } else {
@@ -635,7 +639,7 @@ class UserController extends DeleteOperation {
         );
         res.json({
           success: {
-            message: "Check your Email.",
+            message: userMessage.success.forgetPasswordLinkMail,
           },
         });
       }
@@ -656,10 +660,10 @@ class UserController extends DeleteOperation {
           : findUser.subcategories,
         genres: genres.length ? genres : findUser.genres,
       });
-      if (!updateProfile) throw new GatewayTimeout("User is not updated.");
+      if (!updateProfile) throw new GatewayTimeout(userMessage.error.notUpdate);
       res.json({
         success: {
-          message: "User is updated successfully.",
+          message: userMessage.success.update,
         },
       });
     } catch (error) {

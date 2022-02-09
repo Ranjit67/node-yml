@@ -1,5 +1,6 @@
 const userMessage = {
   error: {
+    allFieldsRequired: "All fields are required",
     notUpdatedBlockOrUnblock:
       "User is verified so you can't block or active the users.",
     duplicateEmail: "This email is already registered.",
@@ -8,6 +9,16 @@ const userMessage = {
     invalidUserId: "Invalid user id.",
     userNotFound: "No user found.",
     notDelete: "User is not deleted.",
+    notCreated: "User is not created.",
+    emailToken: "Email token is not valid.",
+    profileImage: "Profile image is not uploaded.",
+    notUpdate: "User is not updated.",
+    passwordNotSet: "Your password is not set.",
+    wrongPassword: "Wrong password you have enter.",
+    tokenGenerate: "Token is not generated.",
+    oldPassword: "Old password is not match.",
+    passwordNotMatch: "Password is not match.",
+    // userNotFound:"User not found."
   },
   success: {
     userBlocked: "User is blocked successfully.",
@@ -16,6 +27,11 @@ const userMessage = {
     managerDelete: "Manager is deleted successfully.",
     userDelete: "User is deleted successfully.",
     artistDelete: "Artist is deleted successfully.",
+    mailVerification:
+      "User is created successfully. Email send to user mail for verification.",
+    update: "User is updated successfully.",
+    passwordSet: "Password is set successfully.",
+    forgetPasswordLinkMail: "Password reset link send to your mail.",
   },
 };
 export default userMessage;
