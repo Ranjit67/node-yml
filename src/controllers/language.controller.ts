@@ -80,16 +80,16 @@ class LanguageController {
           _id: { $in: language_idsOrId },
         });
         if (!deleteLanguage)
-          throw new GatewayTimeout("Language is not deleted.");
+          throw new GatewayTimeout(languageMessage.error.notDelete);
         const deleteFromUser = await UserSchema.updateMany(
           { languages: { $in: language_idsOrId } },
           { $pull: { languages: { $in: language_idsOrId } } }
         );
         if (!deleteFromUser)
-          throw new NotAcceptable("Language is not deleted from user.");
+          throw new NotAcceptable(languageMessage.error.notDeleteUser);
         res.json({
           success: {
-            message: "Languages are deleted successfully.",
+            message: languageMessage.success.delete,
           },
         });
       } else {
@@ -97,16 +97,16 @@ class LanguageController {
           _id: language_idsOrId,
         });
         if (!deleteLanguage)
-          throw new GatewayTimeout("Language is not deleted.");
+          throw new GatewayTimeout(languageMessage.error.notDelete);
         const deleteFromUser = await UserSchema.updateMany(
           { languages: { $in: [language_idsOrId] } },
           { $pull: { languages: { $in: [language_idsOrId] } } }
         );
         if (!deleteFromUser)
-          throw new NotAcceptable("Language is not deleted from user.");
+          throw new NotAcceptable(languageMessage.error.notDeleteUser);
         res.json({
           success: {
-            message: "Language is deleted successfully.",
+            message: languageMessage.success.delete,
           },
         });
       }

@@ -15,22 +15,7 @@ class FavoriteController {
       const { userId, artistId } = req.body;
       if (!userId || !artistId)
         throw new BadRequest(favoriteMessage.error.allField);
-      // const firstUpdate = await FavoriteSchema.updateOne(
-      //   { artist: artistId, "favorites.user": userId },
-      //   {
-      //     $pull: {
-      //       favorites: {
-      //         user: userId,
-      //       },
-      //     },
-      //   }
-      // );
-      // if (firstUpdate.matchedCount)
-      //   return res.json({
-      //     success: {
-      //       message: favoriteMessage.success.removeFavorite,
-      //     },
-      //   });
+
       const checkAddedOrNot = await FavoriteSchema.findOne({
         artist: artistId,
         "favorites.user": userId,

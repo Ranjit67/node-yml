@@ -30,10 +30,10 @@ class ServiceController {
         timestamp: new Date().toString(),
       });
       if (!saveService)
-        throw new InternalServerError("Service is not created.");
+        throw new InternalServerError(serviceMessage.error.notCreated);
       res.json({
         success: {
-          message: "Service is created successfully.",
+          message: serviceMessage.success.created,
         },
       });
     } catch (error) {
@@ -100,10 +100,10 @@ class ServiceController {
         }
       );
       if (!findOneAndUpdateService)
-        throw new InternalServerError("Service is not updated.");
+        throw new InternalServerError(serviceMessage.error.notUpdated);
       res.json({
         success: {
-          message: " Service is updated successfully.",
+          message: serviceMessage.success.updated,
         },
       });
     } catch (error) {
@@ -113,10 +113,11 @@ class ServiceController {
   public async delete(req: Request, res: Response, next: NextFunction) {
     try {
       const { ids } = req.body;
-      if (!ids?.length) throw new BadRequest("Service is not found.");
+      if (!ids?.length)
+        throw new BadRequest(serviceMessage.error.allFieldsRequired);
       const findAllService = await ServiceSchema.find({ _id: { $in: ids } });
       if (!findAllService?.length)
-        throw new BadRequest("Services are not found.");
+        throw new BadRequest(serviceMessage.error.noData);
       const awsS3 = new AwsS3Services();
       for (let data of findAllService) {
         const deleteOlder = data?.iconFile
@@ -131,16 +132,16 @@ class ServiceController {
         _id: { $in: ids },
       });
       if (!deleteService)
-        throw new InternalServerError("Services are not deleted.");
+        throw new InternalServerError(serviceMessage.error.notDelete);
 
       res.json({
         success: {
-          message: "Services are deleted successfully.",
+          message: serviceMessage.success.delete,
         },
       });
     } catch (error: any) {
       if (error.path === "_id") {
-        error.message = "No Services are found.";
+        error.message = serviceMessage.error.noData;
       }
       next(error);
     }

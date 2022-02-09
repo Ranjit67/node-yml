@@ -4,10 +4,15 @@ const serviceMessage = {
     imageImageUploadFail: "Image Upload Fail.",
     allFieldsRequired: "All fields are required.",
     duplicateName: "This Service name is already exists.",
+    notCreated: "Service is not created.",
+    notUpdated: "Service is not updated.",
+    noData: "No data found.",
+    notDelete: "Services are not deleted.",
   },
   success: {
-    //   categoryCreates: "Category created Successfully.",
-    //   categoryUpdated: "Category Updated Successfully.",
+    created: "Service is created successfully.",
+    updated: "Service is updated successfully.",
+    delete: "Services are deleted successfully.",
   },
 };
 export default serviceMessage;

@@ -24,3 +24,4 @@ export { default as bookingRescheduleMessage } from "./bookingReschedule.message
 export { default as notificationMessage } from "./notification.message";
 export { default as versionMessage } from "./version.message";
 export { default as orderMessage } from "./order.message";
+export { default as emailTokenMessage } from "./emailToken.message";

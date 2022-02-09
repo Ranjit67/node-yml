@@ -12,6 +12,7 @@ import {
   newArtistApprovalIcon,
   newManagerApprovalIcon,
 } from "../notificationIcon";
+import { emailTokenMessage } from "../resultMessage";
 type test = {
   role: userRole;
 };
@@ -33,14 +34,14 @@ class EmailTokenController {
       const { token, password } = req.body;
       const data = new JwtService().emailTokenVerify(token);
       const userId = data?.aud?.[0];
-      if (!userId) throw new NotFound("User is not found.");
+      if (!userId) throw new NotFound(emailTokenMessage.error.userNotFound);
       const hashedPassword = await new PasswordHasServices().hash(password);
       const findUser: any = await UserSchema.findById(userId);
 
       const deleteData = await EmailToken.findOneAndDelete({
         userRef: userId,
       });
-      if (!deleteData) throw new NotFound("Your token has expired.");
+      if (!deleteData) throw new NotFound(emailTokenMessage.error.tokenExpired);
       // console.log("deleteData", deleteData);
       if (findUser.role === "user") {
         const updatePassword = await UserSchema.findByIdAndUpdate(userId, {
@@ -48,8 +49,12 @@ class EmailTokenController {
           status: "active",
         });
         if (!updatePassword)
-          throw new InternalServerError("Password is not updated.");
-        return res.json({ data: "Password is updated successfully." });
+          throw new InternalServerError(
+            emailTokenMessage.error.passwordNotUpdated
+          );
+        return res.json({
+          success: { message: emailTokenMessage.success.updated },
+        });
       } else {
         const updatePassword = await UserSchema.findByIdAndUpdate(userId, {
           password: hashedPassword,
@@ -93,9 +98,11 @@ class EmailTokenController {
         }
         // notification end
         if (!updatePassword)
-          throw new InternalServerError("Password is not updated.");
+          throw new InternalServerError(
+            emailTokenMessage.error.passwordNotUpdated
+          );
         return res.json({
-          data: "Password is updated successfully. Wait for admin approval.",
+          success: { message: emailTokenMessage.error.passwordNotUpdated },
         });
       }
     } catch (error) {

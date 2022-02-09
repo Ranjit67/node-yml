@@ -29,10 +29,11 @@ class EventController {
         imageFile: imageImage.Key,
         timestamp: new Date(),
       });
-      if (!saveEvent) throw new InternalServerError("Event is not created.");
+      if (!saveEvent)
+        throw new InternalServerError(eventMessage.error.notCreated);
       res.json({
         success: {
-          message: "Event is created successfully.",
+          message: eventMessage.success.created,
         },
       });
     } catch (error) {
@@ -101,10 +102,10 @@ class EventController {
         }
       );
       if (!findOneAndUpdateEvent)
-        throw new InternalServerError("Event is not updated.");
+        throw new InternalServerError(eventMessage.error.notUpdated);
       res.json({
         success: {
-          message: "Event is updated successfully.",
+          message: eventMessage.success.updated,
         },
       });
     } catch (error) {
@@ -115,10 +116,11 @@ class EventController {
     try {
       const { ids } = req.body;
 
-      if (!ids?.length) throw new BadRequest("Event is not found.");
+      if (!ids?.length)
+        throw new BadRequest(eventMessage.error.allFieldsRequired);
       const findEvent = await EventSchema.find({ _id: { $in: ids } });
       console.log(findEvent);
-      if (!findEvent?.length) throw new BadRequest("Event is not found.");
+      if (!findEvent?.length) throw new BadRequest(eventMessage.error.notFound);
       const awsS3 = new AwsS3Services();
       for (let item of findEvent) {
         const deleteOlder = item?.iconFile
@@ -130,15 +132,15 @@ class EventController {
       }
       const deleteEvent = await EventSchema.deleteMany({ _id: { $in: ids } });
       if (!deleteEvent)
-        throw new InternalServerError("Events are not deleted.");
+        throw new InternalServerError(eventMessage.error.notDeleted);
       res.json({
         success: {
-          message: "Events are deleted successfully.",
+          message: eventMessage.success.deleted,
         },
       });
     } catch (error: any) {
       if (error.path === "_id") {
-        error.message = "No Events are found.";
+        error.message = eventMessage.error.notFound;
       }
 
       next(error);
