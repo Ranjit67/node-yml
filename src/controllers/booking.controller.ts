@@ -2,6 +2,7 @@ import { Response, Request, NextFunction } from "express";
 import {
   BadRequest,
   InternalServerError,
+  GatewayTimeout,
   Conflict,
   NotFound,
   NotAcceptable,
@@ -50,7 +51,7 @@ class BookingController {
         OtherDetails,
         eventId,
         personalizedMsgDate,
-        isRequestSend,
+        // isRequestSend,
         requestDetails,
         bankAmount,
         walletAmount,
@@ -58,6 +59,7 @@ class BookingController {
         promoCodeId,
         orderId,
         paymentStatus,
+        paymentId,
       } = req.body;
       let promoCodeData;
       if (promoCodeId) {
@@ -88,13 +90,16 @@ class BookingController {
         walletAmount,
         promoCodeAmount,
         bookingType: personalizedMessage ? "personalizedMessage" : "other",
+        orderId,
+        paymentStatus,
+        paymentId,
       });
       const orderCreate = await OrderSchema.create({
         booking: createBooking._id,
       });
       if (!createBooking)
         throw new InternalServerError(bookingMessage.error.notCreated);
-      if (isRequestSend) {
+      if (!orderId) {
         const requestCreate = await RequestSchema.create({
           requestType: personalizedMessage ? "personalize" : "pricing",
           receiverUser: artistId,
@@ -154,6 +159,19 @@ class BookingController {
           },
         });
       } else {
+        // request send for payment
+        const requestCreate = await RequestSchema.create({
+          requestType: "payment",
+          receiverUser: artistId,
+          senderUser: userId,
+          booking: createBooking._id,
+          details: requestDetails,
+          timestamp: new Date(),
+        });
+        if (!requestCreate)
+          throw new NotAcceptable(bookingMessage.error.bookingRequest);
+
+        // request end
         const findArtistManager = await AssignArtistSchema.find({
           "artists.artist": artistId,
         }).select("manager -_id");
@@ -976,10 +994,26 @@ class BookingController {
   }
   async bookingPaymentConfirm(req: Request, res: Response, next: NextFunction) {
     try {
-      const { bookingId, orderId, paymentId, newPaymentId } = req.body;
+      const {
+        bookingId,
+        orderId,
+        paymentId,
+        newPaymentId,
+        //
+        // paymentAmount,
+        requestDetails,
+        bankAmount, //important
+        walletAmount,
+        promoCodeAmount,
+        promoCodeId,
+      } = req.body;
+      let promoCodeData;
+      if (promoCodeId) {
+        promoCodeData = await PromoCodeSchema.findById(promoCodeId);
+      }
       // if (!orderId) throw new BadRequest(bookingMessage.error.allField);
       if (paymentId) {
-        const findBooking = await BookingSchema.findOne({ paymentId });
+        const findBooking: any = await BookingSchema.findOne({ paymentId });
         if (findBooking?.paymentStatus !== "fail")
           throw new BadRequest("Wrong token.");
         const updateBookingData = await BookingSchema.findOneAndUpdate(
@@ -987,10 +1021,67 @@ class BookingController {
           {
             paymentId: newPaymentId,
             paymentStatus: "success",
+            isPayment: true,
+            promoCodeData: promoCodeData ?? {},
+            bankAmount: +bankAmount ?? findBooking.bookingPrice,
+            walletAmount: +walletAmount ?? 0,
+            promoCodeAmount: +promoCodeAmount ?? 0,
           }
         );
+        if (!updateBookingData)
+          throw new GatewayTimeout("Something went wrong.");
+        // request to artist
+        const requestCreate = await RequestSchema.create({
+          requestType: "payment",
+          senderUser: findBooking.user,
+          receiverUser: findBooking.artist,
+          booking: findBooking._id,
+          details: requestDetails,
+          timestamp: new Date(),
+        });
+        if (!requestCreate)
+          throw new NotAcceptable(bookingMessage.error.bookingRequest);
+        // notification start
+        const findArtistManager = await AssignArtistSchema.find({
+          "artists.artist": findBooking?.artist,
+        }).select("manager -_id");
+        const bookingContent = new BookingContent();
+        for (let index of [
+          findBooking?.user,
+          findBooking?.artist,
+          ...findArtistManager.map((item) => item.manager),
+        ]) {
+          const title =
+            index === findBooking?.user
+              ? bookingContent.newBookingUser().subject
+              : bookingContent.newBookingArtist().subject;
+          const description =
+            index === findBooking?.user
+              ? bookingContent.newBookingUser().text
+              : bookingContent.newBookingArtist().text;
+          const bookingNotificationIcon =
+            index === findBooking?.user ? newBookingUser : newBookingArtist;
+          await new NotificationServices().notificationGenerate(
+            index,
+            findBooking?.user,
+            title,
+            description,
+            bookingNotificationIcon,
+            {
+              subject: title,
+              text: description,
+            },
+            {
+              title,
+              body: description,
+              sound: "default",
+            }
+          );
+        }
+
+        // notification end
       } else {
-        const findBookingFirst = await BookingSchema.findOne({
+        const findBookingFirst: any = await BookingSchema.findOne({
           _id: bookingId,
         });
         if (findBookingFirst?.orderId) throw new BadRequest("Wrong token.");
@@ -999,8 +1090,67 @@ class BookingController {
           {
             orderId,
             paymentStatus: "success",
+            isPayment: true,
+            promoCodeData: promoCodeData ?? {},
+            bankAmount: +bankAmount ?? findBookingFirst?.bookingPrice,
+            walletAmount: +walletAmount ?? 0,
+            promoCodeAmount: +promoCodeAmount ?? 0,
           }
         );
+        if (!updateBookingData)
+          throw new GatewayTimeout("Something went wrong.");
+        // request to artist
+        const requestCreate = await RequestSchema.create({
+          requestType: "payment",
+          senderUser: findBookingFirst.user,
+          receiverUser: findBookingFirst.artist,
+          booking: findBookingFirst._id,
+          details: requestDetails,
+          timestamp: new Date(),
+        });
+        if (!requestCreate)
+          throw new NotAcceptable(bookingMessage.error.bookingRequest);
+        // notification start
+        const findArtistManager = await AssignArtistSchema.find({
+          "artists.artist": findBookingFirst?.artist,
+        }).select("manager -_id");
+        const bookingContent = new BookingContent();
+        for (let index of [
+          findBookingFirst?.user,
+          findBookingFirst?.artist,
+          ...findArtistManager.map((item) => item.manager),
+        ]) {
+          const title =
+            index === findBookingFirst?.user
+              ? bookingContent.newBookingUser().subject
+              : bookingContent.newBookingArtist().subject;
+          const description =
+            index === findBookingFirst?.user
+              ? bookingContent.newBookingUser().text
+              : bookingContent.newBookingArtist().text;
+          const bookingNotificationIcon =
+            index === findBookingFirst?.user
+              ? newBookingUser
+              : newBookingArtist;
+          await new NotificationServices().notificationGenerate(
+            index,
+            findBookingFirst?.user,
+            title,
+            description,
+            bookingNotificationIcon,
+            {
+              subject: title,
+              text: description,
+            },
+            {
+              title,
+              body: description,
+              sound: "default",
+            }
+          );
+        }
+
+        // notification end
       }
 
       res.json({
