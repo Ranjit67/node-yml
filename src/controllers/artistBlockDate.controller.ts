@@ -76,6 +76,36 @@ class ArtistBlockDateController {
       next(error);
     }
   }
+  async deleteBlockDateByArtist(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { blockDateIds } = req.body;
+      if (!blockDateIds.length)
+        throw new BadRequest(artistBlockDateMessage.error.allField);
+      const deleteBlockDate = await ArtistBlockDateSchema.updateOne(
+        { "blockedDates._id": { $in: blockDateIds } },
+        {
+          $pull: {
+            blockedDates: {
+              _id: { $in: blockDateIds },
+            },
+          },
+        }
+      );
+      if (!deleteBlockDate)
+        throw new NotAcceptable(artistBlockDateMessage.error.notDeleted);
+      return res.json({
+        success: {
+          message: artistBlockDateMessage.success.deleteBlockDate,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default ArtistBlockDateController;
