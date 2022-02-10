@@ -14,6 +14,7 @@ class ArtistBlockDateRoutes {
       "/all-block-date/:artistId",
       this.artistBlockDate.getBlockDateByArtist
     );
+    this.router.put("/delete", this.artistBlockDate.deleteBlockDateByArtist);
   }
 }
 
