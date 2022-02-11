@@ -4,6 +4,7 @@ const pricingMessage = {
     notSave: "Something went Wrong, Pricing not saved.",
     notFoundPricingId: "Wrong Pricing id, You have input.",
     notRemove: "Something went wrong, Pricing are not deleted.",
+    samePaired: "Same paired already there.",
   },
   success: {
     newPricingAdded: "New Pricing added successfully.",

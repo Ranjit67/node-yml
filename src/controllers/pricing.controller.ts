@@ -15,7 +15,24 @@ class PricingController {
         location,
         latLng,
       } = req.body;
-      if (!artistId) throw new BadRequest(pricingMessage.error.allField);
+      if (
+        !artistId ||
+        !numberOfDays ||
+        !pricePerHour ||
+        !maxCrowdSize ||
+        !minCrowdSize ||
+        !location
+      )
+        throw new BadRequest(pricingMessage.error.allField);
+      const checkData = await PricingSchema.findOne({
+        artist: artistId,
+        "prices.numberOfDays": numberOfDays,
+        "prices.pricePerHour": pricePerHour,
+        "prices.maxCrowdSize": maxCrowdSize,
+        "prices.minCrowdSize": minCrowdSize,
+        "prices.location": location,
+      });
+      if (location) throw new NotAcceptable(pricingMessage.error.samePaired);
       const updateFirst = await PricingSchema.updateOne(
         { artist: artistId },
         {
