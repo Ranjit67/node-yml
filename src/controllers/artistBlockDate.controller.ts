@@ -68,6 +68,7 @@ class ArtistBlockDateController {
       }).select("blockedDates");
       if (!artistBlockDate) res.json({ success: { data: [] } });
       const structDates = artistBlockDate.blockedDates.map((element: any) => ({
+        _id: element._id,
         timestamp: element.timestamp,
         date: new Date(element.date),
       }));
@@ -95,14 +96,20 @@ class ArtistBlockDateController {
           },
         }
       );
-      if (!deleteBlockDate)
+      if (!deleteBlockDate.matchedCount)
         throw new NotAcceptable(artistBlockDateMessage.error.notDeleted);
       return res.json({
         success: {
           message: artistBlockDateMessage.success.deleteBlockDate,
         },
       });
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.path === "_id")
+        return res.status(406).json({
+          error: {
+            message: artistBlockDateMessage.error.notDeleted,
+          },
+        });
       next(error);
     }
   }
