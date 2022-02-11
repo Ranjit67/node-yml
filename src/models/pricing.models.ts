@@ -14,6 +14,10 @@ const pricingSchema = new Schema<PricingModel>({
       maxCrowdSize: Number,
       minCrowdSize: Number,
       location: String,
+      latLng: {
+        lat: Number,
+        lng: Number,
+      },
       timestamp: {
         type: Date,
         default: new Date(),

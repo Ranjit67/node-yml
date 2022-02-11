@@ -10,6 +10,10 @@ export default interface PricingModel extends Document {
       minCrowdSize: number;
       location: string;
       timestamp: Date;
+      latLng: {
+        lat: number;
+        lng: number;
+      };
     }
   ];
 }

@@ -13,6 +13,7 @@ class PricingController {
         maxCrowdSize,
         minCrowdSize,
         location,
+        latLng,
       } = req.body;
       if (!artistId) throw new BadRequest(pricingMessage.error.allField);
       const updateFirst = await PricingSchema.updateOne(
@@ -26,6 +27,7 @@ class PricingController {
               minCrowdSize,
               location,
               timestamp: new Date(),
+              latLng,
             },
           },
         }
@@ -34,18 +36,21 @@ class PricingController {
         return res.json({
           success: { message: pricingMessage.success.newPricingAdded },
         });
-      const artistPricing = new PricingSchema({
+      const artistPriceSave = await PricingSchema.create({
         artist: artistId,
+        prices: [
+          {
+            numberOfDays,
+            pricePerHour,
+            maxCrowdSize,
+            minCrowdSize,
+            location,
+            timestamp: new Date(),
+            latLng,
+          },
+        ],
       });
-      artistPricing.prices.push({
-        numberOfDays,
-        pricePerHour,
-        maxCrowdSize,
-        minCrowdSize,
-        location,
-        timestamp: new Date(),
-      });
-      const artistPriceSave = artistPricing.save();
+
       if (!artistPriceSave)
         throw new NotAcceptable(pricingMessage.error.notSave);
       res.json({ success: { message: pricingMessage.success.create } });
@@ -75,6 +80,7 @@ class PricingController {
         maxCrowdSize,
         minCrowdSize,
         location,
+        latLng,
       } = req.body;
       const findPricing: any = await PricingSchema.findOne({
         artist: artistId,
@@ -95,6 +101,8 @@ class PricingController {
           "prices.$.maxCrowdSize": maxCrowdSize ?? dataUpdate.maxCrowdSize,
           "prices.$.minCrowdSize": minCrowdSize ?? dataUpdate.minCrowdSize,
           "prices.$.location": location ?? dataUpdate.location,
+          "prices.$.latLng.lat": latLng?.lat ?? dataUpdate.latLng?.lat,
+          "prices.$.latLng.lng": latLng?.lng ?? dataUpdate.latLng?.lng,
         }
       );
       if (updatePricing.modifiedCount)
@@ -111,7 +119,7 @@ class PricingController {
     try {
       const { artistId, pricingIds } = req.body;
       // pricingIds - it is array
-      if (!artistId || !pricingIds.length)
+      if (!artistId || !pricingIds?.length)
         throw new BadRequest(pricingMessage.error.allField);
       const removeOnePricing = await PricingSchema.findOneAndUpdate(
         { artist: artistId },
