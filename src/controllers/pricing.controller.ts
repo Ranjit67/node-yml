@@ -26,10 +26,10 @@ class PricingController {
         throw new BadRequest(pricingMessage.error.allField);
       const checkData = await PricingSchema.findOne({
         artist: artistId,
-        "prices.numberOfDays": numberOfDays,
-        "prices.pricePerHour": pricePerHour,
-        "prices.maxCrowdSize": maxCrowdSize,
-        "prices.minCrowdSize": minCrowdSize,
+        "prices.numberOfDays": +numberOfDays,
+        "prices.pricePerHour": +pricePerHour,
+        "prices.maxCrowdSize": +maxCrowdSize,
+        "prices.minCrowdSize": +minCrowdSize,
         "prices.location": location,
       });
       if (location) throw new NotAcceptable(pricingMessage.error.samePaired);
@@ -38,10 +38,10 @@ class PricingController {
         {
           $push: {
             prices: {
-              numberOfDays,
-              pricePerHour,
-              maxCrowdSize,
-              minCrowdSize,
+              numberOfDays: +numberOfDays,
+              pricePerHour: +pricePerHour,
+              maxCrowdSize: +maxCrowdSize,
+              minCrowdSize: +minCrowdSize,
               location,
               timestamp: new Date(),
               latLng,
@@ -57,10 +57,10 @@ class PricingController {
         artist: artistId,
         prices: [
           {
-            numberOfDays,
-            pricePerHour,
-            maxCrowdSize,
-            minCrowdSize,
+            numberOfDays: +numberOfDays,
+            pricePerHour: +pricePerHour,
+            maxCrowdSize: +maxCrowdSize,
+            minCrowdSize: +minCrowdSize,
             location,
             timestamp: new Date(),
             latLng,
