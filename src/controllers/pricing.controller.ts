@@ -25,6 +25,7 @@ class PricingController {
               maxCrowdSize,
               minCrowdSize,
               location,
+              timestamp: new Date(),
             },
           },
         }
