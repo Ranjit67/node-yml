@@ -10,10 +10,22 @@ const pricingSchema = new Schema<PricingModel>({
   prices: [
     {
       numberOfDays: Number,
+      otherDay: {
+        type: Boolean,
+        default: false,
+      },
       pricePerHour: Number,
       maxCrowdSize: Number,
       minCrowdSize: Number,
+      otherCrowdSize: {
+        type: Boolean,
+        default: false,
+      },
       location: String,
+      otherLocation: {
+        type: Boolean,
+        default: false,
+      },
       latLng: {
         lat: Number,
         lng: Number,
