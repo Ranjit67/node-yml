@@ -53,9 +53,37 @@ class RequestController {
         receiverUser: receiverUserId,
         deletedUsers: { $ne: receiverUserId },
       })
-        .populate("senderUser")
+        .populate({
+          path: "senderUser",
+          select: "-password -fcmToken",
+          populate: [
+            {
+              path: "events",
+              module: "Event",
+            },
+            {
+              path: "category",
+              module: "Category",
+              select: "-subcategories",
+            },
+            {
+              path: "languages",
+              module: "Language",
+            },
+            {
+              path: "genres",
+              module: "Genres",
+            },
+            {
+              path: "subcategories",
+              module: "SubCategory",
+            },
+          ],
+        })
+        .select("-deletedUsers")
         .populate({
           path: "booking",
+
           populate: [
             {
               path: "serviceType",
@@ -124,7 +152,33 @@ class RequestController {
         senderUser: senderUserId,
         deletedUsers: { $ne: senderUserId },
       })
-        .populate("receiverUser")
+        .populate({
+          path: "receiverUser",
+          select: "-password -fcmToken",
+          populate: [
+            {
+              path: "events",
+              module: "Event",
+            },
+            {
+              path: "category",
+              module: "Category",
+              select: "-subcategories",
+            },
+            {
+              path: "languages",
+              module: "Language",
+            },
+            {
+              path: "genres",
+              module: "Genres",
+            },
+            {
+              path: "subcategories",
+              module: "SubCategory",
+            },
+          ],
+        })
         .populate({
           path: "booking",
           populate: [
@@ -145,7 +199,8 @@ class RequestController {
         .populate({
           path: "reschedule",
           select: "rescheduleDate rescheduleBy",
-        });
+        })
+        .select("-deletedUsers");
       res.json({
         success: {
           data: requestSender,
