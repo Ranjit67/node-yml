@@ -11,6 +11,9 @@ const requestMessage = {
     notDelete: "Requests are not deleted.",
     notRequestUpdate: "Something went wrong, Request Not rejected.",
     wrongDataEnter: "Wrong id, you have enter.",
+    yourRequestPending:
+      "Your request is already pending. Wait for the Artist actions.",
+    allAreNotDelete: "Something want Wrong, All the data are not deleted.",
   },
   success: {
     created: "Request data created successfully.",

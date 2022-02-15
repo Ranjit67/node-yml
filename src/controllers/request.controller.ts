@@ -22,6 +22,17 @@ class RequestController {
         req.body;
       if (!receiverUserId || !senderUserId || !requestType)
         throw new BadRequest(requestMessage.error.allField);
+      if (requestType === "manager") {
+        const findRequestHaveOrNot = await RequestSchema.findOne({
+          requestType: "manager",
+          status: { $in: ["pending", "accept"] },
+          receiverUser: receiverUserId,
+          senderUser: senderUserId,
+          deletedUsers: { $ne: receiverUserId },
+        });
+        if (findRequestHaveOrNot)
+          throw new Conflict(requestMessage.error.yourRequestPending);
+      }
       const createRequest = await RequestSchema.create({
         requestType,
         receiverUser: receiverUserId,
@@ -481,6 +492,7 @@ class RequestController {
       const { requestIds, userId } = req.body;
       if (!Array.isArray(requestIds))
         throw new BadRequest(requestMessage.error.requestIdIsArray);
+
       const updateRequest = await RequestSchema.updateMany(
         { _id: { $in: requestIds } },
         {
@@ -489,8 +501,10 @@ class RequestController {
           },
         }
       );
-      if (updateRequest.matchedCount === 0)
-        throw new NotAcceptable(requestMessage.error.requestNotDeleted);
+      if (updateRequest.modifiedCount === 0)
+        throw new NotAcceptable(requestMessage.error.notDelete);
+      if (updateRequest.modifiedCount !== requestIds?.length)
+        throw new NotAcceptable(requestMessage.error.allAreNotDelete);
       res.json({
         success: {
           message: requestMessage.success.requestDeleted,
