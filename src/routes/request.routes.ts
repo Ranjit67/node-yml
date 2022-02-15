@@ -30,6 +30,7 @@ class RequestRouter {
       "/manager-remove",
       this.requestController.createMangerRemoveRequest
     );
+    this.router.put("/reject", this.requestController.rejectRequest);
     this.router.post("/delete", this.requestController.delete);
   }
 }

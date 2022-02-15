@@ -341,6 +341,36 @@ class RequestController {
       next(error);
     }
   }
+  async rejectRequest(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { requestId, reason, details, userId } = req.body;
+      if (!requestId || !reason || !userId)
+        throw new BadRequest(requestMessage.error.allField);
+      const updateRequest = await RequestSchema.findOneAndUpdate(
+        { receiverUser: userId, _id: requestId },
+        {
+          status: "reject",
+          reason,
+          details,
+        }
+      );
+      if (!updateRequest)
+        throw new NotAcceptable(requestMessage.error.notRequestUpdate);
+      res.json({
+        success: {
+          message: requestMessage.success.rejectRequest,
+        },
+      });
+    } catch (error: any) {
+      if (error?.path === "_id" || error?.path === "receiverUser")
+        return res.status(404).json({
+          error: {
+            message: requestMessage.error.wrongDataEnter,
+          },
+        });
+      next(error);
+    }
+  }
   public async createMangerRemoveRequest(
     req: Request,
     res: Response,

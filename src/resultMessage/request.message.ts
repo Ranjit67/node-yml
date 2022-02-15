@@ -9,6 +9,8 @@ const requestMessage = {
     artistNotFound: "Something went wrong. Artist is not found.",
     requestIdIsArray: "Array require.",
     notDelete: "Requests are not deleted.",
+    notRequestUpdate: "Something went wrong, Request Not rejected.",
+    wrongDataEnter: "Wrong id, you have enter.",
   },
   success: {
     created: "Request data created successfully.",
@@ -17,6 +19,7 @@ const requestMessage = {
     bookingReject: "Booking rejected successfully.",
     managerRequestCreate: "Your Request has been sent successfully to Artist.",
     requestDeleted: "Request deleted successfully.",
+    rejectRequest: "Requested rejected Successfully.",
   },
 };
 export default requestMessage;
