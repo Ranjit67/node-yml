@@ -282,10 +282,13 @@ class UserController extends DeleteOperation {
           baseUrl,
           token
         );
-        const SendEmail = await new EmailService().emailSend(
+        console.log(emailContent);
+
+        const SendEmail = await new EmailService().LinkEmailSend(
           userSave?.email,
           emailContent.subject,
-          emailContent.text
+          emailContent.text,
+          emailContent.link
         );
         res.json({
           success: {
@@ -324,10 +327,12 @@ class UserController extends DeleteOperation {
           baseUrl,
           token
         );
-        const SendEmail = await new EmailService().emailSend(
+        console.log(emailContent);
+        const SendEmail = await new EmailService().LinkEmailSend(
           userSave?.email,
           emailContent.subject,
-          emailContent.text
+          emailContent.text,
+          emailContent.link
         );
         res.json({
           success: {
@@ -627,15 +632,16 @@ class UserController extends DeleteOperation {
           });
         }
 
-        const emailContent =
-          stringData === "changePassword"
-            ? new UserContent().emailResetPassword(token)
-            : new UserContent().emailForgetPassword(baseUrl, token);
+        const emailContent = new UserContent().emailForgetPassword(
+          baseUrl,
+          token
+        );
 
-        const SendEmail = await new EmailService().emailSend(
+        const SendEmail = await new EmailService().LinkEmailSend(
           email,
           emailContent.subject,
-          emailContent.text
+          emailContent.text,
+          emailContent.link
         );
         res.json({
           success: {

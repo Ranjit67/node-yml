@@ -407,15 +407,15 @@ class RequestController {
       next(error);
     }
   }
-  async rejectRequest(req: Request, res: Response, next: NextFunction) {
+  async acceptRejectRequest(req: Request, res: Response, next: NextFunction) {
     try {
-      const { requestId, reason, details, userId } = req.body;
+      const { requestId, reason, details, userId, isAccept } = req.body;
       if (!requestId || !reason || !userId)
         throw new BadRequest(requestMessage.error.allField);
       const updateRequest = await RequestSchema.findOneAndUpdate(
         { receiverUser: userId, _id: requestId },
         {
-          status: "reject",
+          status: isAccept ? "accept" : "reject",
           reason,
           details,
         }
@@ -424,7 +424,9 @@ class RequestController {
         throw new NotAcceptable(requestMessage.error.notRequestUpdate);
       res.json({
         success: {
-          message: requestMessage.success.rejectRequest,
+          message: isAccept
+            ? requestMessage.success.requestAccept
+            : requestMessage.success.rejectRequest,
         },
       });
     } catch (error: any) {

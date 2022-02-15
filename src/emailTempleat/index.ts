@@ -38,6 +38,13 @@ td {
   background: linear-gradient(to right, #BB0A01, #40559B);
   color: #fff;
 }
+.btn-a {
+  color: white;
+    padding: 12px 30px 12px 30px;
+    background: linear-gradient(to right, #BB0A01, #40559B);
+    border-radius: 10px;
+    width: 100px;
+}
 
 .btn-primary-contained {
   padding-top: 10px;
@@ -244,6 +251,40 @@ module.exports = {
         <tr>
           ${content}
         </tr>
+        
+        
+        ${tableFooter}
+      </table>
+    </body>
+  </html>
+  `,
+  linkEmail: (content: string, link: string) => `
+  <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <title>Thank You!</title>
+      <style>${MailStyle}</style>
+    </head>
+    <body>
+      <table class="tbl-bordered">
+        ${tableHead}
+        <tr>
+          <td class="bg-expo" colspan="100%" align="center">RAPIDLY GROWING SKY-RISE</td>
+        </tr>
+        <tr>
+          ${content}
+        </tr>
+        
+           <tr>
+           <a href =${`"` + link + `"`} class="btn-a" >info@yardhotel.live</a>
+          
+        </tr>
+            
+        
+        
         ${tableFooter}
       </table>
     </body>

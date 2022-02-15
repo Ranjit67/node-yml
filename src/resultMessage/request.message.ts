@@ -17,6 +17,7 @@ const requestMessage = {
     invalid: "Invalid ids entry.",
   },
   success: {
+    requestAccept: "Request is accepted successfully.",
     created: "Request data created successfully.",
     acceptPriceSet: "Request price set successfully.",
     bookingAccept: "Booking accepted successfully.",
