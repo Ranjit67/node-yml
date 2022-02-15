@@ -31,7 +31,7 @@ import {
   PasswordHasServices,
   NotificationServices,
 } from "../services";
-import EmailContent, { UserContent } from "../emailContent";
+import { UserContent } from "../emailContent";
 import { userMessage } from "../resultMessage";
 import { userBlockIcon, userUnblockIcon } from "../notificationIcon";
 
@@ -278,7 +278,7 @@ class UserController extends DeleteOperation {
         });
         if (!saveEmailToken)
           throw new InternalServerError(userMessage.error.emailToken);
-        const emailContent = new EmailContent().emailOnSelfVerification(
+        const emailContent = new UserContent().emailOnSelfVerification(
           baseUrl,
           token
         );
@@ -320,7 +320,7 @@ class UserController extends DeleteOperation {
         });
         if (!saveEmailToken)
           throw new InternalServerError(userMessage.error.emailToken);
-        const emailContent = new EmailContent().emailOnSelfVerification(
+        const emailContent = new UserContent().emailOnSelfVerification(
           baseUrl,
           token
         );
@@ -629,8 +629,8 @@ class UserController extends DeleteOperation {
 
         const emailContent =
           stringData === "changePassword"
-            ? new EmailContent().emailResetPassword(token)
-            : new EmailContent().emailForgetPassword(baseUrl, token);
+            ? new UserContent().emailResetPassword(token)
+            : new UserContent().emailForgetPassword(baseUrl, token);
 
         const SendEmail = await new EmailService().emailSend(
           email,

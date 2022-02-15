@@ -93,6 +93,7 @@ class BookingController {
         orderId,
         paymentStatus,
         paymentId,
+        isPayment: paymentStatus === "success" ? true : false,
       });
       const orderCreate = await OrderSchema.create({
         booking: createBooking._id,

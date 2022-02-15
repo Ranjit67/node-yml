@@ -9,5 +9,13 @@ class SupportContent {
         Thanks.`,
     };
   }
+  public supportEmailContent(user: any, message: string, subject: string) {
+    return {
+      subject: subject,
+      text: `Hi  ${user.firstName}.
+
+        ${message}`,
+    };
+  }
 }
 export default SupportContent;

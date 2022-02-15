@@ -40,5 +40,28 @@ class UserContent {
       Thanks`,
     };
   }
+  public emailOnSelfVerification(baseUrl: string, token: string) {
+    return {
+      subject: `Email verification.`,
+      text: `Thanks for registering with us. Kindly click on below link to verify your account and start using our platform. 
+     
+      ${baseUrl}/password-reset/${token}`,
+    };
+  }
+  public emailForgetPassword(baseUrl: string, token: string) {
+    return {
+      subject: `Forget Password.`,
+      text: `Kindly click on below link to set a new password for your account.
+      
+      ${baseUrl}/verifyEmail/${token}`,
+    };
+  }
+
+  public emailResetPassword(token: string) {
+    return {
+      subject: `Reset Password.`,
+      text: `Go to the dome url http://localhost:3000/verifyEmail/${token}`,
+    };
+  }
 }
 export default UserContent;

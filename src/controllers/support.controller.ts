@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { BadRequest, NotAcceptable } from "http-errors";
 import { SupportSchema, UserSchema } from "../models";
 import { supportMessage } from "../resultMessage";
-import EmailContent, { SupportContent } from "../emailContent";
+import { SupportContent } from "../emailContent";
 import { EmailService, NotificationServices } from "../services";
 import { newSupportMessageAddIcon } from "../notificationIcon";
 
@@ -126,7 +126,7 @@ class SupportController {
       const findUser = await UserSchema.findById(userId);
       if (!findUser?.email)
         throw new NotAcceptable(supportMessage.error.supportEmail);
-      const emailContent = new EmailContent().supportEmailContent(
+      const emailContent = new SupportContent().supportEmailContent(
         findUser,
         message,
         subject
