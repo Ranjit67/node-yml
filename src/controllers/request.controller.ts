@@ -510,7 +510,13 @@ class RequestController {
           message: requestMessage.success.requestDeleted,
         },
       });
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.path === "_id")
+        return res.json({
+          error: {
+            message: requestMessage.error.invalid,
+          },
+        });
       next(error);
     }
   }

@@ -80,8 +80,9 @@ class NotificationController {
           upsert: true,
         }
       );
-      if (!makeRead)
+      if (makeRead.modifiedCount === 0)
         throw new NotAcceptable(notificationMessage.error.notUpdate);
+
       return res.json({
         success: {
           message: notificationMessage.success.makeRed,
@@ -106,7 +107,7 @@ class NotificationController {
           },
         }
       );
-      if (!deleteNotification)
+      if (!deleteNotification.modifiedCount)
         throw new NotAcceptable(notificationMessage.error.notDelete);
       return res.json({
         success: {

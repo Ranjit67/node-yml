@@ -14,6 +14,7 @@ const requestMessage = {
     yourRequestPending:
       "Your request is already pending. Wait for the Artist actions.",
     allAreNotDelete: "Something want Wrong, All the data are not deleted.",
+    invalid: "Invalid ids entry.",
   },
   success: {
     created: "Request data created successfully.",

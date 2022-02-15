@@ -1,8 +1,10 @@
 const notificationMessage = {
   error: {
     allField: "All field are required.",
-    notUpdate: "Notification not update.",
+    notUpdate: "Something went wrong, Notification not mark as read.",
     notDelete: "Something went wrong, Notifications are not delete.",
+    allAreNotDeleted:
+      "Something went wrong, All Notification are not mark as read.",
   },
   success: {
     makeRed: "Notification mark as read successfully.",
