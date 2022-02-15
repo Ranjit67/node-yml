@@ -22,6 +22,7 @@ class RequestController {
         req.body;
       if (!receiverUserId || !senderUserId || !requestType)
         throw new BadRequest(requestMessage.error.allField);
+
       if (requestType === "manager") {
         const findRequestHaveOrNot = await RequestSchema.findOne({
           requestType: "manager",
@@ -33,6 +34,7 @@ class RequestController {
         if (findRequestHaveOrNot)
           throw new Conflict(requestMessage.error.yourRequestPending);
       }
+
       const createRequest = await RequestSchema.create({
         requestType,
         receiverUser: receiverUserId,
@@ -502,6 +504,15 @@ class RequestController {
           },
         }
       );
+      const deletePendingRequest = await RequestSchema.deleteMany({
+        _id: { $in: requestIds },
+        senderUser: userId,
+        status: "pending",
+        requestType: {
+          $nin: ["payment", "personalize", "pricing"],
+        },
+      });
+
       if (updateRequest.modifiedCount === 0)
         throw new NotAcceptable(requestMessage.error.notDelete);
       if (updateRequest.modifiedCount !== requestIds?.length)

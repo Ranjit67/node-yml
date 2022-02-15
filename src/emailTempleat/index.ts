@@ -39,7 +39,7 @@ td {
   color: #fff;
 }
 .btn-a {
-  color: white;
+  color: #fff;
     padding: 12px 30px 12px 30px;
     background: linear-gradient(to right, #BB0A01, #40559B);
     border-radius: 10px;
@@ -193,12 +193,12 @@ const tableFooter = `
 <tr>
         <td align="left" class="icon-link">
           <img src="https://yardhotel-api.herokuapp.com/assets/mail-icon.png" height='20px' alt="" class="icon-margin-right">
-        <a href = "mailto: info@yardhotel.live">info@yardhotel.live</a>
+        <a href = "mailto: support@skyrisecelebrity.com">support@skyrisecelebrity.com</a>
       </td>
         <td >
           <div class='icon-link'>
             <img src="https://yardhotel-api.herokuapp.com/assets/website-icon.png" height='20px' alt="" class="icon-margin-right">
-           <a href = "https://yardhotel.live/" target="_blank">yardhotel.live</a>
+           <a href = "https://skyrisecelebrity.com" target="_blank">sky-rise.com</a>
           </div>
           </td>
          
@@ -209,22 +209,22 @@ const tableFooter = `
              <b>Follow us on social media</b>
            </div>
            <div>
-             <a href="https://twitter.com/Yard__Hotel" target="_blank">
+             <a href="https://skyrisecelebrity.com" target="_blank">
               <img src="https://yardhotel-api.herokuapp.com/assets/twitter-icon.png" height='25px' alt="" class="social-icon">
              </a>
-             <a href="https://in.pinterest.com/yardhotel1/_saved/" target="_blank">
+             <a href="https://skyrisecelebrity.com" target="_blank">
               <img src="https://yardhotel-api.herokuapp.com/assets/pinterest-icon.png" height='25px' alt="" class="social-icon">
              </a>
-             <a href="https://www.tumblr.com/blog/view/yardhotelsearchingyard1" target="_blank" >
+             <a href="https://skyrisecelebrity.com" target="_blank" >
                <img src="https://yardhotel-api.herokuapp.com/assets/tumblr-icon.png" height='25px' alt="" class="social-icon">
              </a>
-             <a href="https://www.facebook.com/yardhotelsearchingyard" target="_blank">
+             <a href=https://skyrisecelebrity.com" target="_blank">
                 <img src='https://yardhotel-api.herokuapp.com/assets/fbIcon.png' height='25px' alt="" class="social-icon">
              </a>
-             <a href="https://www.linkedin.com/company/yardhotel/" target="_blank">
+             <a href="https://skyrisecelebrity.com" target="_blank">
                  <img src="https://yardhotel-api.herokuapp.com/assets/linked-in-icon.png" height='25px' alt="" class="social-icon">
              </a>
-             <a href="https://www.instagram.com/yardhotel/" target="_blank" >
+             <a href="https://skyrisecelebrity.com" target="_blank" >
                   <img src="https://yardhotel-api.herokuapp.com/assets/instagram-icon.png" height='25px' alt="" class="social-icon">
              </a>
            </div>
@@ -246,7 +246,7 @@ module.exports = {
       <table class="tbl-bordered">
         ${tableHead}
         <tr>
-          <td class="bg-expo" colspan="100%" align="center">RAPIDLY GROWING SKY-RISE</td>
+          <td class="bg-expo" colspan="100%" align="center"> SKY RISE CELEBRITY</td>
         </tr>
         <tr>
           ${content}
@@ -272,14 +272,17 @@ module.exports = {
       <table class="tbl-bordered">
         ${tableHead}
         <tr>
-          <td class="bg-expo" colspan="100%" align="center">RAPIDLY GROWING SKY-RISE</td>
+          <td class="bg-expo" colspan="100%" align="center">SKY RISE CELEBRITY</td>
         </tr>
         <tr>
           ${content}
         </tr>
         
            <tr>
-           <a href =${`"` + link + `"`} class="btn-a" >info@yardhotel.live</a>
+           <td  colspan="100%" align="center">
+           <a href =${`"` + link + `"`} class="btn-a" >CLICK</a>
+           </td>
+           
           
         </tr>
             

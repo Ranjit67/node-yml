@@ -39,7 +39,7 @@ class EmailService {
       from: "support@skyrisecelebrity.com",
       to: emails,
       subject: subject,
-      html: template.normalMailBody(message, link),
+      html: template.linkEmail(message, link),
     };
     return new Promise((resolve, reject) => {
       const transport = nodemailer.createTransport({
