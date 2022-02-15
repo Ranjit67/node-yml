@@ -409,11 +409,10 @@ class RequestController {
   }
   async acceptRejectRequest(req: Request, res: Response, next: NextFunction) {
     try {
-      const { requestId, reason, details, userId, isAccept } = req.body;
-      if (!requestId || !reason || !userId)
-        throw new BadRequest(requestMessage.error.allField);
+      const { requestId, reason, details, isAccept } = req.body;
+      if (!requestId) throw new BadRequest(requestMessage.error.allField);
       const updateRequest = await RequestSchema.findOneAndUpdate(
-        { receiverUser: userId, _id: requestId },
+        { _id: requestId },
         {
           status: isAccept ? "accept" : "reject",
           reason,
