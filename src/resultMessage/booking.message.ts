@@ -13,6 +13,9 @@ const bookingMessage = {
     bookingRequest: "Something went wrong, Artist is not get your request.",
     bookingTokenFail: "Something went wrong, Token is not valid.",
     somethingWrong: "Something went wrong, Please try again later.",
+    bookingNotDeleted: "Something went wrong, booking are not deleted.",
+    allBooking: "Something went wrong, All booking are not deleted.",
+    noBookingFound: "No bookings are found.",
   },
   success: {
     artistBookingList: "Artist Booking List.",

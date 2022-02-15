@@ -897,6 +897,10 @@ class BookingController {
           },
         }
       );
+      if (!updateBookings.modifiedCount)
+        throw new NotAcceptable(bookingMessage.error.noBookingFound);
+      if (updateBookings.modifiedCount !== bookingsIds.length)
+        throw new NotAcceptable(bookingMessage.error.allBooking);
       res.json({
         success: {
           message: bookingMessage.success.removeBooking,
