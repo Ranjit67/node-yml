@@ -750,6 +750,7 @@ class UserController extends DeleteOperation {
   async topSearchArtist(req: Request, res: Response, next: NextFunction) {
     try {
       const { limit, country } = req.params;
+
       const findVisitors: any = await VisitorSchema.find({}).populate({
         path: "artist",
         select: "-password  -fcmToken -__v",
@@ -791,6 +792,70 @@ class UserController extends DeleteOperation {
         _id: { $nin: ids },
         role: "artist",
         "location.country": country,
+        status: "active",
+      })
+        .populate("category")
+        .populate("languages")
+        .populate("subcategories")
+        .populate("genres")
+        .select("-password  -fcmToken -__v");
+      const dataArray = [
+        ...[...sortData].map((item) => item?.artist),
+        ...findArtist,
+      ]?.slice(0, +limit);
+      res.json({
+        success: {
+          data: dataArray,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async topSearchArtist2(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { limit } = req.params;
+
+      const findVisitors: any = await VisitorSchema.find({}).populate({
+        path: "artist",
+        select: "-password  -fcmToken -__v",
+        populate: [
+          {
+            path: "category",
+            model: "Category",
+          },
+          {
+            path: "subcategories",
+            model: "SubCategory",
+          },
+          {
+            path: "genres",
+            model: "Genres",
+          },
+          {
+            path: "languages",
+            model: "Language",
+          },
+          {
+            path: "events",
+            model: "Event",
+          },
+        ],
+      });
+      if (!findVisitors.length)
+        return res.json({
+          success: {
+            data: [],
+          },
+        });
+      const sortData = [
+        ...findVisitors.filter((element: any) => element?.artist !== null),
+      ].sort((a: any, b: any): any => a.users.length - b.users.length);
+      const ids = sortData.map((item: any) => item.artist._id);
+      const findArtist: any = await UserSchema.find({
+        _id: { $nin: ids },
+        role: "artist",
+        // "location.country": country,
         status: "active",
       })
         .populate("category")

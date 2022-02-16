@@ -127,6 +127,10 @@ class UserRoutes {
       "/top-search/artists/:limit/:country",
       this.userController.topSearchArtist
     );
+    this.router.get(
+      "/top-search/artists/:limit",
+      this.userController.topSearchArtist2
+    );
 
     //
 
