@@ -768,7 +768,10 @@ class UserController extends DeleteOperation {
         _id: { $nin: ids },
         status: "active",
       });
-      const dataArray = [...sortData, ...findArtist]?.slice(0, +limit);
+      const dataArray = [
+        ...[...sortData].map((item) => item?.artist),
+        ...findArtist,
+      ]?.slice(0, +limit);
       res.json({
         success: {
           data: dataArray,
