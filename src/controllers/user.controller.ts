@@ -494,7 +494,7 @@ class UserController extends DeleteOperation {
         address,
         country,
         yearsOfExperience,
-        languagesId,
+        languages,
         inTopSearches,
         inTopTrending,
         events,
@@ -534,8 +534,8 @@ class UserController extends DeleteOperation {
         },
         yearsOfExperience:
           yearsOfExperience || findUser?.yearsOfExperience || "",
-        languages: Array.isArray(languagesId)
-          ? languagesId
+        languages: Array.isArray(languages)
+          ? languages
           : findUser?.languages || [],
         events: Array.isArray(events) ? events : findUser?.events || [],
         services: Array.isArray(services) ? services : findUser?.services || [],

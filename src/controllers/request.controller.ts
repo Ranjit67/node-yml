@@ -4,17 +4,21 @@ import {
   BadRequest,
   Conflict,
   InternalServerError,
+  NotFound,
 } from "http-errors";
 import {
   RequestSchema,
   BookingSchema,
   UserSchema,
   AssignArtistSchema,
+  BookingRescheduleSchema,
 } from "../models";
 import {
   requestMessage,
   // managerAccept
   assignArtistMessage,
+  // bookingReschedule
+  bookingRescheduleMessage,
 } from "../resultMessage";
 import {
   BookingContent,
@@ -30,6 +34,7 @@ import {
   removeManagerIcon,
   // manager accept
   assignArtistToManager,
+  bookingRescheduleAcceptedByArtistIcon,
 } from "../notificationIcon";
 // manager accept
 
@@ -183,6 +188,452 @@ class RequestHandler {
       next(error);
     }
   }
+  public async rescheduledCustomer(
+    res: Response,
+    next: NextFunction,
+    findRequest: any,
+    permissionBoolean: boolean,
+    reason: string
+  ) {
+    try {
+      const bookingContent = new BookingContent();
+      if (permissionBoolean) {
+        //    permission accepted
+
+        const bookingUpdate = await BookingSchema.findByIdAndUpdate(
+          findRequest.reschedule?.booking.toString(),
+          {
+            eventDate: {
+              start: findRequest.reschedule?.rescheduleDate?.start ?? null,
+              end: findRequest.reschedule?.rescheduleDate?.end ?? null,
+            },
+            bookingReschedule: null,
+            reason: reason,
+            personalizedMsgDate:
+              findRequest?.reschedule?.personalizedMsgDate ?? null,
+          }
+        );
+        // delete reschedule
+        const deleteReschedule =
+          await BookingRescheduleSchema.findByIdAndDelete(
+            findRequest.reschedule?._id.toString()
+          );
+        // notification start
+
+        const title = bookingContent.bookingPermissionAcceptedByArtist(
+          findRequest.senderUser
+        ).subject;
+
+        const description = bookingContent.bookingPermissionAcceptedByArtist(
+          findRequest.senderUser
+        ).text;
+        await new NotificationServices().notificationGenerate(
+          findRequest.senderUser._id.toString(),
+          findRequest.receiverUser._id.toString(),
+          title,
+          description,
+          bookingRescheduleAcceptedByArtistIcon,
+          {
+            subject: title,
+            text: description,
+          },
+          {
+            title,
+            body: description,
+            sound: "default",
+          }
+        );
+
+        // notification end
+      } else {
+        //    permission rejected
+        // request status reject only
+        const updateBooking = await BookingSchema.findByIdAndUpdate(
+          findRequest.reschedule?.booking?.toString(),
+          {
+            bookingReschedule: null,
+            reason: reason,
+          }
+        );
+
+        // notification start
+
+        const title = bookingContent.bookingPermissionRejectByArtist(
+          findRequest.senderUser
+        ).subject;
+        const description = bookingContent.bookingPermissionRejectByArtist(
+          findRequest.senderUser
+        ).text;
+
+        await new NotificationServices().notificationGenerate(
+          findRequest.senderUser._id.toString(),
+          findRequest.receiverUser._id.toString(),
+          title,
+          description,
+          bookingRescheduleAcceptedByArtistIcon,
+          {
+            subject: title,
+            text: description,
+          },
+          {
+            title,
+            body: description,
+            sound: "default",
+          }
+        );
+
+        // notification end
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+  public async rescheduledArtist(
+    res: Response,
+    next: NextFunction,
+    findRequest: any,
+    permissionBoolean: boolean,
+    reason: string
+  ) {
+    try {
+      const bookingContent = new BookingContent();
+      if (permissionBoolean) {
+        //    permission accepted
+        // request status accept
+        // const updateRequest = await RequestSchema.findByIdAndUpdate(requestId, {
+        //   status: "accept",
+        // });
+        // if (!findRequest.reschedule)
+        //   throw new InternalServerError(
+        //     bookingRescheduleMessage.error.actionDenied
+        //   );
+        // findRequest.personalizedMsgDate
+        const bookingUpdate = await BookingSchema.findByIdAndUpdate(
+          findRequest.reschedule?.booking.toString(),
+          {
+            eventDate: {
+              start: findRequest.reschedule?.rescheduleDate?.start ?? null,
+              end: findRequest.reschedule?.rescheduleDate?.end ?? null,
+            },
+            bookingReschedule: null,
+            reason: reason,
+            personalizedMsgDate:
+              findRequest?.reschedule?.personalizedMsgDate ?? null,
+          }
+        );
+        // delete reschedule
+        const deleteReschedule =
+          await BookingRescheduleSchema.findByIdAndDelete(
+            findRequest.reschedule?._id.toString()
+          );
+        // notification start
+
+        const findArtistManager = await AssignArtistSchema.find({
+          "artists.artist": findRequest.senderUser._id.toString(),
+        }).select("manager -_id");
+        for (let index of [
+          findRequest.senderUser._id.toString(),
+          ...findArtistManager.map((item) => item.manager),
+        ]) {
+          const title = bookingContent.bookingPermissionAcceptedByUser(
+            findRequest.senderUser
+          ).subject;
+          const description = bookingContent.bookingPermissionAcceptedByUser(
+            findRequest.senderUser
+          ).text;
+          await new NotificationServices().notificationGenerate(
+            index,
+            findRequest.receiverUser._id.toString(),
+            title,
+            description,
+            bookingRescheduleAcceptedByArtistIcon,
+            {
+              subject: title,
+              text: description,
+            },
+            {
+              title,
+              body: description,
+              sound: "default",
+            }
+          );
+        }
+
+        // notification end
+
+        // res.json({
+        //   success: {
+        //     message: bookingRescheduleMessage.success.accepted,
+        //   },
+        // });
+      } else {
+        //    permission rejected
+        // request status reject only
+        const updateBooking = await BookingSchema.findByIdAndUpdate(
+          findRequest.reschedule?.booking?.toString(),
+          {
+            bookingReschedule: null,
+            reason: reason,
+          }
+        );
+        // const updateRequest = await RequestSchema.findByIdAndUpdate(requestId, {
+        //   status: "reject",
+        // });
+        // notification start
+
+        const findArtistManager = await AssignArtistSchema.find({
+          "artists.artist": findRequest.senderUser._id.toString(),
+        }).select("manager -_id");
+
+        for (let index of [
+          findRequest.senderUser._id.toString(),
+          ...findArtistManager.map((item) => item.manager),
+        ]) {
+          const title = bookingContent.bookingPermissionRejectedByUser(
+            findRequest.senderUser
+          ).subject;
+          const description = bookingContent.bookingPermissionRejectedByUser(
+            findRequest.senderUser
+          ).text;
+          await new NotificationServices().notificationGenerate(
+            index,
+            findRequest.receiverUser._id.toString(),
+            title,
+            description,
+            bookingRescheduleAcceptedByArtistIcon,
+            {
+              subject: title,
+              text: description,
+            },
+            {
+              title,
+              body: description,
+              sound: "default",
+            }
+          );
+        }
+
+        // notification end
+        // res.json({
+        //   success: {
+        //     message: bookingRescheduleMessage.success.rejected,
+        //   },
+        // });
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+  public async priceAccept(
+    res: Response,
+    next: NextFunction,
+    findRequest: any,
+    price: number
+  ) {
+    try {
+      const userData = findRequest.senderUser;
+      const artistData = findRequest.receiverUser;
+      const findUpdateBooking = await BookingSchema.findByIdAndUpdate(
+        findRequest.booking,
+        {
+          bookingPrice: price,
+        }
+      );
+      if (!findUpdateBooking)
+        throw new Conflict(requestMessage.error.bookingPriceNotUpdated);
+      // const deleteRequest = await RequestSchema.findByIdAndUpdate(requestId, {
+      //   status: "accept",
+      // });
+      // if (!deleteRequest)
+      // throw new Conflict(requestMessage.error.requestNotDeleted);
+      // notification start to user only
+      // const bookingContent = new BookingContent();
+      // const findBooking: any = await BookingSchema.findById(findRequest.booking)
+      //   .populate("artist")
+      //   .populate("user");
+
+      const title = new BookingContent().bookingPriceSetByArtistSendToUser(
+        userData
+      ).subject;
+      const description =
+        new BookingContent().bookingPriceSetByArtistSendToUser(userData).text;
+
+      await new NotificationServices().notificationGenerate(
+        userData._id.toString(),
+        artistData._id.toString(),
+        title,
+        description,
+        bookingPriceReceivedByUser,
+        {
+          subject: title,
+          text: description,
+        },
+        {
+          title,
+          body: description,
+          sound: "default",
+        }
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+  async paymentAcceptReject(
+    res: Response,
+    next: NextFunction,
+    findRequest: any,
+    isAccept: boolean,
+    reason: string
+  ) {
+    try {
+      const bookingContent = new BookingContent();
+      if (isAccept) {
+        // const updateRequest = await RequestSchema.findByIdAndUpdate(requestId, {
+        //   status: "accept",
+        // });
+        const bookingUpdate = await BookingSchema.findByIdAndUpdate(
+          findRequest.booking.toString(),
+          {
+            status: "confirm",
+          }
+        );
+        // notification start
+        const findArtistManager = await AssignArtistSchema.find({
+          "artists.artist": findRequest.receiverUser._id.toString(),
+        }).select("manager -_id");
+
+        const title = bookingContent.bookingConfirmUser(
+          findRequest.senderUser
+        ).subject;
+
+        const description = bookingContent.bookingConfirmUser(
+          findRequest.senderUser
+        ).text;
+        // bookingConfirm
+        await new NotificationServices().notificationGenerate(
+          findRequest.senderUser._id.toString(),
+          findRequest.receiverUser._id.toString(),
+          title,
+          description,
+          bookingConfirm,
+          {
+            subject: title,
+            text: description,
+          },
+          {
+            title,
+            body: description,
+            sound: "default",
+          }
+        );
+
+        // notification end
+      } else {
+        // reject
+
+        // const updateRequest = await RequestSchema.findByIdAndUpdate(requestId, {
+        //   status: "reject",
+        //   reason,
+        // });
+        const bookingUpdate = await BookingSchema.findByIdAndUpdate(
+          findRequest.booking.toString(),
+          {
+            status: "cancel",
+            cancelBy: "artist",
+          }
+        );
+        const findSuperAdmin = await UserSchema.find({ role: "admin" }).select(
+          "_id"
+        );
+        for (let index of [
+          findRequest.senderUser._id.toString(),
+          ...findSuperAdmin.map((item) => item._id),
+        ]) {
+          const title =
+            index === findRequest.senderUser._id.toString()
+              ? bookingContent.bookingCancelArtist(findRequest.senderUser)
+                  .subject
+              : bookingContent.bookingCancelNotifyToSuperAdmin().subject;
+          const description =
+            index === findRequest.senderUser._id.toString()
+              ? bookingContent.bookingCancelArtist(findRequest.senderUser).text
+              : bookingContent.bookingCancelNotifyToSuperAdmin().text;
+          const cancelIcon =
+            index === findRequest.senderUser._id.toString()
+              ? bookingCancelByArtistIcon
+              : bookingCancelByArtistIcon;
+          await new NotificationServices().notificationGenerate(
+            index,
+            findRequest.receiverUser._id.toString(),
+            title,
+            description,
+            cancelIcon,
+            {
+              subject: title,
+              text: description,
+            },
+            {
+              title,
+              body: description,
+              sound: "default",
+            }
+          );
+        }
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+  async managerRemoveAccept(
+    res: Response,
+    next: NextFunction,
+    findRequest: any,
+    reason: string
+  ) {
+    try {
+      const managerId = findRequest.senderUser._id.toString();
+      const artistId = findRequest.receiverUser._id.toString();
+      const findAndUpdate = await AssignArtistSchema.updateOne(
+        { manager: managerId },
+        {
+          $pull: {
+            artists: {
+              artist: artistId,
+            },
+          },
+        }
+      );
+      if (!findAndUpdate.matchedCount)
+        throw new NotFound(assignArtistMessage.error.managerNotFound);
+      if (!findAndUpdate.modifiedCount)
+        throw new Conflict(assignArtistMessage.error.artistNotAssignManger);
+      const findManger = await UserSchema.findOne({ _id: managerId });
+      const assignArtistContent = new AssignArtistContent();
+      const title =
+        assignArtistContent.artistAssignRemoveManagerSide(findManger).subject;
+
+      const description =
+        assignArtistContent.artistAssignRemoveManagerSide(findManger).text;
+      await new NotificationServices().notificationGenerate(
+        managerId,
+        artistId,
+        title,
+        description,
+        assignArtistToManager,
+        {
+          subject: title,
+          text: description,
+        },
+        {
+          title,
+          body: description,
+          sound: "default",
+        }
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 class RequestController extends RequestHandler {
   public async requestTracker(req: Request, res: Response, next: NextFunction) {
@@ -190,12 +641,19 @@ class RequestController extends RequestHandler {
       const {
         isAccept,
         requestId,
+
         // mangerAccept
+        // bookingReschdul
+        reason,
+        // pricing, personalize
+        price,
       } = req.body;
       if (!requestId) throw new BadRequest(requestMessage.error.allField);
       const findRequest = await RequestSchema.findById(requestId)
         .populate("senderUser")
-        .populate("receiverUser");
+        .populate("receiverUser")
+        .populate("reschedule")
+        .populate("booking");
       if (!findRequest) throw new NotAcceptable(requestMessage.error.noRequest);
       if (findRequest.requestType === "manager") {
         // action by artist
@@ -203,18 +661,53 @@ class RequestController extends RequestHandler {
           ? await super.managerAccept(res, next, findRequest)
           : await super.managerReject(res, next, findRequest);
       } else if (findRequest.requestType === "pricing") {
+        isAccept && (await super.priceAccept(res, next, findRequest, price));
         // action by artist
       } else if (findRequest.requestType === "rescheduledCustomer") {
         // action by artist
+        await super.rescheduledCustomer(
+          res,
+          next,
+          findRequest,
+          isAccept,
+          reason
+        );
       } else if (findRequest.requestType === "rescheduledArtist") {
+        await super.rescheduledArtist(res, next, findRequest, isAccept, reason);
         // action by user
       } else if (findRequest.requestType === "personalize") {
+        isAccept && (await super.priceAccept(res, next, findRequest, price));
         // action by artist
       } else if (findRequest.requestType === "payment") {
+        await super.paymentAcceptReject(
+          res,
+          next,
+          findRequest,
+          isAccept,
+          reason
+        );
         // action by artist
       } else if (findRequest.requestType === "managerRemove") {
+        isAccept &&
+          (await super.managerRemoveAccept(res, next, findRequest, reason));
         // action by artist
       }
+      const findRequestUpdate = await RequestSchema.findByIdAndUpdate(
+        requestId,
+        {
+          status: isAccept ? "accept" : "reject",
+          reason,
+        }
+      );
+      if (!findRequestUpdate)
+        throw new NotAcceptable(requestMessage.error.noRequest);
+      res.json({
+        success: {
+          message: isAccept
+            ? requestMessage.success.requestAccept
+            : requestMessage.success.rejectRequest,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -506,6 +999,7 @@ class RequestController extends RequestHandler {
       const findRequest: any = await RequestSchema.findById(requestId)
         .populate("senderUser")
         .populate("receiverUser");
+
       const bookingContent = new BookingContent();
       if (!findRequest)
         throw new Conflict(requestMessage.error.requestNotFound);
