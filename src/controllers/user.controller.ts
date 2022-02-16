@@ -788,6 +788,7 @@ class UserController extends DeleteOperation {
       const ids = sortData.map((item: any) => item.artist._id);
       const findArtist: any = await UserSchema.find({
         _id: { $nin: ids },
+        role: "artist",
         status: "active",
       })
         .populate("category")

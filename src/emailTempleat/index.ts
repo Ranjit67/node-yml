@@ -39,7 +39,7 @@ td {
   color: #fff;
 }
 .btn-a {
-  color: #fff;
+  color: #fff !important;
     padding: 12px 30px 12px 30px;
     background: linear-gradient(to right, #BB0A01, #40559B);
     border-radius: 10px;
