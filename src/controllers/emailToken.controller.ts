@@ -1,6 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { EmailToken, UserSchema } from "../models";
-import { InternalServerError, NotFound } from "http-errors";
+import {
+  InternalServerError,
+  NotFound,
+  BadRequest,
+  NotAcceptable,
+} from "http-errors";
 import {
   JwtService,
   NotificationServices,
@@ -28,6 +33,10 @@ class EmailTokenController {
   public async emailVerify(req: Request, res: Response, next: NextFunction) {
     try {
       const { token, password } = req.body;
+      if (!token || !password)
+        throw new BadRequest(emailTokenMessage.error.allField);
+      if (password.length < 4)
+        throw new NotAcceptable(emailTokenMessage.error.password);
       const data = new JwtService().emailTokenVerify(token);
       const userId = data?.aud?.[0];
       if (!userId) throw new NotFound(emailTokenMessage.error.userNotFound);

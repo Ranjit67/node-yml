@@ -10,7 +10,7 @@ class BookingRescheduledRoutes {
   }
   private routes() {
     this.router.post("/create", this.bookingRescheduleController.create);
-    this.router.post(
+    this.router.put(
       "/permission",
       this.bookingRescheduleController.ReschedulePermission
     );
