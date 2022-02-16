@@ -40,6 +40,15 @@ class AssignArtistContent {
         Thanks`,
     };
   }
+  public managerRequestReject(user: any) {
+    return {
+      subject: "Artist Manage Request Rejected",
+      text: `Hi ${user.firstName}
+                        
+      We are sorry to let you know that the artist has rejected your request to manage his account. 
+      Thanks.`,
+    };
+  }
 }
 
 export default AssignArtistContent;

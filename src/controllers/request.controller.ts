@@ -1,21 +1,225 @@
 import { Request, Response, NextFunction } from "express";
-import { NotAcceptable, BadRequest, Conflict } from "http-errors";
+import {
+  NotAcceptable,
+  BadRequest,
+  Conflict,
+  InternalServerError,
+} from "http-errors";
 import {
   RequestSchema,
   BookingSchema,
   UserSchema,
   AssignArtistSchema,
 } from "../models";
-import { requestMessage } from "../resultMessage";
-import { BookingContent, RequestContent } from "../emailContent";
+import {
+  requestMessage,
+  // managerAccept
+  assignArtistMessage,
+} from "../resultMessage";
+import {
+  BookingContent,
+  RequestContent,
+  // manageraccept
+  AssignArtistContent,
+} from "../emailContent";
 import { NotificationServices } from "../services";
 import {
   bookingPriceReceivedByUser,
   bookingConfirm,
   bookingCancelByArtistIcon,
   removeManagerIcon,
+  // manager accept
+  assignArtistToManager,
 } from "../notificationIcon";
-class RequestController {
+// manager accept
+
+class RequestHandler {
+  public async managerAccept(
+    res: Response,
+    next: NextFunction,
+    findRequest: any
+  ) {
+    try {
+      //  here sender is manager
+      // here receiver is artist
+      const artistId = findRequest?.receiverUser?._id;
+      const managerId = findRequest?.senderUser?._id;
+      const findManager = await UserSchema.find({
+        _id: { $in: [artistId, managerId] },
+      });
+      const findArtistData = findManager.find(
+        (item) =>
+          item.role === "artist" && item._id.toString() === artistId.toString()
+      );
+      const findManagerData = findManager.find(
+        (item) =>
+          item.role === "manager" &&
+          item._id.toString() === managerId.toString()
+      );
+      // notification
+      const assignArtistContent = new AssignArtistContent();
+      const title =
+        assignArtistContent.managerRequestAcceptedByArtist(
+          findManagerData
+        ).subject;
+
+      const description =
+        assignArtistContent.managerRequestAcceptedByArtist(
+          findManagerData
+        ).text;
+
+      // notification credentials end
+      if (!findArtistData || !findManagerData)
+        throw new BadRequest(assignArtistMessage.error.invalidUser);
+
+      const updateAssignArtist = await AssignArtistSchema.findOneAndUpdate(
+        {
+          manager: managerId,
+          "artists.artist": { $ne: artistId },
+        },
+        {
+          $addToSet: {
+            artists: {
+              artist: artistId,
+            },
+          },
+        }
+      );
+      // notification start
+
+      await new NotificationServices().notificationGenerate(
+        managerId,
+        artistId,
+        title,
+        description,
+        assignArtistToManager,
+        {
+          subject: title,
+          text: description,
+        },
+        {
+          title,
+          body: description,
+          sound: "default",
+        }
+      );
+      // notification end
+      if (updateAssignArtist)
+        return res.json({
+          success: { message: assignArtistMessage.success.assignArtist },
+        });
+
+      const saveAssignArtist = await AssignArtistSchema.create({
+        manager: managerId,
+        artists: [
+          {
+            artist: artistId,
+            timestamp: new Date(),
+          },
+        ],
+      }); // here Error handling throw middleware.
+
+      if (!saveAssignArtist)
+        throw new InternalServerError(assignArtistMessage.error.notAssign);
+      // notification start  only send to manager
+
+      await new NotificationServices().notificationGenerate(
+        managerId,
+        artistId,
+        title,
+        description,
+        assignArtistToManager,
+        {
+          subject: title,
+          text: description,
+        },
+        {
+          title,
+          body: description,
+          sound: "default",
+        }
+      );
+
+      // notification end
+      res.json({
+        success: { message: assignArtistMessage.success.assignArtist },
+      });
+      //
+    } catch (error) {
+      next(error);
+    }
+  }
+  public async managerReject(
+    res: Response,
+    next: NextFunction,
+    findRequest: any
+  ) {
+    try {
+      const findManagerData = findRequest.senderUser;
+      const findArtistData = findRequest.receiverUser;
+      const assignArtistContent = new AssignArtistContent();
+      const title =
+        assignArtistContent.managerRequestReject(findManagerData).subject;
+
+      const description =
+        assignArtistContent.managerRequestReject(findManagerData).text;
+      await new NotificationServices().notificationGenerate(
+        findManagerData?._id,
+        findArtistData?._id,
+        title,
+        description,
+        assignArtistToManager,
+        {
+          subject: title,
+          text: description,
+        },
+        {
+          title,
+          body: description,
+          sound: "default",
+        }
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+}
+class RequestController extends RequestHandler {
+  public async requestTracker(req: Request, res: Response, next: NextFunction) {
+    try {
+      const {
+        isAccept,
+        requestId,
+        // mangerAccept
+      } = req.body;
+      if (!requestId) throw new BadRequest(requestMessage.error.allField);
+      const findRequest = await RequestSchema.findById(requestId)
+        .populate("senderUser")
+        .populate("receiverUser");
+      if (!findRequest) throw new NotAcceptable(requestMessage.error.noRequest);
+      if (findRequest.requestType === "manager") {
+        // action by artist
+        isAccept
+          ? await super.managerAccept(res, next, findRequest)
+          : await super.managerReject(res, next, findRequest);
+      } else if (findRequest.requestType === "pricing") {
+        // action by artist
+      } else if (findRequest.requestType === "rescheduledCustomer") {
+        // action by artist
+      } else if (findRequest.requestType === "rescheduledArtist") {
+        // action by user
+      } else if (findRequest.requestType === "personalize") {
+        // action by artist
+      } else if (findRequest.requestType === "payment") {
+        // action by artist
+      } else if (findRequest.requestType === "managerRemove") {
+        // action by artist
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
       const { requestType, receiverUserId, senderUserId, details, reason } =

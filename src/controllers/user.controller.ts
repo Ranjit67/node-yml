@@ -416,6 +416,7 @@ class UserController extends DeleteOperation {
         .populate("genres")
         .populate("languages")
         .populate("events")
+        .populate("services")
         .populate({
           path: "artistMedia",
           select: "artistVideos artistPhotos youtubeVideos",
@@ -461,6 +462,7 @@ class UserController extends DeleteOperation {
         .populate("genres")
         .populate("languages")
         .populate("events")
+        .populate("services")
         .select("-password -__v");
 
       res.json({
@@ -777,6 +779,10 @@ class UserController extends DeleteOperation {
           {
             path: "events",
             model: "Event",
+          },
+          {
+            path: "services",
+            model: "Service",
           },
         ],
       });
