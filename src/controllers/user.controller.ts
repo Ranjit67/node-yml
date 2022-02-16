@@ -699,6 +699,7 @@ class UserController extends DeleteOperation {
   }
   async topSearchArtist(req: Request, res: Response, next: NextFunction) {
     try {
+      const { limit } = req.params;
       const findVisitors: any = await VisitorSchema.find({}).populate({
         path: "artist",
         select: "-password  -fcmToken -__v",
@@ -712,10 +713,15 @@ class UserController extends DeleteOperation {
       const sortData = findVisitors.sort(
         (a: any, b: any): any => a.users.length - b.users.length
       );
-
+      const ids = sortData.map((item: any) => item.artist._id);
+      const findArtist: any = await UserSchema.find({
+        _id: { $nin: ids },
+        status: "active",
+      });
+      const dataArray = [...sortData, ...findArtist]?.slice(0, +limit);
       res.json({
         success: {
-          data: sortData,
+          data: dataArray,
         },
       });
     } catch (error) {
