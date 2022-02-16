@@ -275,6 +275,7 @@ class UserController extends DeleteOperation {
           yearsOfExperience,
           languages: languagesId,
           Dob,
+          timestamp: new Date(),
         });
         const userSave = await user.save();
         if (!userSave)
@@ -323,6 +324,7 @@ class UserController extends DeleteOperation {
           yearsOfExperience,
           languages: languagesId,
           Dob,
+          timestamp: new Date(),
         });
         const userSave = await user.save();
         if (!userSave)
@@ -689,6 +691,31 @@ class UserController extends DeleteOperation {
       res.json({
         success: {
           message: userMessage.success.update,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async topSearchArtist(req: Request, res: Response, next: NextFunction) {
+    try {
+      const findVisitors: any = await VisitorSchema.find({}).populate({
+        path: "artist",
+        select: "-password  -fcmToken -__v",
+      });
+      if (!findVisitors.length)
+        return res.json({
+          success: {
+            data: [],
+          },
+        });
+      const sortData = findVisitors.sort(
+        (a: any, b: any): any => a.users.length - b.users.length
+      );
+
+      res.json({
+        success: {
+          data: sortData,
         },
       });
     } catch (error) {

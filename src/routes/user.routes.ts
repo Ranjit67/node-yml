@@ -123,6 +123,7 @@ class UserRoutes {
       "/account-update-category",
       this.userController.categoryUpdate
     );
+    this.router.get("/top-search/artists", this.userController.topSearchArtist);
 
     //
 
