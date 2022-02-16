@@ -8,12 +8,13 @@ export default interface PricingModel extends Document {
       pricePerHour: number;
       maxCrowdSize: number;
       minCrowdSize: number;
-      location: string;
-      timestamp: Date;
-      latLng: {
+      location: {
         lat: number;
         lng: number;
+        address: string;
+        country: string;
       };
+      timestamp: Date;
     }
   ];
 }

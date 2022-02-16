@@ -12,11 +12,13 @@ class PricingController {
         pricePerHour,
         maxCrowdSize,
         minCrowdSize,
-        location,
-        latLng,
+        lat,
+        lng,
+        address,
+        country,
         otherDay,
         otherCrowdSize,
-        otherLocation,
+        // otherLocation,
       } = req.body;
       if (
         !artistId ||
@@ -24,7 +26,10 @@ class PricingController {
         !pricePerHour ||
         !maxCrowdSize ||
         !minCrowdSize ||
-        !location
+        !lat ||
+        !lng ||
+        !address ||
+        !country
       )
         throw new BadRequest(pricingMessage.error.allField);
       const checkData = await PricingSchema.findOne({
@@ -35,7 +40,12 @@ class PricingController {
             pricePerHour: +pricePerHour,
             maxCrowdSize: +maxCrowdSize,
             minCrowdSize: +minCrowdSize,
-            location,
+            location: {
+              lat: +lat,
+              lng: +lng,
+              address: address,
+              country: country,
+            },
           },
         },
       });
@@ -49,12 +59,17 @@ class PricingController {
               pricePerHour: +pricePerHour,
               maxCrowdSize: +maxCrowdSize,
               minCrowdSize: +minCrowdSize,
-              location,
+              location: {
+                lat: +lat,
+                lng: +lng,
+                address: address,
+                country: country,
+              },
               timestamp: new Date(),
-              latLng,
+              // latLng,
               otherDay,
               otherCrowdSize,
-              otherLocation,
+              // otherLocation,
             },
           },
         }
@@ -71,12 +86,17 @@ class PricingController {
             pricePerHour: +pricePerHour,
             maxCrowdSize: +maxCrowdSize,
             minCrowdSize: +minCrowdSize,
-            location,
+            location: {
+              lat: +lat,
+              lng: +lng,
+              address: address,
+              country: country,
+            },
             timestamp: new Date(),
-            latLng,
+            // latLng,
             otherDay,
             otherCrowdSize,
-            otherLocation,
+            // otherLocation,
           },
         ],
       });
@@ -109,11 +129,15 @@ class PricingController {
         pricePerHour,
         maxCrowdSize,
         minCrowdSize,
-        location,
-        latLng,
+        lat,
+        lng,
+        address,
+        country,
+        // location,
+        // latLng,
         otherDay,
         otherCrowdSize,
-        otherLocation,
+        // otherLocation,
       } = req.body;
       const findPricing: any = await PricingSchema.findOne({
         artist: artistId,
@@ -133,13 +157,15 @@ class PricingController {
           "prices.$.pricePerHour": pricePerHour ?? dataUpdate.pricePerHour,
           "prices.$.maxCrowdSize": maxCrowdSize ?? dataUpdate.maxCrowdSize,
           "prices.$.minCrowdSize": minCrowdSize ?? dataUpdate.minCrowdSize,
-          "prices.$.location": location ?? dataUpdate.location,
-          "prices.$.latLng.lat": latLng?.lat ?? dataUpdate.latLng?.lat,
-          "prices.$.latLng.lng": latLng?.lng ?? dataUpdate.latLng?.lng,
+
+          "prices.$.location.lat": +lat ?? dataUpdate?.location?.lat,
+          "prices.$.location.lan": +lng ?? dataUpdate?.location?.lng,
+          "prices.$.location.address": address ?? dataUpdate?.location?.address,
+          "prices.$.location.country": country ?? dataUpdate?.location?.country,
+
           "prices.$.otherDay": otherDay ?? dataUpdate.otherDay,
           "prices.$.otherCrowdSize":
             otherCrowdSize ?? dataUpdate.otherCrowdSize,
-          "prices.$.otherLocation": otherLocation ?? dataUpdate.otherLocation,
         }
       );
       if (updatePricing.modifiedCount)

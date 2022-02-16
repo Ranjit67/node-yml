@@ -21,15 +21,23 @@ const pricingSchema = new Schema<PricingModel>({
         type: Boolean,
         default: false,
       },
-      location: String,
-      otherLocation: {
-        type: Boolean,
-        default: false,
+      location: {
+        lat: {
+          type: Number,
+          default: 0,
+        },
+        lng: {
+          type: Number,
+          default: 0,
+        },
+        address: {
+          type: String,
+        },
+        country: {
+          type: String,
+        },
       },
-      latLng: {
-        lat: Number,
-        lng: Number,
-      },
+
       timestamp: {
         type: Date,
         default: new Date(),

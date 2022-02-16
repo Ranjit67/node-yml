@@ -435,7 +435,10 @@ class UserController extends DeleteOperation {
         Dob,
         status,
         gender,
-        location,
+        lat,
+        lng,
+        address,
+        country,
         yearsOfExperience,
         languagesId,
         inTopSearches,
@@ -468,7 +471,12 @@ class UserController extends DeleteOperation {
         lastName: lastName || findUser.lastName || "",
 
         gender: gender || findUser?.gender || "",
-        location: location || findUser?.location || "",
+        location: {
+          lat: lat ?? findUser?.location?.lat,
+          lng: lng ?? findUser?.location?.lng,
+          address: address ?? findUser?.location?.address,
+          country: country ?? findUser?.location?.country,
+        },
         yearsOfExperience:
           yearsOfExperience || findUser?.yearsOfExperience || "",
         languages: Array.isArray(languagesId)
