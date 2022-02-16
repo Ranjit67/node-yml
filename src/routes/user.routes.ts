@@ -124,13 +124,16 @@ class UserRoutes {
       this.userController.categoryUpdate
     );
     this.router.get(
-      "/top-search/artists/:limit",
+      "/top-search/artists/:limit/:country",
       this.userController.topSearchArtist
     );
 
     //
 
     this.router.delete("/accounts-delete/:id", this.userController.delete); // delete for temporary
+
+    // fake
+    this.router.get("/accounts-fake", this.userController.fakeDataUpdate);
   }
 }
 export default UserRoutes;

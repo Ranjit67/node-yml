@@ -749,10 +749,11 @@ class UserController extends DeleteOperation {
   }
   async topSearchArtist(req: Request, res: Response, next: NextFunction) {
     try {
-      const { limit } = req.params;
+      const { limit, country } = req.params;
       const findVisitors: any = await VisitorSchema.find({}).populate({
         path: "artist",
         select: "-password  -fcmToken -__v",
+        match: { "location.country": country },
         populate: [
           {
             path: "category",
@@ -782,13 +783,14 @@ class UserController extends DeleteOperation {
             data: [],
           },
         });
-      const sortData = findVisitors.sort(
-        (a: any, b: any): any => a.users.length - b.users.length
-      );
+      const sortData = [
+        ...findVisitors.filter((element: any) => element?.artist !== null),
+      ].sort((a: any, b: any): any => a.users.length - b.users.length);
       const ids = sortData.map((item: any) => item.artist._id);
       const findArtist: any = await UserSchema.find({
         _id: { $nin: ids },
         role: "artist",
+        "location.country": country,
         status: "active",
       })
         .populate("category")
@@ -805,6 +807,25 @@ class UserController extends DeleteOperation {
           data: dataArray,
         },
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+  // fake data update
+  public async fakeDataUpdate(req: Request, res: Response, next: NextFunction) {
+    try {
+      const updateArtistLocation = await UserSchema.updateMany(
+        {},
+        {
+          location: {
+            lat: 478294789274982.67,
+            lng: 789789789789789.78,
+            address: "NH 560",
+            country: "India",
+          },
+        }
+      );
+      res.json({ data: "success" });
     } catch (error) {
       next(error);
     }
