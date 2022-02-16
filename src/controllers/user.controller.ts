@@ -753,6 +753,28 @@ class UserController extends DeleteOperation {
       const findVisitors: any = await VisitorSchema.find({}).populate({
         path: "artist",
         select: "-password  -fcmToken -__v",
+        populate: [
+          {
+            path: "category",
+            model: "Category",
+          },
+          {
+            path: "subcategories",
+            model: "SubCategory",
+          },
+          {
+            path: "genres",
+            model: "Genres",
+          },
+          {
+            path: "languages",
+            model: "Language",
+          },
+          {
+            path: "events",
+            model: "Event",
+          },
+        ],
       });
       if (!findVisitors.length)
         return res.json({
@@ -767,7 +789,12 @@ class UserController extends DeleteOperation {
       const findArtist: any = await UserSchema.find({
         _id: { $nin: ids },
         status: "active",
-      });
+      })
+        .populate("category")
+        .populate("languages")
+        .populate("subcategories")
+        .populate("genres")
+        .select("-password  -fcmToken -__v");
       const dataArray = [
         ...[...sortData].map((item) => item?.artist),
         ...findArtist,

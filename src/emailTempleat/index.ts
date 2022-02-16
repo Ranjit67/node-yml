@@ -198,7 +198,7 @@ const tableFooter = `
         <td >
           <div class='icon-link'>
             <img src="https://yardhotel-api.herokuapp.com/assets/website-icon.png" height='20px' alt="" class="icon-margin-right">
-           <a href = "https://skyrisecelebrity.com" target="_blank">sky-rise.com</a>
+           <a href = "https://skyrisecelebrity.com" target="_blank">skyrisecelebrity.com</a>
           </div>
           </td>
          
