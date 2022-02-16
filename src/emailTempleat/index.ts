@@ -182,7 +182,7 @@ const tableHead = `
  <tr>
         <td align="center" colspan="100%">
           <img
-            src="https://yardhotel.in/static/media/logo.b978b057.png"
+            src="https://sky-rise.s3.amazonaws.com/emailTempletImage/download+sky+rise.png"
             class="img-logo"
             alt=""
           />
