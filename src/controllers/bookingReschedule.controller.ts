@@ -33,6 +33,8 @@ class BookingRescheduleController {
         rescheduleBy,
         requestDetails,
       } = req.body;
+      if (!bookingId)
+        throw new BadRequest(bookingRescheduleMessage.error.bookingId);
       const checkRescheduledBooking = await BookingRescheduleSchema.findOne({
         booking: bookingId,
       });
@@ -147,7 +149,6 @@ class BookingRescheduleController {
             bookingRescheduleMessage.error.notCreated
           );
         // notification start
-        // console.log("hit-1");
         for (let index of [
           findBooking.user._id.toString(),
           findBooking.artist._id.toString(),
@@ -393,7 +394,6 @@ class BookingRescheduleController {
         });
       }
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }

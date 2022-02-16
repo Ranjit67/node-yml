@@ -11,7 +11,7 @@ class EmailController {
       );
       res.json({
         success: {
-          data: SendEmail,
+          message: "Email send successfully.",
         },
       });
     } catch (error) {

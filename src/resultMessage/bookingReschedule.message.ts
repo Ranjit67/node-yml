@@ -5,22 +5,14 @@ const bookingRescheduleMessage = {
     bookingRescheduleAlreadyExist:
       "Your booking reschedule is already pending.",
     actionDenied: "Request action has attempted, So you can not attempt again.",
-    //   requestNotCreated: "Request is Not crated.",
-    //   bookingPriceNotAccept: "Booking price Not acceptable.",
-    //   statusNotUpdate: "Something went wrong, Booking is not confirm.",
-    //   bookingComplete: "Something went wrong, Your action not recorded.",
+    allField: "All field are required",
+    bookingId: "Booking Id is required",
   },
   success: {
     createdUser: "Booking reschedule is request send to user successfully.",
     createdArtist: "Booking reschedule is request send to artist successfully.",
     accepted: "Booking reschedule is accepted successfully.",
     rejected: "Booking reschedule is rejected successfully.",
-
-    //   artistBookingList: "Artist Booking List.",
-    //   userBookingList: "User Booking List.",
-    //   bookingCreated: "Booking is created successfully.",
-    //   bookingConfirm: "Booking Confirm Successfully.",
-    //   bookingComplete: "Thank you for giving, Your valuable response.",
   },
 };
 export default bookingRescheduleMessage;

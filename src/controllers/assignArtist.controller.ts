@@ -83,14 +83,16 @@ class AssignArtistController {
           success: { message: assignArtistMessage.success.assignArtist },
         });
 
-      const assignArtist = new AssignArtistSchema({
+      const saveAssignArtist = await AssignArtistSchema.create({
         manager: managerId,
-      });
-      assignArtist.artists.push({
-        artist: artistId,
-        timestamp: new Date(),
+        artists: [
+          {
+            artist: artistId,
+            timestamp: new Date(),
+          },
+        ],
       }); // here Error handling throw middleware.
-      const saveAssignArtist = await assignArtist.save();
+
       if (!saveAssignArtist)
         throw new InternalServerError(assignArtistMessage.error.notAssign);
       // notification start  only send to manager
