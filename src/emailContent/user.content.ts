@@ -51,7 +51,7 @@ class UserContent {
     return {
       subject: `Forget Password.`,
       text: `Kindly click on below link to set a new password for your account.`,
-      link: `${baseUrl}/verifyEmail/${token}`,
+      link: `${baseUrl}/password-reset/${token}`,
     };
   }
 

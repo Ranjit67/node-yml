@@ -214,7 +214,12 @@ class BookingRescheduleController {
     next: NextFunction
   ) {
     try {
-      const { requestId, permissionBoolean, actionBy, reason } = req.body;
+      const {
+        requestId,
+        isAccept: permissionBoolean,
+        actionBy,
+        reason,
+      } = req.body;
       const findRequest: any = await RequestSchema.findById(requestId)
         .populate("reschedule")
         .populate("senderUser")

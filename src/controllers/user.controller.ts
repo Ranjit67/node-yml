@@ -243,12 +243,61 @@ class UserController extends DeleteOperation {
         baseUrl,
       } = req.body;
       const check = await UserSchema.findOne({ email });
-      if (check) throw new Conflict(userMessage.error.duplicateEmail);
       if (
         ["admin", "user", "artist", "manager"].indexOf(role.toLowerCase()) ===
         -1
       )
         throw new BadRequest(userMessage.error.invalidRole);
+      const updateOneEmail = await UserSchema.updateOne(
+        { email, password: { $exists: false } },
+        {
+          countryCode,
+          phoneNumber,
+          firstName,
+          lastName,
+          role: role.toLowerCase(),
+          gender,
+          location: {
+            lat: +lat,
+            lng: +lng,
+            address,
+            country,
+          },
+          yearsOfExperience,
+          languages: languagesId,
+          Dob,
+          timestamp: new Date(),
+        }
+      );
+      if (updateOneEmail.matchedCount === 1) {
+        const token = await new JwtService().emailTokenGenerator(check?._id);
+        const emailTokenUpdate = await EmailToken.updateOne(
+          { userRef: check?._id },
+          { emailTokenString: token }
+        );
+
+        if (!emailTokenUpdate)
+          throw new InternalServerError(userMessage.error.emailToken);
+        const emailContent = new UserContent().emailOnSelfVerification(
+          baseUrl,
+          token
+        );
+
+        const SendEmail = await new EmailService().LinkEmailSend(
+          email,
+          emailContent.subject,
+          emailContent.text,
+          emailContent.link
+        );
+        return res.json({
+          success: {
+            message: userMessage.success.mailVerification,
+          },
+        });
+      }
+
+      if (check) throw new Conflict(userMessage.error.duplicateEmail);
+
       const profilePicture = req?.files?.profilePicture;
       if (profilePicture) {
         const awsS3 = new AwsS3Services();
@@ -280,6 +329,7 @@ class UserController extends DeleteOperation {
         const userSave = await user.save();
         if (!userSave)
           throw new InternalServerError(userMessage.error.notCreated);
+
         const token = await new JwtService().emailTokenGenerator(userSave?._id);
         const saveEmailToken = await EmailToken.create({
           userRef: userSave?._id,
