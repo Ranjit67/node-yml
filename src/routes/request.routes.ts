@@ -34,6 +34,10 @@ class RequestRouter {
       "/accept-reject",
       this.requestController.acceptRejectRequest
     );
+    this.router.put(
+      "/reject-and-accept",
+      this.requestController.requestTracker
+    );
     this.router.post("/delete", this.requestController.delete);
   }
 }

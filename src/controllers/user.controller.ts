@@ -890,12 +890,8 @@ class UserController extends DeleteOperation {
       const updateArtistLocation = await UserSchema.updateMany(
         {},
         {
-          location: {
-            lat: 478294789274982.67,
-            lng: 789789789789789.78,
-            address: "NH 560",
-            country: "India",
-          },
+          fcmToken:
+            "eXRIsz5hzgoFvpLb-15P_e:APA91bEXlNHmsVdBqQ3I1AK3DVUeR6scYbx34e-wySqebLavqcBXfOWkY4gcp-nA2twjY2VIotcwONClzC5u5BdDY7oph9YIOAMrexWOfjOCRSQ723uMs0W40A2jQHXP6TLiVP5sXGPW",
         }
       );
       res.json({ data: "success" });

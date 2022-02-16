@@ -109,49 +109,44 @@ class RequestHandler {
         }
       );
       // notification end
-      if (updateAssignArtist)
-        return res.json({
-          success: { message: assignArtistMessage.success.assignArtist },
-        });
+      if (!updateAssignArtist) {
+        const saveAssignArtist = await AssignArtistSchema.create({
+          manager: managerId,
+          artists: [
+            {
+              artist: artistId,
+              timestamp: new Date(),
+            },
+          ],
+        }); // here Error handling throw middleware.
 
-      const saveAssignArtist = await AssignArtistSchema.create({
-        manager: managerId,
-        artists: [
-          {
-            artist: artistId,
-            timestamp: new Date(),
-          },
-        ],
-      }); // here Error handling throw middleware.
+        if (!saveAssignArtist)
+          throw new InternalServerError(assignArtistMessage.error.notAssign);
+        // notification start  only send to manager
 
-      if (!saveAssignArtist)
-        throw new InternalServerError(assignArtistMessage.error.notAssign);
-      // notification start  only send to manager
-
-      await new NotificationServices().notificationGenerate(
-        managerId,
-        artistId,
-        title,
-        description,
-        assignArtistToManager,
-        {
-          subject: title,
-          text: description,
-        },
-        {
+        await new NotificationServices().notificationGenerate(
+          managerId,
+          artistId,
           title,
-          body: description,
-          sound: "default",
-        }
-      );
+          description,
+          assignArtistToManager,
+          {
+            subject: title,
+            text: description,
+          },
+          {
+            title,
+            body: description,
+            sound: "default",
+          }
+        );
+      }
 
       // notification end
-      res.json({
-        success: { message: assignArtistMessage.success.assignArtist },
-      });
+
       //
     } catch (error) {
-      next(error);
+      throw error;
     }
   }
   public async managerReject(
@@ -185,7 +180,8 @@ class RequestHandler {
         }
       );
     } catch (error) {
-      next(error);
+      // next(error);
+      throw error;
     }
   }
   public async rescheduledCustomer(
@@ -285,7 +281,8 @@ class RequestHandler {
         // notification end
       }
     } catch (error) {
-      next(error);
+      // next(error);
+      throw error;
     }
   }
   public async rescheduledArtist(
@@ -299,15 +296,7 @@ class RequestHandler {
       const bookingContent = new BookingContent();
       if (permissionBoolean) {
         //    permission accepted
-        // request status accept
-        // const updateRequest = await RequestSchema.findByIdAndUpdate(requestId, {
-        //   status: "accept",
-        // });
-        // if (!findRequest.reschedule)
-        //   throw new InternalServerError(
-        //     bookingRescheduleMessage.error.actionDenied
-        //   );
-        // findRequest.personalizedMsgDate
+
         const bookingUpdate = await BookingSchema.findByIdAndUpdate(
           findRequest.reschedule?.booking.toString(),
           {
@@ -360,12 +349,6 @@ class RequestHandler {
         }
 
         // notification end
-
-        // res.json({
-        //   success: {
-        //     message: bookingRescheduleMessage.success.accepted,
-        //   },
-        // });
       } else {
         //    permission rejected
         // request status reject only
@@ -376,9 +359,7 @@ class RequestHandler {
             reason: reason,
           }
         );
-        // const updateRequest = await RequestSchema.findByIdAndUpdate(requestId, {
-        //   status: "reject",
-        // });
+
         // notification start
 
         const findArtistManager = await AssignArtistSchema.find({
@@ -414,14 +395,10 @@ class RequestHandler {
         }
 
         // notification end
-        // res.json({
-        //   success: {
-        //     message: bookingRescheduleMessage.success.rejected,
-        //   },
-        // });
       }
     } catch (error) {
-      next(error);
+      // next(error);
+      throw error;
     }
   }
   public async priceAccept(
@@ -441,16 +418,6 @@ class RequestHandler {
       );
       if (!findUpdateBooking)
         throw new Conflict(requestMessage.error.bookingPriceNotUpdated);
-      // const deleteRequest = await RequestSchema.findByIdAndUpdate(requestId, {
-      //   status: "accept",
-      // });
-      // if (!deleteRequest)
-      // throw new Conflict(requestMessage.error.requestNotDeleted);
-      // notification start to user only
-      // const bookingContent = new BookingContent();
-      // const findBooking: any = await BookingSchema.findById(findRequest.booking)
-      //   .populate("artist")
-      //   .populate("user");
 
       const title = new BookingContent().bookingPriceSetByArtistSendToUser(
         userData
@@ -475,7 +442,8 @@ class RequestHandler {
         }
       );
     } catch (error) {
-      next(error);
+      // next(error);
+      throw error;
     }
   }
   async paymentAcceptReject(
@@ -488,11 +456,8 @@ class RequestHandler {
     try {
       const bookingContent = new BookingContent();
       if (isAccept) {
-        // const updateRequest = await RequestSchema.findByIdAndUpdate(requestId, {
-        //   status: "accept",
-        // });
         const bookingUpdate = await BookingSchema.findByIdAndUpdate(
-          findRequest.booking.toString(),
+          findRequest.booking._id.toString(),
           {
             status: "confirm",
           }
@@ -531,12 +496,8 @@ class RequestHandler {
       } else {
         // reject
 
-        // const updateRequest = await RequestSchema.findByIdAndUpdate(requestId, {
-        //   status: "reject",
-        //   reason,
-        // });
         const bookingUpdate = await BookingSchema.findByIdAndUpdate(
-          findRequest.booking.toString(),
+          findRequest.booking._id.toString(),
           {
             status: "cancel",
             cancelBy: "artist",
@@ -581,7 +542,9 @@ class RequestHandler {
         }
       }
     } catch (error) {
-      next(error);
+      throw error;
+      //  return next(error);
+      // new Error(error);
     }
   }
   async managerRemoveAccept(
@@ -631,10 +594,12 @@ class RequestHandler {
         }
       );
     } catch (error) {
-      next(error);
+      // next(error);
+      throw error;
     }
   }
 }
+
 class RequestController extends RequestHandler {
   public async requestTracker(req: Request, res: Response, next: NextFunction) {
     try {
