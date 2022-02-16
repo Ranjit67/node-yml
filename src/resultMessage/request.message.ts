@@ -1,6 +1,7 @@
 const requestMessage = {
   error: {
     allField: "All fields are required.",
+    noRequest: "No request found.",
     notCreated: "Something went wrong. Request is not created.",
     requestNotFound: "Request is not found.",
     bookingPriceNotUpdated: "Booking price is not set.",

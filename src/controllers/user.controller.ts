@@ -496,6 +496,7 @@ class UserController extends DeleteOperation {
         inTopSearches,
         inTopTrending,
         events,
+        services,
         bio,
         artistMedia,
       } = req.body;
@@ -535,6 +536,7 @@ class UserController extends DeleteOperation {
           ? languagesId
           : findUser?.languages || [],
         events: Array.isArray(events) ? events : findUser?.events || [],
+        services: Array.isArray(services) ? services : findUser?.services || [],
         // other tags credentials
         fcmToken: fcmToken || findUser.fcmToken || "",
         status: status || findUser.status || "",

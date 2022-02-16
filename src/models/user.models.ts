@@ -13,6 +13,12 @@ const userSchema = new Schema<UserModel>({
       ref: "Event",
     },
   ],
+  services: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Service",
+    },
+  ],
 
   subcategories: [
     {

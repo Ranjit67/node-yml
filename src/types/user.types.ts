@@ -13,6 +13,7 @@ export interface UserModel extends Document {
   profileImageRef: string;
   artistMedia: ObjectId;
   events: ObjectId[];
+  services: ObjectId[];
   //
   category: ObjectId;
   genres: ObjectId[];
