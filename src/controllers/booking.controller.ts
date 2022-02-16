@@ -39,7 +39,7 @@ class BookingController {
         eventStartDate,
         eventEndDate,
         cityName,
-        eventLocation,
+        // eventLocation,
         crowdSize,
         serviceId,
         bookingPrice,
@@ -60,6 +60,12 @@ class BookingController {
         orderId,
         paymentStatus,
         paymentId,
+        //
+        address,
+        lat,
+        lng,
+        country,
+        //
       } = req.body;
       let promoCodeData;
       if (promoCodeId) {
@@ -72,7 +78,12 @@ class BookingController {
           end: eventEndDate,
         },
         cityName,
-        eventLocation,
+        eventLocation: address,
+        location: {
+          lat: +lat,
+          lng: +lng,
+          country,
+        },
         crowdSize,
         serviceType: serviceId,
         bookingPrice,

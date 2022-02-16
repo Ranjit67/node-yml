@@ -25,6 +25,11 @@ export interface BookingModels extends Document {
   artist: ObjectId;
   user: ObjectId;
   personalizedVideo: ObjectId;
+  location: {
+    lat: number;
+    lng: number;
+    country: string;
+  };
   //   requestType: string;
   personalizedMessage: string;
   eventDuration: string;

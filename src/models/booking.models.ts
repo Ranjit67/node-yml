@@ -13,6 +13,19 @@ const bookingSchema = new Schema({
   eventLocation: {
     type: String,
   },
+  location: {
+    lat: {
+      type: Number,
+      default: 0,
+    },
+    lng: {
+      type: Number,
+      default: 0,
+    },
+    country: {
+      type: String,
+    },
+  },
   crowdSize: {
     type: Number,
   },
