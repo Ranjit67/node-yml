@@ -119,7 +119,6 @@ class EventController {
       if (!ids?.length)
         throw new BadRequest(eventMessage.error.allFieldsRequired);
       const findEvent = await EventSchema.find({ _id: { $in: ids } });
-      console.log(findEvent);
       if (!findEvent?.length) throw new BadRequest(eventMessage.error.notFound);
       const awsS3 = new AwsS3Services();
       for (let item of findEvent) {

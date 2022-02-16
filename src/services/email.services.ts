@@ -4,7 +4,7 @@ const template = require("../emailTempleat");
 class EmailService {
   public emailSend(emails: string, subject: string, message: string): any {
     const emailCredentials = {
-      from: "support@skyrisecelebrity.com",
+      from: `Skyrise <support@skyrisecelebrity.com>`,
       to: emails,
       subject: subject,
       html: template.normalMailBody(message),
@@ -36,7 +36,7 @@ class EmailService {
     link: string
   ): any {
     const emailCredentials = {
-      from: "support@skyrisecelebrity.com",
+      from: "Skyrise <support@skyrisecelebrity.com>",
       to: emails,
       subject: subject,
       html: template.linkEmail(message, link),

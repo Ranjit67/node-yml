@@ -75,7 +75,18 @@ const userSchema = new Schema<UserModel>({
     type: String,
   },
   location: {
-    type: String,
+    lat: {
+      type: Number,
+    },
+    lng: {
+      type: Number,
+    },
+    address: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
   },
   profileImageUrl: {
     type: String,

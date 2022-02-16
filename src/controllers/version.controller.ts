@@ -19,7 +19,6 @@ class VersionController {
           timestamp: new Date(),
         }
       );
-      console.log(updateOne);
       if (updateOne.matchedCount === 1)
         return res.json({
           success: {

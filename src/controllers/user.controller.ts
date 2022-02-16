@@ -233,7 +233,10 @@ class UserController extends DeleteOperation {
         lastName,
         role,
         gender,
-        location,
+        lat,
+        lng,
+        address,
+        country,
         yearsOfExperience,
         languagesId,
         Dob,
@@ -263,7 +266,12 @@ class UserController extends DeleteOperation {
           lastName,
           role: role.toLowerCase(),
           gender,
-          location,
+          location: {
+            lat: +lat,
+            lng: +lng,
+            address,
+            country,
+          },
           yearsOfExperience,
           languages: languagesId,
           Dob,
@@ -282,7 +290,6 @@ class UserController extends DeleteOperation {
           baseUrl,
           token
         );
-        console.log(emailContent);
 
         const SendEmail = await new EmailService().LinkEmailSend(
           userSave?.email,
@@ -307,7 +314,12 @@ class UserController extends DeleteOperation {
           lastName,
           role,
           gender,
-          location,
+          location: {
+            lat: +lat,
+            lng: +lng,
+            address,
+            country,
+          },
           yearsOfExperience,
           languages: languagesId,
           Dob,
@@ -327,7 +339,6 @@ class UserController extends DeleteOperation {
           baseUrl,
           token
         );
-        console.log(emailContent);
         const SendEmail = await new EmailService().LinkEmailSend(
           userSave?.email,
           emailContent.subject,

@@ -40,7 +40,6 @@ class NotificationServices {
           },
           { upsert: true }
         );
-        // console.log("firstUpdateNotification", firstUpdateNotification);
         const findUserData: any = await UserSchema.findOne({ _id: sendTo });
 
         const SendEmail = await new EmailService().emailSend(

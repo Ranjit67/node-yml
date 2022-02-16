@@ -38,7 +38,6 @@ class EmailTokenController {
         userRef: userId,
       });
       if (!deleteData) throw new NotFound(emailTokenMessage.error.tokenExpired);
-      // console.log("deleteData", deleteData);
       if (findUser.role === "user") {
         const updatePassword = await UserSchema.findByIdAndUpdate(userId, {
           password: hashedPassword,

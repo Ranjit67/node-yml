@@ -8,10 +8,7 @@ import {
 import { Request, Response, NextFunction } from "express";
 import axios from "axios";
 import md5 from "md5";
-// console.log(
-//   "PaymentRoutes",
-//   md5("merchant-id=10000100&passphrase=​passphrase&..&version=v1")
-// );
+
 class PaymentController {
   async makePayment(req: Request, res: Response, next: NextFunction) {
     try {
@@ -64,7 +61,6 @@ class PaymentController {
           },
         }
       );
-      console.log(result);
       res.json({
         success: {
           data: result.data,

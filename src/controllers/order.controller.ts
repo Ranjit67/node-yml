@@ -26,7 +26,6 @@ class OrderController {
   async update(req: Request, res: Response, next: NextFunction) {
     try {
       const { orderId, bookingId, status } = req.body;
-      console.log(req.body);
       if (!orderId || !bookingId)
         throw new BadRequest(orderMessage.error.allField);
       const updateOrder = await OrderSchema.findOneAndUpdate(

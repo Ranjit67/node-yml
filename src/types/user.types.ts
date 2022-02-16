@@ -29,7 +29,12 @@ export interface UserModel extends Document {
   role: userRole;
   status: userStatus;
   gender: gender;
-  location: string;
+  location: {
+    lat: number;
+    lng: number;
+    address: string;
+    country: string;
+  };
   profileImageUrl: string;
   yearsOfExperience: string;
   inTopSearches: Boolean;
