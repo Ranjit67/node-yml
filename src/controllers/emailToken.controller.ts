@@ -106,7 +106,7 @@ class EmailTokenController {
             emailTokenMessage.error.passwordNotUpdated
           );
         return res.json({
-          success: { message: emailTokenMessage.error.passwordNotUpdated },
+          success: { message: emailTokenMessage.success.updated },
         });
       }
     } catch (error) {
