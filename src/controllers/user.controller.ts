@@ -363,7 +363,7 @@ class UserController extends DeleteOperation {
           phoneNumber,
           firstName,
           lastName,
-          role,
+          role: role.toLowerCase(),
           gender,
           location: {
             lat: +lat,
