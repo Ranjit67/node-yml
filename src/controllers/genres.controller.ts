@@ -111,6 +111,33 @@ class GenresController {
       next(error);
     }
   }
+  async getAllGenresUnderSubCategories(
+    req: any,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { subcategoriesIDs } = req.body;
+      if (!Array.isArray(subcategoriesIDs))
+        throw new BadRequest(genresMessage.error.allField);
+      const findGenres = await GenresSchema.find({
+        parentId: { $in: subcategoriesIDs },
+      });
+      if (!findGenres.length)
+        return res.json({
+          success: {
+            data: [],
+          },
+        });
+      return res.json({
+        success: {
+          data: findGenres,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
   public async delete(req: any, res: Response, next: NextFunction) {
     try {
       const { ids } = req.body;

@@ -34,7 +34,8 @@ class SupportController {
         countryCode,
         email,
         message,
-        user: userId,
+        user: userId ?? null,
+        timestamp: new Date(),
       });
       if (!saveSupport)
         throw new NotAcceptable(supportMessage.error.dataNotAdded);

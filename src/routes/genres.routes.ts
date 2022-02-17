@@ -12,6 +12,10 @@ class GenresRoutes {
   private routes() {
     this.router.post("/create", this.genresController.create);
     this.router.post(
+      "/genres",
+      this.genresController.getAllGenresUnderSubCategories
+    );
+    this.router.post(
       "/sub-category-genres",
       this.genresController.genresUnderSubCategory
     );
