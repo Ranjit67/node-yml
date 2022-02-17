@@ -23,7 +23,7 @@ const reviewSchema = new Schema({
   },
   timestamp: {
     type: Date,
-    default: new Date().toString(),
+    default: new Date(),
   },
   artistID: {
     type: Schema.Types.ObjectId,
