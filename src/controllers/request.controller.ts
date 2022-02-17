@@ -195,7 +195,8 @@ class RequestHandler {
       const bookingContent = new BookingContent();
       if (permissionBoolean) {
         //    permission accepted
-
+        if (!findRequest?.reschedule?.booking.toString())
+          throw new NotAcceptable(requestMessage.error.actionTaken);
         const bookingUpdate = await BookingSchema.findByIdAndUpdate(
           findRequest.reschedule?.booking.toString(),
           {
@@ -244,6 +245,8 @@ class RequestHandler {
       } else {
         //    permission rejected
         // request status reject only
+        if (!findRequest?.reschedule?.booking.toString())
+          throw new NotAcceptable(requestMessage.error.actionTaken);
         const updateBooking = await BookingSchema.findByIdAndUpdate(
           findRequest.reschedule?.booking?.toString(),
           {
@@ -296,7 +299,8 @@ class RequestHandler {
       const bookingContent = new BookingContent();
       if (permissionBoolean) {
         //    permission accepted
-
+        if (!findRequest?.reschedule?.booking.toString())
+          throw new NotAcceptable(requestMessage.error.actionTaken);
         const bookingUpdate = await BookingSchema.findByIdAndUpdate(
           findRequest.reschedule?.booking.toString(),
           {
@@ -352,6 +356,8 @@ class RequestHandler {
       } else {
         //    permission rejected
         // request status reject only
+        if (!findRequest?.reschedule?.booking.toString())
+          throw new NotAcceptable(requestMessage.error.actionTaken);
         const updateBooking = await BookingSchema.findByIdAndUpdate(
           findRequest.reschedule?.booking?.toString(),
           {
@@ -413,7 +419,7 @@ class RequestHandler {
       const findUpdateBooking = await BookingSchema.findByIdAndUpdate(
         findRequest.booking,
         {
-          bookingPrice: price,
+          bookingPrice: +price,
         }
       );
       if (!findUpdateBooking)
@@ -630,31 +636,47 @@ class RequestController extends RequestHandler {
         // action by artist
       } else if (findRequest.requestType === "rescheduledCustomer") {
         // action by artist
+        const reasonManipulation: string = reason ?? "";
         await super.rescheduledCustomer(
           res,
           next,
           findRequest,
           isAccept,
-          reason
+          reasonManipulation
         );
       } else if (findRequest.requestType === "rescheduledArtist") {
-        await super.rescheduledArtist(res, next, findRequest, isAccept, reason);
+        const reasonManipulation: string = reason ?? "";
+        await super.rescheduledArtist(
+          res,
+          next,
+          findRequest,
+          isAccept,
+          reasonManipulation
+        );
         // action by user
       } else if (findRequest.requestType === "personalize") {
+        if (!price) throw new BadRequest(requestMessage.error.priceImportant);
         isAccept && (await super.priceAccept(res, next, findRequest, price));
         // action by artist
       } else if (findRequest.requestType === "payment") {
+        const reasonManipulation: string = reason ?? "";
         await super.paymentAcceptReject(
           res,
           next,
           findRequest,
           isAccept,
-          reason
+          reasonManipulation
         );
         // action by artist
       } else if (findRequest.requestType === "managerRemove") {
+        const reasonManipulation: string = reason ?? "";
         isAccept &&
-          (await super.managerRemoveAccept(res, next, findRequest, reason));
+          (await super.managerRemoveAccept(
+            res,
+            next,
+            findRequest,
+            reasonManipulation
+          ));
         // action by artist
       }
       const findRequestUpdate = await RequestSchema.findByIdAndUpdate(

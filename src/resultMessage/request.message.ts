@@ -16,6 +16,8 @@ const requestMessage = {
       "Your request is already pending. Wait for the Artist actions.",
     allAreNotDelete: "Something want Wrong, All the data are not deleted.",
     invalid: "Invalid ids entry.",
+    actionTaken: "Your action is already recoded.",
+    priceImportant: "You can't empty price field.",
   },
   success: {
     requestAccept: "Request is accepted successfully.",

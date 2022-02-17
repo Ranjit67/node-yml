@@ -808,7 +808,7 @@ class UserController extends DeleteOperation {
         .populate("genres")
         .select("-password  -fcmToken -__v");
       const dataArray = [
-        ...[...sortData].map((item) => item?.artist),
+        ...[...sortData].map((item) => item?.artist)?.reverse(),
         ...findArtist,
       ]?.slice(0, +limit);
       res.json({
@@ -872,7 +872,7 @@ class UserController extends DeleteOperation {
         .populate("genres")
         .select("-password  -fcmToken -__v");
       const dataArray = [
-        ...[...sortData].map((item) => item?.artist),
+        ...[...sortData].map((item) => item?.artist)?.reverse(),
         ...findArtist,
       ]?.slice(0, +limit);
       res.json({

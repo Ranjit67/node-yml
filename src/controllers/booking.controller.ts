@@ -111,14 +111,9 @@ class BookingController {
       });
       if (!createBooking)
         throw new InternalServerError(bookingMessage.error.notCreated);
-      if (!orderId) {
+      if (paymentStatus !== "success") {
         const requestCreate = await RequestSchema.create({
-          requestType:
-            paymentStatus === "success"
-              ? "payment"
-              : personalizedMessage
-              ? "personalize"
-              : "pricing",
+          requestType: personalizedMessage ? "personalize" : "pricing",
           receiverUser: artistId,
           senderUser: userId,
           details: requestDetails,

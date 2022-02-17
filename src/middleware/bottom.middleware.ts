@@ -14,7 +14,7 @@ class BottomMiddleware {
     res: Response,
     next: NextFunction
   ) {
-    next(new NotFound());
+    next(new NotFound("No route found, Please check your url."));
   }
   public fromRouteErrorHandler(
     err: any,
