@@ -3,7 +3,16 @@ import { UserSchema } from "../models";
 class FilterController {
   public async getFilterData(req: Request, res: Response, next: NextFunction) {
     try {
-      const { lat, lng, range, categoriesIds, eventsIds } = req.body;
+      const {
+        lat,
+        lng,
+        range,
+        categoriesIds,
+        eventsIds,
+        servicesIds,
+        languagesIds,
+        countriesNames,
+      } = req.body;
       const { limit, skip } = req.params;
       const deg2rad = (deg: any): any => {
         return deg * (Math.PI / 180);
@@ -28,13 +37,42 @@ class FilterController {
         return d;
       };
 
-      const getLocationAll = await UserSchema.find({
+      // const getLocationAll = await UserSchema.find({
+      //   role: "artist",
+      //   status: "active",
+      // });
+
+      // const data =
+      // limit && skip ? distanceFilter.slice(+skip, +limit) : distanceFilter;
+
+      const categoryFilters = await UserSchema.find({
         role: "artist",
         status: "active",
+        category: categoriesIds?.length
+          ? { $in: categoriesIds }
+          : { $exists: true },
+        events: eventsIds?.length ? { $in: eventsIds } : { $exists: true },
+        services: servicesIds?.length
+          ? {
+              $in: servicesIds,
+            }
+          : { $exists: true },
+        languages: languagesIds?.length
+          ? {
+              $in: languagesIds,
+            }
+          : { $exists: true },
+        "location.country": countriesNames?.length
+          ? {
+              $in: countriesNames,
+            }
+          : {
+              $exists: true,
+            },
       });
       const distanceFilter: any[] =
         lat && lng && range
-          ? getLocationAll
+          ? categoryFilters
               .map((item: any) => {
                 return {
                   ...item?._doc,
@@ -47,20 +85,12 @@ class FilterController {
                 };
               })
               .filter((item) => item.distance < range)
-          : getLocationAll;
-
+          : categoryFilters;
       const data =
         limit && skip ? distanceFilter.slice(+skip, +limit) : distanceFilter;
-
-      // const categoryFilters = await UserSchema.find({
-      //   role
-      //   category: categoriesIds.length
-      //     ? { $in: categoriesIds }
-      //     : { $exists: true },
-      // });
       res.json({
         success: {
-          data,
+          data: data,
         },
       });
     } catch (error) {
