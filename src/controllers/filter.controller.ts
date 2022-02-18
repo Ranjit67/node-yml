@@ -82,19 +82,23 @@ class FilterController {
           : categoryFilters;
       // price logic start
       const getIds = price ? distanceFilter.map((idGet) => idGet._id) : [];
-      // const findPriceMinMax = getIds?.length
-      //   ? await PricingSchema.find({
-      //       artist: { $in: getIds },
-      //       "prices.pricePerHour": { $gte: +price.min, $lte: +price.max },
-      //     })
-      //   : distanceFilter;
-      const findPriceMinMax = distanceFilter;
-      //
+      const findPriceMinMax = getIds?.length
+        ? await PricingSchema.find({
+            artist: { $in: getIds },
+            $and: [
+              { "prices.pricePerHour": { $gte: +price.min } },
+              { "prices.pricePerHour": { $lte: +price.max } },
+            ],
+          })
+        : distanceFilter;
+
       const priceFinalResult =
         findPriceMinMax?.length === distanceFilter?.length
           ? findPriceMinMax
           : distanceFilter.filter((outer) =>
-              findPriceMinMax.find((inner) => inner?.artist === outer._id)
+              findPriceMinMax.find(
+                (inner) => inner?.artist.toString() === outer._id.toString()
+              )
             );
 
       // price logic end
