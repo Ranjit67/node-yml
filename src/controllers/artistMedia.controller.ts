@@ -83,7 +83,9 @@ class ArtistMediaController {
         );
         if (firstUpdate.matchedCount === 1)
           return res.json({
-            data: artistMediaMessage.success.artistMediaUpdated,
+            success: {
+              message: artistMediaMessage.success.artistMediaUpdated,
+            },
           });
 
         const saveData = await ArtistMediaSchema.create({

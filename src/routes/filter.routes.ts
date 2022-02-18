@@ -1,16 +1,17 @@
 import { Router } from "express";
-
+import { FilterController } from "../controllers";
 class FilterRoutes {
-  public router = Router();
-  public path = "/filter";
-  // public routes(app: Application): void {
-  //     app.route('/filter')
-  //         .get(FilterController.getAll)
-  //         .post(FilterController.create);
+  public router: Router;
 
-  //     app.route('/filter/:id')
-  //         .get(FilterController.getById)
-  //         .put(FilterController.update)
-  //         .delete(FilterController.delete);
-  // }
+  public path = "/filter";
+  private filterController = new FilterController();
+
+  constructor() {
+    this.router = Router();
+    this.routes();
+  }
+  private routes() {
+    this.router.post("/:skip/:limit", this.filterController.getFilterData);
+  }
 }
+export default FilterRoutes;

@@ -27,3 +27,4 @@ export { default as NotificationController } from "./notification.controller";
 export { default as VersionController } from "./version.controller";
 export { default as EmailController } from "./email.controller";
 export { default as OrderController } from "./order.controller";
+export { default as FilterController } from "./filter.controller";

@@ -32,6 +32,7 @@ import {
   VersionRouter,
   EmailTestRoute,
   OrderRoutes,
+  FilterRoutes,
 } from "./routes";
 import { PaymentRoutes } from "./payment";
 import { SchedulerService } from "./services";
@@ -70,6 +71,7 @@ const object = {
     new OrderRoutes(),
     new EmailTestRoute(),
     new PaymentRoutes(),
+    new FilterRoutes(),
   ],
   topMiddleware: [new TopMiddleware().allowCrossDomain],
   bottomMiddleware: [
