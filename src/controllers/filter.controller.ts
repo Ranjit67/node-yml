@@ -48,10 +48,16 @@ class FilterController {
               })
               .filter((item) => item.distance < range)
           : getLocationAll;
-      // const categoryFilters =
 
-      const data = distanceFilter.slice(+skip, +limit);
+      const data =
+        limit && skip ? distanceFilter.slice(+skip, +limit) : distanceFilter;
 
+      // const categoryFilters = await UserSchema.find({
+      //   role
+      //   category: categoriesIds.length
+      //     ? { $in: categoriesIds }
+      //     : { $exists: true },
+      // });
       res.json({
         success: {
           data,
