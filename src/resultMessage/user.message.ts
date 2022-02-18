@@ -18,6 +18,8 @@ const userMessage = {
     tokenGenerate: "Token is not generated.",
     oldPassword: "Old password is not match.",
     passwordNotMatch: "Password is not match.",
+    forgetPasswordNot:
+      "Your account is not verified, please verify your account.",
     // userNotFound:"User not found."
   },
   success: {

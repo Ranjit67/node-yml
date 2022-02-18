@@ -62,45 +62,48 @@ class EmailTokenController {
       } else {
         const updatePassword = await UserSchema.findByIdAndUpdate(userId, {
           password: hashedPassword,
-          status: "pending",
+          status: findUser?.password ? findUser.status : "pending",
         });
-        // notification start
-        const findAdmins = await UserSchema.find({ role: "admin" }).select(
-          "_id"
-        );
-
-        const userContent = new UserContent();
-        const title =
-          findUser.role === "artist"
-            ? userContent.newArtistApprove().subject
-            : userContent.newManagerApprove().subject;
-        const description =
-          findUser.role === "artist"
-            ? userContent.newArtistApprove().text
-            : userContent.newManagerApprove().text;
-        const icon =
-          findUser.role === "artist"
-            ? newArtistApprovalIcon
-            : newManagerApprovalIcon;
-        for (let index of [...findAdmins.map((item) => item._id)]) {
-          await new NotificationServices().notificationGenerate(
-            index,
-            userId,
-            title,
-            description,
-            icon,
-            {
-              subject: title,
-              text: description,
-            },
-            {
-              title,
-              body: description,
-              sound: "default",
-            }
+        if (!findUser?.password) {
+          // notification start
+          const findAdmins = await UserSchema.find({ role: "admin" }).select(
+            "_id"
           );
+
+          const userContent = new UserContent();
+          const title =
+            findUser.role === "artist"
+              ? userContent.newArtistApprove().subject
+              : userContent.newManagerApprove().subject;
+          const description =
+            findUser.role === "artist"
+              ? userContent.newArtistApprove().text
+              : userContent.newManagerApprove().text;
+          const icon =
+            findUser.role === "artist"
+              ? newArtistApprovalIcon
+              : newManagerApprovalIcon;
+          for (let index of [...findAdmins.map((item) => item._id)]) {
+            await new NotificationServices().notificationGenerate(
+              index,
+              userId,
+              title,
+              description,
+              icon,
+              {
+                subject: title,
+                text: description,
+              },
+              {
+                title,
+                body: description,
+                sound: "default",
+              }
+            );
+          }
+          // notification end
         }
-        // notification end
+
         if (!updatePassword)
           throw new InternalServerError(
             emailTokenMessage.error.passwordNotUpdated

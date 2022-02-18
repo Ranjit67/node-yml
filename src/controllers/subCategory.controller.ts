@@ -132,18 +132,7 @@ class subCategoryController {
       next(error);
     }
   }
-  async underGenres(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { categoriesIds } = req.body;
-      if (!Array.isArray(categoriesIds))
-        throw new BadRequest(subCategoryMessage.error.allField);
-      // const findSubCategories = await SubCategorySchema.find({
 
-      // })
-    } catch (error) {
-      next(error);
-    }
-  }
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
       const { id: ids } = req.body;

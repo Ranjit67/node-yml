@@ -693,6 +693,8 @@ class UserController extends DeleteOperation {
           },
         });
       } else {
+        if (!findUser?.password)
+          throw new NotAcceptable(userMessage.error.forgetPasswordNot);
         const token = await new JwtService().emailTokenGenerator(findUser?._id);
         const updateEmailToken = await EmailToken.update(
           { userRef: findUser?._id },
