@@ -43,5 +43,6 @@ export interface UserModel extends Document {
   bio: String;
   fcmToken: string;
   Dob: Date;
+  ratings: number;
   timestamp: Date;
 }

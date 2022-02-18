@@ -890,10 +890,9 @@ class UserController extends DeleteOperation {
   public async fakeDataUpdate(req: Request, res: Response, next: NextFunction) {
     try {
       const updateArtistLocation = await UserSchema.updateMany(
-        {},
+        { ratings: { $exists: false } },
         {
-          fcmToken:
-            "eXRIsz5hzgoFvpLb-15P_e:APA91bEXlNHmsVdBqQ3I1AK3DVUeR6scYbx34e-wySqebLavqcBXfOWkY4gcp-nA2twjY2VIotcwONClzC5u5BdDY7oph9YIOAMrexWOfjOCRSQ723uMs0W40A2jQHXP6TLiVP5sXGPW",
+          ratings: 0,
         }
       );
       res.json({ data: "success" });

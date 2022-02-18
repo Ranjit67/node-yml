@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { UserSchema } from "../models";
+import { UserSchema, PricingSchema } from "../models";
 class FilterController {
   public async getFilterData(req: Request, res: Response, next: NextFunction) {
     try {
@@ -12,6 +12,8 @@ class FilterController {
         servicesIds,
         languagesIds,
         countriesNames,
+        price, // it is a object (min, max)
+        ratings,
       } = req.body;
       const { limit, skip } = req.params;
       const deg2rad = (deg: any): any => {
@@ -36,14 +38,6 @@ class FilterController {
         var d = R * c; // Distance in km
         return d;
       };
-
-      // const getLocationAll = await UserSchema.find({
-      //   role: "artist",
-      //   status: "active",
-      // });
-
-      // const data =
-      // limit && skip ? distanceFilter.slice(+skip, +limit) : distanceFilter;
 
       const categoryFilters = await UserSchema.find({
         role: "artist",
@@ -86,11 +80,39 @@ class FilterController {
               })
               .filter((item) => item.distance < range)
           : categoryFilters;
-      const data =
-        limit && skip ? distanceFilter.slice(+skip, +limit) : distanceFilter;
+      // price logic start
+      const getIds = price ? distanceFilter.map((idGet) => idGet._id) : [];
+      const findPriceMinMax = getIds?.length
+        ? await PricingSchema.find({
+            artist: { $in: getIds },
+            "prices.pricePerHour": { $gte: +price.min, $lte: +price.max },
+          })
+        : distanceFilter;
+      //
+      const priceFinalResult =
+        findPriceMinMax?.length === distanceFilter?.length
+          ? findPriceMinMax
+          : distanceFilter.filter((outer) =>
+              findPriceMinMax.find((inner) => inner?.artist === outer._id)
+            );
+
+      // price logic end
+
+      // rating start
+      const ratingData = ratings?.length
+        ? priceFinalResult?.filter(
+            (outer) => ratings.indexOf(outer?.ratings) === 1
+          )
+        : priceFinalResult;
+
+      // rating end
+      const limitRange =
+        limit && skip ? ratingData.slice(+skip, +limit) : ratingData;
+      // pricing
+
       res.json({
         success: {
-          data: data,
+          data: limitRange,
         },
       });
     } catch (error) {

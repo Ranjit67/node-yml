@@ -44,12 +44,27 @@ class ReviewController {
         user: userId,
         title,
         description,
-        ratings,
+        ratings: +ratings,
         timestamp: new Date(),
         artistID: artistId,
       });
       if (!createReview) throw new NotAcceptable(reviewMessage.error.notSave);
-
+      const findAllByArtist = await ReviewSchema.find({ artist: artistId });
+      if (findAllByArtist?.length) {
+        const ratingTotal = findAllByArtist.reduce(
+          (accumulate, currentValue) => {
+            return accumulate + currentValue.ratings;
+          },
+          0
+        );
+        if (ratingTotal > 0) {
+          const ratingAverage = ratingTotal / findAllByArtist.length;
+          await UserSchema.findOneAndUpdate(
+            { _id: artistId },
+            { ratings: Math.floor(ratingAverage) }
+          );
+        }
+      }
       return res.json({
         success: {
           message: reviewMessage.success.created,

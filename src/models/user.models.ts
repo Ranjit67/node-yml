@@ -114,6 +114,10 @@ const userSchema = new Schema<UserModel>({
     type: Boolean,
     default: false,
   },
+  ratings: {
+    type: Number,
+    default: 0,
+  },
   timestamp: {
     type: Date,
     default: new Date(),
