@@ -80,9 +80,9 @@ class BookingController {
         cityName,
         eventLocation: address,
         location: {
-          lat: +lat,
-          lng: +lng,
-          country,
+          lat: lat ? +lat : 0,
+          lng: lng ? +lng : 0,
+          country: country ?? "",
         },
         crowdSize,
         serviceType: serviceId,
