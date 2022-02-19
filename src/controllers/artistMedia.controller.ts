@@ -113,7 +113,12 @@ class ArtistMediaController {
   public async photoCreate(req: any, res: Response, next: NextFunction) {
     try {
       const { artistId } = req.body;
-      const images = req.files.images;
+
+      const images = Array.isArray(req?.files?.images)
+        ? req?.files?.images
+        : req?.files?.images
+        ? [req.files.images]
+        : [];
       if (!artistId || !images.length)
         throw new BadRequest(artistMediaMessage.error.allField);
       const awsS3 = new AwsS3Services();

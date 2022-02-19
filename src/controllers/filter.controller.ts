@@ -124,6 +124,60 @@ class FilterController {
       next(error);
     }
   }
+  public async getFilterData2(req: Request, res: Response, next: NextFunction) {
+    try {
+      const {
+        lat,
+        lng,
+        range,
+        categoriesIds,
+        eventsIds,
+        servicesIds,
+        languagesIds,
+        countriesNames,
+        price, // it is a object (min, max)
+        ratings,
+      } = req.body;
+      const { limit, skip } = req.params;
+      const deg2rad = (deg: any): any => {
+        return deg * (Math.PI / 180);
+      };
+      const getDistanceFromLatLonInKm = (
+        currentLan: number,
+        currentLng: number,
+        haveLan: number,
+        haveLng: number
+      ): any => {
+        var R = 6371; // Radius of the earth in km
+        var dLat: any = deg2rad(haveLan - currentLan); // deg2rad below
+        var dLon: any = deg2rad(haveLng - currentLng);
+        var a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(deg2rad(currentLan)) *
+            Math.cos(deg2rad(haveLan)) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        var d = R * c; // Distance in km
+        return d;
+      };
+      const userData = await UserSchema.aggregate([
+        { $match: { status: "active", role: "artist" } },
+      ]);
+
+      // rating end
+      const limitRange: any[] = userData;
+      // pricing
+
+      res.json({
+        success: {
+          data: limitRange,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default FilterController;
