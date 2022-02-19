@@ -183,7 +183,32 @@ class AssignArtistController {
       if (!managerId) throw new BadRequest(assignArtistMessage.error.allField);
       const findManagerData = await AssignArtistSchema.findOne({
         manager: managerId,
-      }).populate("artists.artist");
+      }).populate({
+        path: "artists.artist",
+        populate: [
+          {
+            path: "category",
+            model: "Category",
+          },
+          {
+            path: "subcategories",
+            model: "SubCategory",
+          },
+          {
+            path: "genres",
+            model: "Genres",
+          },
+          {
+            path: "languages",
+            model: "Language",
+          },
+          {
+            path: "events",
+            model: "Event",
+          },
+        ],
+        select: "-password -fcmToken",
+      });
       res.json({ success: { data: findManagerData?.artists } });
     } catch (error) {
       next(error);
