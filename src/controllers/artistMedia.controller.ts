@@ -261,7 +261,7 @@ class ArtistMediaController {
       });
     } catch (error: any) {
       if (error.path === "_id")
-        return res.json({
+        return res.status(400).json({
           error: {
             message: artistMediaMessage.error.videoNotFound,
           },
