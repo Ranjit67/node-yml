@@ -6,6 +6,7 @@ const artistMediaMessage = {
     artistIdRequired: "Artist Id is required.",
     notDataFound: "No Artist's data found.",
     noDataFoundForDelete: "No data found for delete.",
+    videoNotFound: "Video is not found.",
   },
   success: {
     artistMediaUpdated: "Videos are Uploaded successfully.",

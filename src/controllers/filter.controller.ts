@@ -162,7 +162,8 @@ class FilterController {
         return d;
       };
       const userData = await UserSchema.aggregate([
-        { $match: { status: "active", role: "artist" } },
+        // { $match: { status: "active", role: "artist" } },
+        { $group: { _id: "$role" } },
       ]);
 
       // rating end

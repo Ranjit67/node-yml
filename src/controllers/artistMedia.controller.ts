@@ -222,7 +222,7 @@ class ArtistMediaController {
   public async videoDelete(req: Request, res: Response, next: NextFunction) {
     try {
       const { artistId, videoIds } = req.body;
-      if (!artistId || !videoIds.length)
+      if (!artistId || !videoIds?.length)
         throw new BadRequest(artistMediaMessage.error.allField);
       const findVideos = await ArtistMediaSchema.findOne({
         artist: artistId,
@@ -259,7 +259,13 @@ class ArtistMediaController {
       return res.json({
         success: { message: artistMediaMessage.success.videoDeleted },
       });
-    } catch (error) {
+    } catch (error: any) {
+      if (error.path === "_id")
+        return res.json({
+          error: {
+            message: artistMediaMessage.error.videoNotFound,
+          },
+        });
       next(error);
     }
   }
