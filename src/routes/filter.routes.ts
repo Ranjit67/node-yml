@@ -11,8 +11,8 @@ class FilterRoutes {
     this.routes();
   }
   private routes() {
-    this.router.post("/", this.filterController.getFilterData);
-    this.router.post("/:skip/:limit", this.filterController.getFilterData);
+    this.router.post("/", this.filterController.getFilterData2);
+    this.router.post("/:skip/:limit", this.filterController.getFilterData2);
   }
 }
 export default FilterRoutes;

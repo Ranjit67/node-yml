@@ -11,21 +11,32 @@ class ArtistMediaController {
       if (!artistId)
         throw new BadRequest(artistMediaMessage.error.artistIdRequired);
 
-      const videoObject = req.files;
+      const videoObject = Array.isArray(req?.files?.video)
+        ? req?.files?.video
+        : req?.files?.video
+        ? [req.files.video]
+        : [];
       const timestamp = new Date();
 
-      const linkArray = links.length
+      const linkArray = Array.isArray(links)
         ? links.map((element: string) => ({
             youtubeUrl: element,
             timestamp,
           }))
+        : links
+        ? [
+            {
+              youtubeUrl: links,
+              timestamp,
+            },
+          ]
         : [];
       if (videoObject) {
         // here may links and local video have
         let videoArray = [];
 
         const awsS3 = new AwsS3Services();
-        for (let a of videoObject.video) {
+        for (let a of videoObject) {
           const videoUrl = await awsS3.upload(a);
           videoArray.push({
             videoUrl: videoUrl?.Location,
