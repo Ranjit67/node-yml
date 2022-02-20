@@ -163,16 +163,31 @@ class FilterController {
       };
       const userData = await UserSchema.aggregate([
         // { $match: { status: "active", role: "artist" } },
-        { $group: { _id: "$role" } },
+        // { $group: { _id: "$role" } },
+        // { $count: "total" },
+        {
+          $project: {
+            _id: 0,
+            roles: {
+              $function: {
+                body: function (status: string) {
+                  return "active" + status;
+                },
+                args: ["$status"],
+                lang: "js",
+              },
+            },
+          },
+        },
       ]);
 
       // rating end
-      const limitRange: any[] = userData;
+      // const limitRange: any[] = userData;
       // pricing
 
       res.json({
         success: {
-          data: limitRange,
+          data: userData,
         },
       });
     } catch (error) {

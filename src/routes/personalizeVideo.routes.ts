@@ -21,7 +21,10 @@ class PersonalizeVideoRoute {
     );
     // this.router.get("/all-personalize-video", this.personalizeVideoController.getAll);
     // this.router.put("/update", this.personalizeVideoController.update);
-    // this.router.delete("/delete", this.personalizeVideoController.delete);
+    this.router.put(
+      "/delete",
+      this.personalizeVideoController.deletePersonalizedVideo
+    );
     // this.router.get("/all-personalize-video/:id", this.personalizeVideoController.getOne);
   }
 }

@@ -26,6 +26,12 @@ const personalizeSchema = new Schema({
   videoFile: {
     type: String,
   },
+  isDeletesId: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
   timestamp: {
     type: Date,
   },

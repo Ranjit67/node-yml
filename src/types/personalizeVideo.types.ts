@@ -8,4 +8,5 @@ export interface PersonalizeModel extends Document {
   timestamp: Date;
   userCopy: Object;
   artistCopy: Object;
+  isDeletesId: ObjectId[];
 }

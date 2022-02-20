@@ -80,6 +80,7 @@ class PersonalizedVideoController {
       const { userId } = req.params;
       const findVideoUser = await PersonalizeVideoSchema.find({
         user: userId,
+        isDeletesId: { $ne: userId },
       }).populate({
         path: "artist",
         select: "-password -__v -fcmToken",
@@ -103,6 +104,7 @@ class PersonalizedVideoController {
       const { artistId } = req.params;
       const findVideoUser = await PersonalizeVideoSchema.find({
         artist: artistId,
+        isDeletesId: { $ne: artistId },
       }).populate({
         path: "user",
         select: "-password -__v -fcmToken",
@@ -110,6 +112,32 @@ class PersonalizedVideoController {
       res.json({
         success: {
           data: findVideoUser,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async deletePersonalizedVideo(req: any, res: Response, next: NextFunction) {
+    try {
+      const { personalizeId, userId } = req.body;
+      if (!personalizeId || !userId)
+        throw new BadRequest(personalizeVideoMessage.error.allField);
+      const findPersonalizeVideo = await PersonalizeVideoSchema.updateOne(
+        { _id: personalizeId },
+        {
+          $addToSet: {
+            isDeletesId: userId,
+          },
+        }
+      );
+      if (!findPersonalizeVideo.matchedCount)
+        throw new NotAcceptable(personalizeVideoMessage.error.notFound);
+      if (!findPersonalizeVideo.modifiedCount)
+        throw new NotAcceptable(personalizeVideoMessage.error.nothingChange);
+      res.json({
+        success: {
+          message: personalizeVideoMessage.success.deleted,
         },
       });
     } catch (error) {
