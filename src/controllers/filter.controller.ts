@@ -15,6 +15,7 @@ class FilterController {
         price, // it is a object (min, max)
         ratings,
         dates, // in toDateString() format
+        genders, //Male, Female format
       } = req.body;
       const { limit, skip } = req.params;
       const deg2rad = (deg: any): any => {
@@ -47,6 +48,7 @@ class FilterController {
           ? { $in: categoriesIds }
           : { $exists: true },
         events: eventsIds?.length ? { $in: eventsIds } : { $exists: true },
+        gender: genders?.length ? { $in: genders } : { $exists: true },
         services: servicesIds?.length
           ? {
               $in: servicesIds,
