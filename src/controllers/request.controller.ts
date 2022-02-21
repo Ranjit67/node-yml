@@ -841,6 +841,18 @@ class RequestController extends RequestHandler {
         } else if (findRequestHaveOrNot?.status === "accept") {
           throw new Conflict(requestMessage.error.yourRequestAccept);
         }
+      } else if (requestType === "managerRemove") {
+        const findRequestHaveOrNot: any = await RequestSchema.findOne({
+          requestType: "managerRemove",
+          status: { $in: ["pending"] },
+          receiverUser: receiverUserId,
+          senderUser: senderUserId,
+          deletedUsers: { $ne: receiverUserId },
+        });
+
+        if (findRequestHaveOrNot?.status === "pending") {
+          throw new Conflict(requestMessage.error.managerRemovePending);
+        }
       }
 
       const createRequest = await RequestSchema.create({

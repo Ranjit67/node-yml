@@ -20,6 +20,8 @@ const requestMessage = {
     invalid: "Invalid ids entry.",
     actionTaken: "Your action is already recoded.",
     priceImportant: "You can't empty price field.",
+    managerRemovePending:
+      "Your manager remove request is pending wait for the artist action.",
   },
   success: {
     requestAccept: "Request is accepted successfully.",
