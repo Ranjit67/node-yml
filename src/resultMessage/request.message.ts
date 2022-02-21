@@ -14,6 +14,8 @@ const requestMessage = {
     wrongDataEnter: "Wrong id, you have enter.",
     yourRequestPending:
       "Your request is already pending. Wait for the Artist actions.",
+    yourRequestAccept:
+      "Your request is already manage this artist, You can not send request again.",
     allAreNotDelete: "Something want Wrong, All the data are not deleted.",
     invalid: "Invalid ids entry.",
     actionTaken: "Your action is already recoded.",

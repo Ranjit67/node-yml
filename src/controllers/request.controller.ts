@@ -25,6 +25,7 @@ import {
   RequestContent,
   // manageraccept
   AssignArtistContent,
+  UserContent,
 } from "../emailContent";
 import { NotificationServices } from "../services";
 import {
@@ -414,6 +415,7 @@ class RequestHandler {
     price: number
   ) {
     try {
+      if (!price) throw new BadRequest(requestMessage.error.priceImportant);
       const userData = findRequest.senderUser;
       const artistData = findRequest.receiverUser;
       const findUpdateBooking = await BookingSchema.findByIdAndUpdate(
@@ -604,6 +606,119 @@ class RequestHandler {
       throw error;
     }
   }
+
+  async personalizeRejection(
+    res: Response,
+    next: NextFunction,
+    findRequest: any
+  ) {
+    try {
+      const bookingContent = new BookingContent();
+      // notification start
+
+      const title = bookingContent.personalizeRejection(
+        findRequest.senderUser
+      ).subject;
+
+      const description = bookingContent.personalizeRejection(
+        findRequest.senderUser
+      ).text;
+      await new NotificationServices().notificationGenerate(
+        findRequest.senderUser?._id.toString(),
+        findRequest.receiverUser?._id.toString(),
+        title,
+        description,
+        assignArtistToManager,
+        {
+          subject: title,
+          text: description,
+        },
+        {
+          title,
+          body: description,
+          sound: "default",
+        }
+      );
+
+      //  notification end
+    } catch (error) {
+      throw error;
+    }
+  }
+  async priceSetRejectionByArtist(
+    res: Response,
+    next: NextFunction,
+    findRequest: any
+  ) {
+    try {
+      const bookingContent = new BookingContent();
+      // notification start
+
+      const title = bookingContent.priceSetRejection(
+        findRequest.senderUser
+      ).subject;
+
+      const description = bookingContent.priceSetRejection(
+        findRequest.senderUser
+      ).text;
+      await new NotificationServices().notificationGenerate(
+        findRequest.senderUser?._id.toString(),
+        findRequest.receiverUser?._id.toString(),
+        title,
+        description,
+        assignArtistToManager,
+        {
+          subject: title,
+          text: description,
+        },
+        {
+          title,
+          body: description,
+          sound: "default",
+        }
+      );
+
+      //  notification end
+    } catch (error) {
+      throw error;
+    }
+  }
+  async managerRemoveReject(
+    res: Response,
+    next: NextFunction,
+    findRequest: any
+  ) {
+    try {
+      const bookingContent = new UserContent();
+      // notification start
+
+      const title = bookingContent.managerRemoveRejection(
+        findRequest.senderUser
+      ).subject;
+
+      const description = bookingContent.managerRemoveRejection(
+        findRequest.senderUser
+      ).text;
+      await new NotificationServices().notificationGenerate(
+        findRequest.senderUser?._id.toString(),
+        findRequest.receiverUser?._id.toString(),
+        title,
+        description,
+        assignArtistToManager,
+        {
+          subject: title,
+          text: description,
+        },
+        {
+          title,
+          body: description,
+          sound: "default",
+        }
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 class RequestController extends RequestHandler {
@@ -631,9 +746,10 @@ class RequestController extends RequestHandler {
         isAccept
           ? await super.managerAccept(res, next, findRequest)
           : await super.managerReject(res, next, findRequest);
-      } else if (findRequest.requestType === "pricing" && isAccept) {
-        if (!price) throw new BadRequest(requestMessage.error.priceImportant);
-        await super.priceAccept(res, next, findRequest, price);
+      } else if (findRequest.requestType === "pricing") {
+        isAccept
+          ? await super.priceAccept(res, next, findRequest, price)
+          : await super.priceSetRejectionByArtist(res, next, findRequest);
         // action by artist
       } else if (findRequest.requestType === "rescheduledCustomer") {
         // action by artist
@@ -655,9 +771,10 @@ class RequestController extends RequestHandler {
           reasonManipulation
         );
         // action by user
-      } else if (findRequest.requestType === "personalize" && isAccept) {
-        if (!price) throw new BadRequest(requestMessage.error.priceImportant);
-        await super.priceAccept(res, next, findRequest, price);
+      } else if (findRequest.requestType === "personalize") {
+        isAccept
+          ? await super.priceAccept(res, next, findRequest, price)
+          : await super.personalizeRejection(res, next, findRequest);
         // action by artist
       } else if (findRequest.requestType === "payment") {
         const reasonManipulation: string = reason ?? "";
@@ -669,15 +786,17 @@ class RequestController extends RequestHandler {
           reasonManipulation
         );
         // action by artist
-      } else if (findRequest.requestType === "managerRemove" && isAccept) {
+      } else if (findRequest.requestType === "managerRemove") {
         const reasonManipulation: string = reason ?? "";
 
-        await super.managerRemoveAccept(
-          res,
-          next,
-          findRequest,
-          reasonManipulation
-        );
+        isAccept
+          ? await super.managerRemoveAccept(
+              res,
+              next,
+              findRequest,
+              reasonManipulation
+            )
+          : await super.managerRemoveReject(res, next, findRequest);
         // action by artist
       }
       const findRequestUpdate = await RequestSchema.findByIdAndUpdate(
@@ -709,15 +828,19 @@ class RequestController extends RequestHandler {
         throw new BadRequest(requestMessage.error.allField);
 
       if (requestType === "manager") {
-        const findRequestHaveOrNot = await RequestSchema.findOne({
+        const findRequestHaveOrNot: any = await RequestSchema.findOne({
           requestType: "manager",
           status: { $in: ["pending", "accept"] },
           receiverUser: receiverUserId,
           senderUser: senderUserId,
           deletedUsers: { $ne: receiverUserId },
         });
-        if (findRequestHaveOrNot)
+
+        if (findRequestHaveOrNot?.status === "pending") {
           throw new Conflict(requestMessage.error.yourRequestPending);
+        } else if (findRequestHaveOrNot?.status === "accept") {
+          throw new Conflict(requestMessage.error.yourRequestAccept);
+        }
       }
 
       const createRequest = await RequestSchema.create({

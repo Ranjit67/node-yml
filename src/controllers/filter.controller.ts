@@ -116,16 +116,28 @@ class FilterController {
       const changeDateFormat = dates?.length
         ? dates.map((ele: any) => new Date(ele).toDateString())
         : [];
+      const findOnlyIdsOfArtist = dates?.length
+        ? ratingData?.map((ele: any) => ele._id)
+        : [];
+
       const availabilityData = changeDateFormat?.length
         ? await ArtistBlockDateSchema.find({
-            "blockedDates.dateDayFormat": { $nin: changeDateFormat },
+            $or: [
+              // {
+              //   artist: { $nin: findOnlyIdsOfArtist },
+              // },
+              {
+                "blockedDates.dateDayFormat": { $nin: changeDateFormat },
+              },
+            ],
           })
         : [];
+
       const findArtistThroughAvailabilityDate = availabilityData?.length
         ? ratingData.filter((outer) => {
-            return availabilityData.find(
-              (inner) => inner?.artist.toString() === outer._id.toString()
-            );
+            return availabilityData.find((inner) => {
+              return inner?.artist.toString().includes(outer._id.toString());
+            });
           })
         : ratingData;
 
@@ -138,6 +150,7 @@ class FilterController {
 
       res.json({
         success: {
+          // length: limitRange.length,
           data: limitRange,
         },
       });

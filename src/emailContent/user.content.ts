@@ -70,5 +70,14 @@ class UserContent {
       text: `Go to the dome url http://localhost:3000/verifyEmail/${token}`,
     };
   }
+  public managerRemoveRejection(user: any) {
+    return {
+      subject: `Remove Request Rejected.`,
+      text: `Hello ${user.firstName},
+      
+      Your request to get removed from managing your artist has been rejected by the artist. Kindly do contact the artist directly for queries or do reach us anytime. 
+      Thanks`,
+    };
+  }
 }
 export default UserContent;

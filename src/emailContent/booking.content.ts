@@ -222,6 +222,25 @@ class BookingContent {
       Thanks.`,
     };
   }
+  // booking rejection
+  public personalizeRejection(user: any) {
+    return {
+      subject: "Personalized Request Rejected⁣",
+      text: `Hello ${user.firstName}
+      
+      We are really sorry to let you know that the artist has rejected your request for Personalized Messages due to certain reasons. 
+      Thanks.`,
+    };
+  }
+  public priceSetRejection(user: any) {
+    return {
+      subject: "Request Rejected⁣",
+      text: `Hello ${user.firstName}
+      
+      Your artist booking request for you event has been rejected by the artist due to certain reasons. We are really sorry for this. For any further queries kindly reach us anytime. 
+      Thanks.`,
+    };
+  }
 }
 
 export default BookingContent;

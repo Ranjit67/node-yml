@@ -600,6 +600,11 @@ class UserController extends DeleteOperation {
     try {
       const { id } = req.body;
       const findUser: any = await UserSchema.findById(id);
+      if (findUser.role === "artist" && findUser.status === "pending") {
+        const createArtistBlockDate = await ArtistBlockDateSchema.create({
+          artist: findUser._id,
+        });
+      }
       const updateUser = await UserSchema.updateOne(
         { _id: id },
         {
@@ -901,12 +906,15 @@ class UserController extends DeleteOperation {
   // fake data update
   public async fakeDataUpdate(req: Request, res: Response, next: NextFunction) {
     try {
-      const updateArtistLocation = await UserSchema.updateMany(
-        { ratings: { $exists: false } },
-        {
-          ratings: 0,
-        }
-      );
+      const updateArtistLocation = await UserSchema.find({
+        role: "artist",
+        status: "active",
+      });
+      const getIds = updateArtistLocation.map((item: any) => ({
+        artist: item._id,
+      }));
+      const createMany = await ArtistBlockDateSchema.insertMany(getIds);
+
       res.json({ data: "success" });
     } catch (error) {
       next(error);
