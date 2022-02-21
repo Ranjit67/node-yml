@@ -73,11 +73,11 @@ class EmailTokenController {
           const userContent = new UserContent();
           const title =
             findUser.role === "artist"
-              ? userContent.newArtistApprove().subject
+              ? userContent.newArtistApproveRequestReceived().subject
               : userContent.newManagerApprove().subject;
           const description =
             findUser.role === "artist"
-              ? userContent.newArtistApprove().text
+              ? userContent.newArtistApproveRequestReceived().text
               : userContent.newManagerApprove().text;
           const icon =
             findUser.role === "artist"

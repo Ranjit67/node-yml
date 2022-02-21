@@ -30,7 +30,7 @@ class UserContent {
     Thanks`,
     };
   }
-  public newArtistApprove() {
+  public newArtistApproveRequestReceived() {
     return {
       subject: "New Artist.",
       text: `Hi
@@ -38,6 +38,15 @@ class UserContent {
       A new artist has created an account on the platform & is currently under pending. 
       Kindly visit your manage users option to take action. 
       Thanks`,
+    };
+  }
+  public afterApproveRequest(user: any) {
+    return {
+      subject: "Account Approved.",
+      text: `Hello ${user.firstName}
+          
+       We are happy to let you know that your account has now been approved by the Skyrise team & you can now easily access all our functionalities. 
+      Thanks for joining with Skyrise.⁣`,
     };
   }
   public emailOnSelfVerification(baseUrl: string, token: string) {

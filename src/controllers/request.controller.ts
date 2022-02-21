@@ -631,8 +631,9 @@ class RequestController extends RequestHandler {
         isAccept
           ? await super.managerAccept(res, next, findRequest)
           : await super.managerReject(res, next, findRequest);
-      } else if (findRequest.requestType === "pricing") {
-        isAccept && (await super.priceAccept(res, next, findRequest, price));
+      } else if (findRequest.requestType === "pricing" && isAccept) {
+        if (!price) throw new BadRequest(requestMessage.error.priceImportant);
+        await super.priceAccept(res, next, findRequest, price);
         // action by artist
       } else if (findRequest.requestType === "rescheduledCustomer") {
         // action by artist
@@ -654,9 +655,9 @@ class RequestController extends RequestHandler {
           reasonManipulation
         );
         // action by user
-      } else if (findRequest.requestType === "personalize") {
+      } else if (findRequest.requestType === "personalize" && isAccept) {
         if (!price) throw new BadRequest(requestMessage.error.priceImportant);
-        isAccept && (await super.priceAccept(res, next, findRequest, price));
+        await super.priceAccept(res, next, findRequest, price);
         // action by artist
       } else if (findRequest.requestType === "payment") {
         const reasonManipulation: string = reason ?? "";
@@ -668,15 +669,15 @@ class RequestController extends RequestHandler {
           reasonManipulation
         );
         // action by artist
-      } else if (findRequest.requestType === "managerRemove") {
+      } else if (findRequest.requestType === "managerRemove" && isAccept) {
         const reasonManipulation: string = reason ?? "";
-        isAccept &&
-          (await super.managerRemoveAccept(
-            res,
-            next,
-            findRequest,
-            reasonManipulation
-          ));
+
+        await super.managerRemoveAccept(
+          res,
+          next,
+          findRequest,
+          reasonManipulation
+        );
         // action by artist
       }
       const findRequestUpdate = await RequestSchema.findByIdAndUpdate(

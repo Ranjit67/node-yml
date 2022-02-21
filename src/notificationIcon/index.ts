@@ -50,3 +50,5 @@ export const newSupportMessageAddIcon =
   "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
 export const eventCompleteIcon =
   "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";
+export const userApproveIcon =
+  "https://sky-rise.s3.amazonaws.com/notification/superadmin.png";

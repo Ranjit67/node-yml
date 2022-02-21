@@ -33,7 +33,11 @@ import {
 } from "../services";
 import { UserContent } from "../emailContent";
 import { userMessage } from "../resultMessage";
-import { userBlockIcon, userUnblockIcon } from "../notificationIcon";
+import {
+  userApproveIcon,
+  userBlockIcon,
+  userUnblockIcon,
+} from "../notificationIcon";
 
 class DeleteOperation {
   async artistDelete(res: Response, userData: any) {
@@ -611,39 +615,47 @@ class UserController extends DeleteOperation {
       );
       if (updateUser.modifiedCount === 0)
         throw new NotAcceptable(userMessage.error.notUpdatedBlockOrUnblock);
-      if (findUser.status === "active" || findUser.status === "blocked") {
-        // notification start
-        const userContent = new UserContent();
-        const findAdmin: any = await UserSchema.findOne({ role: "admin" });
-        const title =
-          findUser.status === "active"
-            ? userContent.superAdminBlockUser(findUser).subject
-            : userContent.superAdminUnblockUser(findUser).subject;
-        const description =
-          findUser.status === "active"
-            ? userContent.superAdminBlockUser(findUser).text
-            : userContent.superAdminUnblockUser(findUser).text;
-        const icon =
-          findUser.status === "active" ? userBlockIcon : userUnblockIcon;
-        await new NotificationServices().notificationGenerate(
-          id,
-          findAdmin._id.toString(),
+      // if (findUser.status === "active" || findUser.status === "blocked") {
+      // notification start
+      const userContent = new UserContent();
+      const findAdmin: any = await UserSchema.findOne({ role: "admin" });
+      const title =
+        findUser.status === "active"
+          ? userContent.superAdminBlockUser(findUser).subject
+          : findUser.status === "blocked"
+          ? userContent.superAdminUnblockUser(findUser).subject
+          : userContent.afterApproveRequest(findUser).subject;
+      const description =
+        findUser.status === "active"
+          ? userContent.superAdminBlockUser(findUser).text
+          : findUser.status === "blocked"
+          ? userContent.superAdminUnblockUser(findUser).text
+          : userContent.afterApproveRequest(findUser).text;
+      const icon =
+        findUser.status === "active"
+          ? userBlockIcon
+          : findUser.status === "blocked"
+          ? userUnblockIcon
+          : userApproveIcon;
+      await new NotificationServices().notificationGenerate(
+        id,
+        findAdmin._id.toString(),
+        title,
+        description,
+        icon,
+        {
+          subject: title,
+          text: description,
+        },
+        {
           title,
-          description,
-          icon,
-          {
-            subject: title,
-            text: description,
-          },
-          {
-            title,
-            body: description,
-            sound: "default",
-          }
-        );
+          body: description,
+          sound: "default",
+        }
+      );
 
-        // notification end
-      }
+      // notification end
+      // }
 
       return res.json({
         success: {
