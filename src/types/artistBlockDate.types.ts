@@ -4,6 +4,7 @@ export interface ArtistBlockDateModel extends Document {
   blockedDates: [
     {
       date: number;
+      dateDayFormat: string;
       timestamp: Date;
     }
   ];

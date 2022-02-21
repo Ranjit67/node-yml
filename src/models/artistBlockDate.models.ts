@@ -11,6 +11,7 @@ const artistBlockDateSchema = new Schema({
   blockedDates: [
     {
       date: Number,
+      dateDayFormat: String,
       timestamp: Date,
     },
   ],

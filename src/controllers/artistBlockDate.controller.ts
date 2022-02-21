@@ -18,6 +18,7 @@ class ArtistBlockDateController {
       const currentTime = new Date();
       const structDates = datesArray.map((date: Date) => ({
         date: new Date(date).getTime(),
+        dateDayFormat: new Date(date).toDateString(),
         timestamp: currentTime,
       }));
 

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { UserSchema, PricingSchema } from "../models";
+import { UserSchema, PricingSchema, ArtistBlockDateSchema } from "../models";
 class FilterController {
   public async getFilterData(req: Request, res: Response, next: NextFunction) {
     try {
@@ -14,6 +14,7 @@ class FilterController {
         countriesNames,
         price, // it is a object (min, max)
         ratings,
+        dates, // in toDateString() format
       } = req.body;
       const { limit, skip } = req.params;
       const deg2rad = (deg: any): any => {
@@ -111,8 +112,28 @@ class FilterController {
         : priceFinalResult;
 
       // rating end
+      // availability start
+      const changeDateFormat = dates?.length
+        ? dates.map((ele: any) => new Date(ele).toDateString())
+        : [];
+      const availabilityData = changeDateFormat?.length
+        ? await ArtistBlockDateSchema.find({
+            "blockedDates.dateDayFormat": { $nin: changeDateFormat },
+          })
+        : [];
+      const findArtistThroughAvailabilityDate = availabilityData?.length
+        ? ratingData.filter((outer) => {
+            return availabilityData.find(
+              (inner) => inner?.artist.toString() === outer._id.toString()
+            );
+          })
+        : ratingData;
+
+      // avaliablity end
       const limitRange =
-        limit && skip ? ratingData.slice(+skip, +limit) : ratingData;
+        limit && skip
+          ? findArtistThroughAvailabilityDate.slice(+skip, +limit)
+          : findArtistThroughAvailabilityDate;
       // pricing
 
       res.json({
