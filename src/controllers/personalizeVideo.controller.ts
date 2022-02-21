@@ -81,10 +81,24 @@ class PersonalizedVideoController {
       const findVideoUser = await PersonalizeVideoSchema.find({
         user: userId,
         isDeletesId: { $ne: userId },
-      }).populate({
-        path: "artist",
-        select: "-password -__v -fcmToken",
-      });
+      })
+        .populate({
+          path: "artist",
+          select: "-password -__v -fcmToken",
+        })
+        .populate({
+          path: "booking",
+          populate: [
+            {
+              path: "eventType",
+              model: "Event",
+            },
+            {
+              path: "serviceType",
+              model: "Service",
+            },
+          ],
+        });
 
       res.json({
         success: {
@@ -105,10 +119,24 @@ class PersonalizedVideoController {
       const findVideoUser = await PersonalizeVideoSchema.find({
         artist: artistId,
         isDeletesId: { $ne: artistId },
-      }).populate({
-        path: "user",
-        select: "-password -__v -fcmToken",
-      });
+      })
+        .populate({
+          path: "user",
+          select: "-password -__v -fcmToken",
+        })
+        .populate({
+          path: "booking",
+          populate: [
+            {
+              path: "eventType",
+              model: "Event",
+            },
+            {
+              path: "serviceType",
+              model: "Service",
+            },
+          ],
+        });
       res.json({
         success: {
           data: findVideoUser,
