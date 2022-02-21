@@ -64,7 +64,7 @@ class FilterController {
           : {
               $exists: true,
             },
-      });
+      }).select("-fcmToken -password -profileImageRef -__v");
       const distanceFilter: any[] =
         lat && lng && range
           ? categoryFilters
@@ -129,7 +129,7 @@ class FilterController {
           })
         : ratingData;
 
-      // avaliablity end
+      // availability end
       const limitRange =
         limit && skip
           ? findArtistThroughAvailabilityDate.slice(+skip, +limit)
