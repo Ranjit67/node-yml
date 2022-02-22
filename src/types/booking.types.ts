@@ -17,10 +17,10 @@ export interface BookingModels extends Document {
   bookingType: bookingType;
   bookingReschedule: ObjectId;
   bookingPrice: number;
-  bankAmount: number;
-  walletAmount: number;
-  promoCodeAmount: number;
-  promoCodeData: Object;
+  // bankAmount: number;
+  // walletAmount: number;
+  // promoCodeAmount: number;
+  // promoCodeData: Object;
   status: bookingStatus;
   artist: ObjectId;
   user: ObjectId;
@@ -44,7 +44,9 @@ export interface BookingModels extends Document {
   reason: string;
   paymentStatus: paymentStatus;
   // orderId: ObjectId;
-  orderId: String;
-  paymentId: String;
+  // orderId: String;
+  // paymentId: String;
   isDeletesId: ObjectId[];
+  payment: ObjectId;
+  timestamp: Date;
 }

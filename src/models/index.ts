@@ -27,3 +27,4 @@ export { default as BookingRescheduleSchema } from "./bookingReschedule.models";
 export { default as VersionSchema } from "./version.models";
 export { default as OrderSchema } from "./order.models";
 export { default as EventDurationSchema } from "./eventDuration.models";
+export { default as PaymentSchema } from "./payment.models";

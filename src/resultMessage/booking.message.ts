@@ -16,11 +16,17 @@ const bookingMessage = {
     bookingNotDeleted: "Something went wrong, booking are not deleted.",
     allBooking: "Something went wrong, All booking are not deleted.",
     noBookingFound: "No bookings are found.",
+    paymentNotCreated: "Something went wrong, Payment is not created.",
+    paymentNotUpdated:
+      "Something went wrong, Payment is not updated in booking.",
   },
   success: {
     artistBookingList: "Artist Booking List.",
     userBookingList: "User Booking List.",
-    bookingCreated: "Booking is created successfully.",
+    bookingCreatedSuccess:
+      "Booking is created successfully, Wait for artist confirm.",
+    bookingCreatedForPaymentSuccess:
+      "Booking is created successfully, Wait for artist set his payment on your booking.",
     bookingConfirm: "Booking Confirm Successfully.",
     bookingComplete: "Thank you for giving, Your valuable response.",
     bookingCancelWallet:

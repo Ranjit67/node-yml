@@ -2,14 +2,12 @@ import { Schema, model } from "mongoose";
 
 import { BookingModels } from "../types";
 
-const bookingSchema = new Schema({
+const bookingSchema = new Schema<BookingModels>({
   eventDate: {
     start: Date,
     end: Date,
   },
-  cityName: {
-    type: String,
-  },
+
   eventLocation: {
     type: String,
   },
@@ -44,18 +42,7 @@ const bookingSchema = new Schema({
   bookingPrice: {
     type: Number,
   },
-  bankAmount: {
-    type: Number,
-  },
-  walletAmount: {
-    type: Number,
-  },
-  promoCodeAmount: {
-    type: Number,
-  },
-  promoCodeData: {
-    type: Object,
-  },
+
   status: {
     enum: ["pending", "confirm", "cancel", "past"],
     type: String,
@@ -78,9 +65,7 @@ const bookingSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "PersonalizeVideo",
   },
-  //   requestType: {
-  //     type: String,
-  //   },
+
   personalizedMessage: {
     type: String,
   },
@@ -120,18 +105,12 @@ const bookingSchema = new Schema({
     type: String,
   },
 
-  orderId: {
-    type: String,
-  },
-  paymentId: {
-    type: String,
-  },
-  paymentStatus: {
-    enum: ["fail", "success"],
-    type: String,
-  },
   reason: {
     type: String,
+  },
+  payment: {
+    type: Schema.Types.ObjectId,
+    ref: "Payment",
   },
 });
 const BookingSchema = model<BookingModels>("Booking", bookingSchema);

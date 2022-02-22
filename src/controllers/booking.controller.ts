@@ -18,6 +18,7 @@ import {
   UserSchema,
   PromoCodeSchema,
   OrderSchema,
+  PaymentSchema,
 } from "../models";
 import { bookingMessage } from "../resultMessage";
 import { NotificationServices } from "../services";
@@ -32,18 +33,88 @@ import {
   pastBookingCancelIcon,
   pastBookingConfirmIcon,
 } from "../notificationIcon";
-class BookingController {
+class BookingPayment {
+  async paymentSuccess(
+    artistId: string,
+    userId: string,
+    bookingId: string,
+    paymentData: any,
+    walletAmount: number,
+    bankAmount: number,
+    promoCodeData: any,
+    promoCodeAmount: number
+  ) {
+    try {
+      // payment status update
+      const createPayment = await PaymentSchema.create({
+        booking: bookingId,
+        artist: artistId,
+        user: userId,
+        walletAmount: walletAmount,
+        bankAmount: bankAmount,
+        paymentData,
+        promoCode: promoCodeData,
+        promoCodeDisCountAmount: promoCodeAmount,
+        timestamp: new Date(),
+      });
+      if (!createPayment)
+        throw new InternalServerError(bookingMessage.error.paymentNotCreated);
+      const updateInBooking = await BookingSchema.findByIdAndUpdate(bookingId, {
+        payment: createPayment._id,
+      });
+      if (!updateInBooking)
+        throw new InternalServerError(bookingMessage.error.paymentNotUpdated);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async onlyPaymentTime(
+    bookingId: string,
+    artistId: string,
+    userId: string,
+    walletAmount: number,
+    bankAmount: number,
+    promoCodeData: any,
+    paymentData: any,
+    promoCodeAmount: number
+  ) {
+    try {
+      const createPayment = await PaymentSchema.create({
+        booking: bookingId,
+        artist: artistId,
+        user: userId,
+        walletAmount: walletAmount,
+        bankAmount: bankAmount,
+        paymentData,
+        promoCode: promoCodeData,
+        promoCodeDisCountAmount: promoCodeAmount,
+        timestamp: new Date(),
+      });
+      if (!createPayment)
+        throw new InternalServerError(bookingMessage.error.paymentNotCreated);
+      const updateInBooking = await BookingSchema.findByIdAndUpdate(bookingId, {
+        payment: createPayment._id,
+        isPayment: true,
+      });
+      if (!updateInBooking)
+        throw new InternalServerError(bookingMessage.error.paymentNotUpdated);
+    } catch (error) {
+      throw error;
+    }
+  }
+}
+class BookingController extends BookingPayment {
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
       const {
         eventStartDate,
         eventEndDate,
-        cityName,
-        // eventLocation,
+
         crowdSize,
         serviceId,
         bookingPrice,
-        status,
+
         artistId,
         userId,
         personalizedMessage,
@@ -51,21 +122,18 @@ class BookingController {
         OtherDetails,
         eventId,
         personalizedMsgDate,
-        // isRequestSend,
         requestDetails,
         bankAmount,
         walletAmount,
         promoCodeAmount,
         promoCodeId,
-        orderId,
         paymentStatus,
-        paymentId,
-        //
+        paymentData,
+
         address,
         lat,
         lng,
         country,
-        //
       } = req.body;
       let promoCodeData;
       if (promoCodeId) {
@@ -77,7 +145,7 @@ class BookingController {
           start: eventStartDate,
           end: eventEndDate,
         },
-        cityName,
+
         eventLocation: address,
         location: {
           lat: lat ? +lat : 0,
@@ -87,7 +155,7 @@ class BookingController {
         crowdSize,
         serviceType: serviceId,
         bookingPrice,
-        status,
+        status: "pending",
         artist: artistId,
         user: userId,
         personalizedMessage,
@@ -96,32 +164,31 @@ class BookingController {
         eventType: eventId,
         personalizedMsgDate,
         timestamp: new Date(),
-        promoCodeData,
-        bankAmount,
-        walletAmount,
-        promoCodeAmount,
+
         bookingType: personalizedMessage ? "personalizedMessage" : "other",
-        orderId,
-        paymentStatus,
-        paymentId,
+
         isPayment: paymentStatus === "success" ? true : false,
       });
-      const orderCreate = await OrderSchema.create({
-        booking: createBooking._id,
-      });
+
       if (!createBooking)
         throw new InternalServerError(bookingMessage.error.notCreated);
+      const requestCreate = await RequestSchema.create({
+        requestType:
+          paymentStatus === "success"
+            ? "payment"
+            : personalizedMessage
+            ? "personalize"
+            : "pricing",
+        receiverUser: artistId,
+        senderUser: userId,
+        details: requestDetails,
+        timestamp: new Date(),
+        booking: createBooking._id,
+      });
+      if (!requestCreate)
+        throw new InternalServerError(bookingMessage.error.requestNotCreated);
+
       if (paymentStatus !== "success") {
-        const requestCreate = await RequestSchema.create({
-          requestType: personalizedMessage ? "personalize" : "pricing",
-          receiverUser: artistId,
-          senderUser: userId,
-          details: requestDetails,
-          timestamp: new Date(),
-          booking: createBooking._id,
-        });
-        if (!requestCreate)
-          throw new InternalServerError(bookingMessage.error.requestNotCreated);
         // notification send
         const findArtistManager = await AssignArtistSchema.find({
           "artists.artist": artistId,
@@ -165,29 +232,24 @@ class BookingController {
             }
           );
         }
-        res.json({
-          success: {
-            message: bookingMessage.success.bookingCreated,
-          },
-        });
       } else {
-        // request send for payment
-        const requestCreate = await RequestSchema.create({
-          requestType: "payment",
-          receiverUser: artistId,
-          senderUser: userId,
-          booking: createBooking._id,
-          details: requestDetails,
-          timestamp: new Date(),
-        });
-        if (!requestCreate)
-          throw new NotAcceptable(bookingMessage.error.bookingRequest);
+        // payment status update
+        await super.paymentSuccess(
+          artistId,
+          userId,
+          createBooking._id,
+          paymentData,
+          walletAmount,
+          bankAmount,
+          promoCodeData,
+          promoCodeAmount
+        );
 
-        // request end
+        // payment status update end
+
         const findArtistManager = await AssignArtistSchema.find({
           "artists.artist": artistId,
         }).select("manager -_id");
-        // [artistId,userId, findArtistManager.map(item => item.manager)]
         const bookingContent = new BookingContent();
         for (let index of [
           userId,
@@ -226,12 +288,15 @@ class BookingController {
           );
         }
         //notification send
-        res.json({
-          success: {
-            message: bookingMessage.success.bookingCreated,
-          },
-        });
       }
+      res.json({
+        success: {
+          message:
+            paymentStatus === "success"
+              ? bookingMessage.success.bookingCreatedSuccess
+              : bookingMessage.success.bookingCreatedForPaymentSuccess,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -250,6 +315,7 @@ class BookingController {
         .populate("user")
         .populate("eventType")
         .populate("serviceType")
+        .populate("payment")
         .populate({
           path: "personalizedVideo",
 
@@ -304,7 +370,7 @@ class BookingController {
         .populate("eventType")
         .populate("serviceType")
         .populate("bookingReschedule")
-        .populate("orderId")
+        .populate("payment")
         .populate({
           path: "personalizedVideo",
           select: "-__v -booking -artist -user -booking -videoFile ",
@@ -328,8 +394,9 @@ class BookingController {
         requestDetails,
         bankAmount,
         walletAmount,
-        promoCodeAmount,
         promoCodeId,
+        promoCodeAmount,
+        paymentData,
       } = req.body;
       const findBooking: any = await BookingSchema.findById(bookingId)
         .populate({
@@ -344,18 +411,18 @@ class BookingController {
       }
       if (findBooking?.bookingPrice !== +paymentAmount)
         throw new NotAcceptable(bookingMessage.error.bookingPriceNotAccept);
-      const bookingStatusUpdate = await BookingSchema.findByIdAndUpdate(
+
+      await super.onlyPaymentTime(
         bookingId,
-        {
-          isPayment: true,
-          promoCodeData: promoCodeData ?? {},
-          bankAmount: bankAmount ?? findBooking.bookingPrice,
-          walletAmount: walletAmount ?? 0,
-          promoCodeAmount: promoCodeAmount ?? 0,
-        }
+        findBooking.artist,
+        findBooking.user,
+        walletAmount,
+        bankAmount,
+        promoCodeData,
+        paymentData,
+        promoCodeAmount
       );
-      if (!bookingStatusUpdate)
-        throw new InternalServerError(bookingMessage.error.statusNotUpdate);
+
       // request to artist
       const requestCreate = await RequestSchema.create({
         requestType: "payment",
