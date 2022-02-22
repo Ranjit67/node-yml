@@ -66,6 +66,7 @@ class FilterController {
           : {
               $exists: true,
             },
+        // ratings: { $gte: ratings },
       }).select("-fcmToken -password -profileImageRef -__v");
       const distanceFilter: any[] =
         lat && lng && range
@@ -108,9 +109,9 @@ class FilterController {
 
       // rating start
       const ratingData = ratings?.length
-        ? priceFinalResult?.filter(
-            (outer) => ratings.indexOf(Math.floor(outer?.ratings)) === 1
-          )
+        ? priceFinalResult?.filter((outer) => {
+            return ratings.indexOf(Math.floor(outer?.ratings)) !== -1;
+          })
         : priceFinalResult;
 
       // rating end
