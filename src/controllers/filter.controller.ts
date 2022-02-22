@@ -109,7 +109,7 @@ class FilterController {
       // rating start
       const ratingData = ratings?.length
         ? priceFinalResult?.filter(
-            (outer) => ratings.indexOf(outer?.ratings) === 1
+            (outer) => ratings.indexOf(Math.floor(outer?.ratings)) === 1
           )
         : priceFinalResult;
 

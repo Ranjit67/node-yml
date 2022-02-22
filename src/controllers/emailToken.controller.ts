@@ -40,8 +40,15 @@ class EmailTokenController {
       const data = new JwtService().emailTokenVerify(token);
       const userId = data?.aud?.[0];
       if (!userId) throw new NotFound(emailTokenMessage.error.userNotFound);
-      const hashedPassword = await new PasswordHasServices().hash(password);
       const findUser: any = await UserSchema.findById(userId);
+      const currentDate = new Date().getTime();
+      const creationTimeInterval =
+        currentDate - new Date(findUser.timestamp).getTime();
+
+      if (creationTimeInterval >= 60000 * 15)
+        throw new NotAcceptable(emailTokenMessage.error.emailTokenExpired);
+
+      const hashedPassword = await new PasswordHasServices().hash(password);
 
       const deleteData = await EmailToken.findOneAndDelete({
         userRef: userId,

@@ -252,6 +252,14 @@ class UserController extends DeleteOperation {
         -1
       )
         throw new BadRequest(userMessage.error.invalidRole);
+      if (check) {
+        const currentTime = new Date().getTime();
+        const checkTime = currentTime - new Date(check?.timestamp).getTime();
+
+        if (checkTime <= 60000 * 15)
+          throw new NotAcceptable(userMessage.error.currentlyRegistered);
+      }
+
       const updateOneEmail = await UserSchema.updateOne(
         { email, password: { $exists: false } },
         {

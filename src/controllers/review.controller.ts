@@ -61,7 +61,7 @@ class ReviewController {
           const ratingAverage = ratingTotal / findAllByArtist.length;
           await UserSchema.findOneAndUpdate(
             { _id: artistId },
-            { ratings: Math.floor(ratingAverage) }
+            { ratings: ratingAverage }
           );
         }
       }

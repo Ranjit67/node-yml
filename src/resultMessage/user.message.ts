@@ -1,6 +1,8 @@
 const userMessage = {
   error: {
     allFieldsRequired: "All fields are required",
+    currentlyRegistered:
+      "You are already registered, Please check your email and set your password",
     notUpdatedBlockOrUnblock:
       "User is verified so you can't block or active the users.",
     duplicateEmail: "This email is already registered.",
