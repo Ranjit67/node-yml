@@ -26,3 +26,4 @@ export { default as PersonalizeVideoSchema } from "./personalizeVideo.models";
 export { default as BookingRescheduleSchema } from "./bookingReschedule.models";
 export { default as VersionSchema } from "./version.models";
 export { default as OrderSchema } from "./order.models";
+export { default as EventDurationSchema } from "./eventDuration.models";

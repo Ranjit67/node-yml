@@ -29,3 +29,4 @@ export { default as BookingRescheduleRoute } from "./bookingReschedule.routes";
 export { default as EmailTestRoute } from "./emailTest.routes";
 export { default as OrderRoutes } from "./order.routes";
 export { default as FilterRoutes } from "./filter.routes";
+export { default as EventDurationRoutes } from "./eventDuration.routes";

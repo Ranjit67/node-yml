@@ -37,3 +37,4 @@ export { SupportModel } from "./support.types";
 export { UserModel, userRole, userStatus, gender } from "./user.types";
 export { VersionModel } from "./version.types";
 export { VisitorModel } from "./visitor.types";
+export { default as EventDurationModel } from "./eventDuration.types";
