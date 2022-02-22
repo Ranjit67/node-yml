@@ -1,21 +1,23 @@
 import { Request, Response, NextFunction } from "express";
 import { BadRequest, InternalServerError, NotAcceptable } from "http-errors";
 import { EventDurationSchema } from "../models";
+import { eventDurationMessage } from "../resultMessage";
 
 class EventDurationController {
   async create(req: Request, res: Response, next: NextFunction) {
     try {
       const { eventDuration } = req.body;
-      if (!eventDuration) throw new BadRequest("All fields are required.");
+      if (!eventDuration)
+        throw new BadRequest(eventDurationMessage.error.allField);
       const createEventDuration = await EventDurationSchema.create({
         eventDuration,
         timestamp: new Date(),
       });
       if (!createEventDuration)
-        throw new NotAcceptable("Event Duration not created.");
+        throw new NotAcceptable(eventDurationMessage.error.notCreated);
       return res.json({
         success: {
-          message: "Event Duration created successfully.",
+          message: eventDurationMessage.success.created,
         },
       });
     } catch (error) {
@@ -46,10 +48,10 @@ class EventDurationController {
         }
       );
       if (!updateEventDuration)
-        throw new NotAcceptable("Event Duration is not updated.");
+        throw new NotAcceptable(eventDurationMessage.error.notUpdated);
       res.json({
         success: {
-          message: "Event Duration is updated successfully.",
+          message: eventDurationMessage.success.updated,
         },
       });
     } catch (error) {
@@ -60,15 +62,15 @@ class EventDurationController {
     try {
       const { eventDurationIds } = req.body;
       if (!Array.isArray(eventDurationIds))
-        throw new BadRequest("All fields are required.");
+        throw new BadRequest(eventDurationMessage.error.allField);
       const deleteManyData = await EventDurationSchema.deleteMany({
         _id: { $in: eventDurationIds },
       });
       if (!deleteManyData.deletedCount)
-        throw new NotAcceptable("Event Duration is not deleted.");
+        throw new NotAcceptable(eventDurationMessage.error.notDelete);
       res.json({
         success: {
-          message: "Event Duration is deleted successfully.",
+          message: eventDurationMessage.success.delete,
         },
       });
     } catch (error) {

@@ -26,3 +26,4 @@ export { default as versionMessage } from "./version.message";
 export { default as orderMessage } from "./order.message";
 export { default as emailTokenMessage } from "./emailToken.message";
 export { default as assignArtistMessage } from "./assignArtist.message";
+export { default as eventDurationMessage } from "./eventDuration.message";
