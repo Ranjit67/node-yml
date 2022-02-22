@@ -6,7 +6,6 @@ class EventDurationController {
   async create(req: Request, res: Response, next: NextFunction) {
     try {
       const { eventDuration } = req.body;
-      console.log(eventDuration);
       if (!eventDuration) throw new BadRequest("All fields are required.");
       const createEventDuration = await EventDurationSchema.create({
         eventDuration,
