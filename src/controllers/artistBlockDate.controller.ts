@@ -6,7 +6,7 @@ import {
   NotAcceptable,
   NotFound,
 } from "http-errors";
-import { ArtistBlockDateSchema } from "../models";
+import { ArtistBlockDateSchema, UserSchema } from "../models";
 import { artistBlockDateMessage } from "../resultMessage";
 
 class ArtistBlockDateController {
@@ -42,6 +42,13 @@ class ArtistBlockDateController {
         return res.json({
           success: { message: artistBlockDateMessage.success.blockDateInput },
         });
+      const checkArtist = await UserSchema.findOne({
+        _id: artistId,
+        status: "active",
+        role: "artist",
+      });
+      if (!checkArtist)
+        throw new NotAcceptable(artistBlockDateMessage.error.notAcceptable);
       const firstTimeSave = await ArtistBlockDateSchema.create({
         artist: artistId,
         blockedDates: structDates,

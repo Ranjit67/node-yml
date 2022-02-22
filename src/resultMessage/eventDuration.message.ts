@@ -3,7 +3,6 @@ const eventDurationMessage = {
     allField: "All fields are required.",
     notCreated: "Event Duration not created.",
     notUpdated: "Event Duration is not updated.",
-
     notDelete: "Something went wrong, Data is not deleted.",
     numArray: "You have to send number in array.",
   },
