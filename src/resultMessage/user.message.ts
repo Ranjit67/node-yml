@@ -22,6 +22,8 @@ const userMessage = {
     passwordNotMatch: "Password is not match.",
     forgetPasswordNot:
       "Your account is not verified, please verify your account.",
+    forgetPasswordLinkTimeHave:
+      "Your password set link sent to your email, please check your email.",
     // userNotFound:"User not found."
   },
   success: {

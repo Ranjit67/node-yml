@@ -346,6 +346,7 @@ class UserController extends DeleteOperation {
         const saveEmailToken = await EmailToken.create({
           userRef: userSave?._id,
           emailTokenString: token,
+          timestamp: new Date(),
         });
         if (!saveEmailToken)
           throw new InternalServerError(userMessage.error.emailToken);
@@ -396,6 +397,7 @@ class UserController extends DeleteOperation {
         const saveEmailToken = await EmailToken.create({
           userRef: userSave?._id,
           emailTokenString: token,
+          timestamp: new Date(),
         });
         if (!saveEmailToken)
           throw new InternalServerError(userMessage.error.emailToken);
@@ -720,10 +722,22 @@ class UserController extends DeleteOperation {
       } else {
         if (!findUser?.password)
           throw new NotAcceptable(userMessage.error.forgetPasswordNot);
+        const findUserToken: any = await EmailToken.findOne({
+          userRef: findUser?._id,
+        });
+        if (findUserToken) {
+          const currentTime = new Date().getTime();
+          const timeInterval =
+            currentTime - new Date(findUserToken?.timestamp).getTime();
+          if (timeInterval <= 60000 * 15)
+            throw new NotAcceptable(
+              userMessage.error.forgetPasswordLinkTimeHave
+            );
+        }
         const token = await new JwtService().emailTokenGenerator(findUser?._id);
-        const updateEmailToken = await EmailToken.update(
+        const updateEmailToken = await EmailToken.updateOne(
           { userRef: findUser?._id },
-          { emailTokenString: token },
+          { emailTokenString: token, timestamp: new Date() },
           { multi: false }
         );
 
@@ -731,6 +745,7 @@ class UserController extends DeleteOperation {
           const saveEmailToken = await EmailToken.create({
             userRef: findUser?._id,
             emailTokenString: token,
+            timestamp: new Date(),
           });
         }
 

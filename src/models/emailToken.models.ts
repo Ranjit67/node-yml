@@ -9,6 +9,9 @@ const emailTokenSchema = new Schema({
   emailTokenString: {
     type: String,
   },
+  timestamp: {
+    type: Date,
+  },
 });
 const EmailToken = model<EmailTokenModel>("EmailToken", emailTokenSchema);
 

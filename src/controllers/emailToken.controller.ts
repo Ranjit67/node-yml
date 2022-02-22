@@ -41,12 +41,27 @@ class EmailTokenController {
       const userId = data?.aud?.[0];
       if (!userId) throw new NotFound(emailTokenMessage.error.userNotFound);
       const findUser: any = await UserSchema.findById(userId);
-      const currentDate = new Date().getTime();
-      const creationTimeInterval =
-        currentDate - new Date(findUser.timestamp).getTime();
+      if (!findUser?.password) {
+        //new register time
+        const currentDate = new Date().getTime();
+        const creationTimeInterval =
+          currentDate - new Date(findUser.timestamp).getTime();
 
-      if (creationTimeInterval >= 60000 * 15)
-        throw new NotAcceptable(emailTokenMessage.error.emailTokenExpired);
+        if (creationTimeInterval >= 60000 * 15)
+          throw new NotAcceptable(emailTokenMessage.error.emailTokenExpired);
+      } else {
+        // forgetPassword time
+        const findUserToken: any = await EmailToken.findOne({
+          userRef: userId,
+        });
+        const currentTime = new Date().getTime();
+        const creationTimeInterval =
+          currentTime - new Date(findUserToken?.timestamp).getTime();
+        if (creationTimeInterval > 60000 * 15)
+          throw new NotAcceptable(
+            emailTokenMessage.error.forgetPasswordLinkTimeOff
+          );
+      }
 
       const hashedPassword = await new PasswordHasServices().hash(password);
 
