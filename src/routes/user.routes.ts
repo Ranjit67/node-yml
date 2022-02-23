@@ -18,6 +18,10 @@ class UserRoutes {
       this.userController.activeArtist
     );
     this.router.get(
+      "/accounts-active/artist",
+      this.userController.activeArtist
+    );
+    this.router.get(
       "/accounts-self",
       new ProtectedMiddleware().protected,
       this.userController.getSelf

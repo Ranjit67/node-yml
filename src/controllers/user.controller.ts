@@ -448,23 +448,49 @@ class UserController extends DeleteOperation {
   }
   public async activeArtist(req: any, res: Response, next: NextFunction) {
     try {
-      const findAllUser = await UserSchema.find({ isDeleted: false })
-        .populate("category")
-        .populate("subcategories")
-        .populate("genres")
-        .populate("languages")
-        .populate("events")
-        .populate("services")
-        .populate({
-          path: "artistMedia",
-          select: "artistVideos artistPhotos youtubeVideos",
+      const { limit, skip } = req.params;
+      if (limit && skip) {
+        const findAllUser = await UserSchema.find({
+          role: "artist",
+          status: "active",
         })
-        .select("-password -__v -fcmToken -profileImageRef");
-      res.json({
-        success: {
-          data: findAllUser,
-        },
-      });
+          .populate("category")
+          .populate("subcategories")
+          .populate("genres")
+          .populate("languages")
+          .populate("events")
+          .populate("services")
+          .populate({
+            path: "artistMedia",
+            select: "artistVideos artistPhotos youtubeVideos",
+          })
+          .limit(+limit)
+          .skip(+skip)
+          .select("-password -__v -fcmToken -profileImageRef");
+        res.json({
+          success: {
+            data: findAllUser,
+          },
+        });
+      } else {
+        const findAllUser = await UserSchema.find({ isDeleted: false })
+          .populate("category")
+          .populate("subcategories")
+          .populate("genres")
+          .populate("languages")
+          .populate("events")
+          .populate("services")
+          .populate({
+            path: "artistMedia",
+            select: "artistVideos artistPhotos youtubeVideos",
+          })
+          .select("-password -__v -fcmToken -profileImageRef");
+        res.json({
+          success: {
+            data: findAllUser,
+          },
+        });
+      }
     } catch (error) {
       next(error);
     }
