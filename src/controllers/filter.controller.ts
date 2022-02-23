@@ -192,23 +192,23 @@ class FilterController {
         return d;
       };
       const userData = await UserSchema.aggregate([
-        // { $match: { status: "active", role: "artist" } },
+        { $match: { status: "active", role: "artist" } },
         // { $group: { _id: "$role" } },
         // { $count: "total" },
-        {
-          $project: {
-            _id: 0,
-            roles: {
-              $function: {
-                body: function (status: string) {
-                  return "active" + status;
-                },
-                args: ["$status"],
-                lang: "js",
-              },
-            },
-          },
-        },
+        // {
+        //   $project: {
+        //     _id: 0,
+        //     roles: {
+        //       $function: {
+        //         body: function (status: string) {
+        //           return "active" + status;
+        //         },
+        //         args: ["$status"],
+        //         lang: "js",
+        //       },
+        //     },
+        //   },
+        // },
       ]);
 
       // rating end

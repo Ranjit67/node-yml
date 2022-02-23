@@ -14,6 +14,10 @@ class UserRoutes {
   private routes() {
     this.router.get("/accounts", this.userController.getAll);
     this.router.get(
+      "/accounts-active/artist/:limit/:skip",
+      this.userController.activeArtist
+    );
+    this.router.get(
       "/accounts-self",
       new ProtectedMiddleware().protected,
       this.userController.getSelf

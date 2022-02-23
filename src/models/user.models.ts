@@ -118,6 +118,16 @@ const userSchema = new Schema<UserModel>({
     type: Number,
     default: 0,
   },
+  minPrice: {
+    type: Number,
+  },
+  maxPrice: {
+    type: Number,
+  },
+  pricing: {
+    type: Schema.Types.ObjectId,
+    ref: "Pricing",
+  },
   timestamp: {
     type: Date,
     default: new Date(),

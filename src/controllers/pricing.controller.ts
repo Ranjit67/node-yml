@@ -1,9 +1,32 @@
 import { Request, Response, NextFunction } from "express";
-import { PricingSchema } from "../models";
+import { PricingSchema, UserSchema } from "../models";
 import { BadRequest, NotAcceptable } from "http-errors";
 import { pricingMessage } from "../resultMessage";
 
-class PricingController {
+class PriceUpdateUser {
+  async updateMinPriceUser(artistId: string) {
+    try {
+      const findPriceArtist = await PricingSchema.findOne({
+        artist: artistId,
+      });
+
+      findPriceArtist?.prices.sort((a, b) => a?.pricePerHour - b?.pricePerHour);
+      const updateUserMinPrice = await UserSchema.findByIdAndUpdate(artistId, {
+        minPrice: findPriceArtist?.prices?.[0].pricePerHour,
+        maxPrice:
+          findPriceArtist?.prices?.[findPriceArtist?.prices?.length - 1]
+            .pricePerHour,
+        pricing: findPriceArtist?._id,
+      });
+      if (!updateUserMinPrice)
+        throw new NotAcceptable(pricingMessage.error.pricingNotUpdated);
+    } catch (error) {
+      throw error;
+    }
+  }
+}
+
+class PricingController extends PriceUpdateUser {
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
       const {
@@ -74,10 +97,13 @@ class PricingController {
           },
         }
       );
-      if (updateFirst.matchedCount)
+      if (updateFirst.matchedCount) {
+        await super.updateMinPriceUser(artistId);
         return res.json({
           success: { message: pricingMessage.success.newPricingAdded },
         });
+      }
+
       const artistPriceSave = await PricingSchema.create({
         artist: artistId,
         prices: [
@@ -103,6 +129,8 @@ class PricingController {
 
       if (!artistPriceSave)
         throw new NotAcceptable(pricingMessage.error.notSave);
+      await super.updateMinPriceUser(artistId);
+
       res.json({ success: { message: pricingMessage.success.create } });
     } catch (error) {
       next(error);
@@ -192,6 +220,15 @@ class PricingController {
       if (!removeOnePricing)
         throw new NotAcceptable(pricingMessage.error.notRemove);
       res.json({ success: { message: pricingMessage.success.deletePrices } });
+    } catch (error) {
+      next(error);
+    }
+  }
+  public async fake(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { artistId } = req.body;
+      const findAllPrice = await PricingSchema.find();
+      const getAllArtistId = findAllPrice.map((item: any) => item.artist);
     } catch (error) {
       next(error);
     }

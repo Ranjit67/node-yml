@@ -44,5 +44,8 @@ export interface UserModel extends Document {
   fcmToken: string;
   Dob: Date;
   ratings: number;
+  minPrice: number;
+  maxPrice: number;
+  pricing: Object;
   timestamp: Date;
 }

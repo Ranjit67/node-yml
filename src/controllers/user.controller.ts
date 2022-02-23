@@ -431,6 +431,30 @@ class UserController extends DeleteOperation {
         .populate("languages")
         .populate("events")
         .populate("services")
+        .populate("pricing")
+        .populate({
+          path: "artistMedia",
+          select: "artistVideos artistPhotos youtubeVideos",
+        })
+        .select("-password -__v -fcmToken -profileImageRef");
+      res.json({
+        success: {
+          data: findAllUser,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  public async activeArtist(req: any, res: Response, next: NextFunction) {
+    try {
+      const findAllUser = await UserSchema.find({ isDeleted: false })
+        .populate("category")
+        .populate("subcategories")
+        .populate("genres")
+        .populate("languages")
+        .populate("events")
+        .populate("services")
         .populate({
           path: "artistMedia",
           select: "artistVideos artistPhotos youtubeVideos",
