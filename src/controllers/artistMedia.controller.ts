@@ -5,6 +5,7 @@ import { AwsS3Services } from "../services";
 import { ArtistMediaSchema, UserSchema } from "../models";
 
 class ArtistMediaController {
+  private dir = "artistMedia";
   public async videoCreate(req: any, res: Response, next: NextFunction) {
     try {
       const { artistId, links } = req.body;
@@ -37,7 +38,7 @@ class ArtistMediaController {
 
         const awsS3 = new AwsS3Services();
         for (let a of videoObject) {
-          const videoUrl = await awsS3.upload(a);
+          const videoUrl = await awsS3.upload(a, "artistMedia");
           videoArray.push({
             videoUrl: videoUrl?.Location,
             videoFile: videoUrl?.key,
@@ -136,7 +137,7 @@ class ArtistMediaController {
       const imageArray = [];
       const timestamp = new Date();
       for (let a of images) {
-        const imageUrl = await awsS3.upload(a);
+        const imageUrl = await awsS3.upload(a, "artistMedia");
         imageArray.push({
           imageUrl: imageUrl?.Location,
           imageFile: imageUrl?.key,
@@ -234,7 +235,7 @@ class ArtistMediaController {
 
       const awsS3 = new AwsS3Services();
       for (let a of getVideoItems) {
-        const deleteVideo = await awsS3.delete(a.videoFile);
+        const deleteVideo = await awsS3.delete(a.videoFile, "artistMedia");
       }
       const update = await ArtistMediaSchema.updateOne(
         { artist: artistId },
@@ -285,7 +286,7 @@ class ArtistMediaController {
         throw new NotFound(artistMediaMessage.error.noDataFoundForDelete);
       const awsS3 = new AwsS3Services();
       for (let a of getPhotoItems) {
-        const deletePhoto = await awsS3.delete(a.imageFile);
+        const deletePhoto = await awsS3.delete(a.imageFile, "artistMedia");
       }
       const update = await ArtistMediaSchema.updateOne(
         { artist: artistId },

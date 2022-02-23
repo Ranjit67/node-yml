@@ -6,6 +6,7 @@ import { AwsS3Services, NotificationServices } from "../services";
 import { PersonalizeMessageContent } from "../emailContent";
 import { personalizeMessageReceiving } from "../notificationIcon";
 class PersonalizedVideoController {
+  private dir = "personalizeVideo";
   public async create(req: any, res: Response, next: NextFunction) {
     try {
       const { bookingId } = req.body;
@@ -18,7 +19,7 @@ class PersonalizedVideoController {
       if (!findBooking)
         throw new NotAcceptable(personalizeVideoMessage.error.noBookingFound);
       const awsS3Services = new AwsS3Services();
-      const uploadVideo = await awsS3Services.upload(video);
+      const uploadVideo = await awsS3Services.upload(video, "personalizeVideo");
       const createPersonalizeVideo = await PersonalizeVideoSchema.create({
         user: findBooking.user._id.toString(),
         artist: findBooking.artist.toString(),

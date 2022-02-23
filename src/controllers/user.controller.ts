@@ -40,6 +40,7 @@ import {
 } from "../notificationIcon";
 
 class DeleteOperation {
+  private dir2 = "profile";
   async artistDelete(res: Response, userData: any) {
     // artist delete start
     const removePricing = await PricingSchema.findOneAndDelete({
@@ -89,12 +90,12 @@ class DeleteOperation {
       const awsS3 = new AwsS3Services();
       if (findArtistMedia?.artistVideos?.length) {
         for (let element of findArtistMedia.artistVideos) {
-          await awsS3.delete(element.videoFile);
+          await awsS3.delete(element.videoFile, "profile");
         }
       }
       if (findArtistMedia?.artistPhotos?.length) {
         for (let element of findArtistMedia.artistPhotos) {
-          await awsS3.delete(element.imageFile);
+          await awsS3.delete(element.imageFile, "profile");
         }
       }
       const deleteArtistMedia = await ArtistMediaSchema.findOneAndDelete({
@@ -313,7 +314,7 @@ class UserController extends DeleteOperation {
       const profilePicture = req?.files?.profilePicture;
       if (profilePicture) {
         const awsS3 = new AwsS3Services();
-        const profileImage = await awsS3.upload(profilePicture);
+        const profileImage = await awsS3.upload(profilePicture, "profile");
         if (!profileImage)
           throw new InternalServerError("Profile image is not uploaded.");
 
@@ -567,7 +568,6 @@ class UserController extends DeleteOperation {
         artistMedia,
       } = req.body;
       const { id } = req.params;
-
       if (!id) throw new BadRequest(userMessage.error.allFieldsRequired);
       const findUser = await UserSchema.findById(id);
       if (!findUser) throw new BadRequest(userMessage.error.invalidUserId);
@@ -575,7 +575,13 @@ class UserController extends DeleteOperation {
       let profileImage;
       if (profilePicture) {
         const awsS3 = new AwsS3Services();
-        profileImage = await awsS3.upload(profilePicture);
+        profileImage = await awsS3.upload(profilePicture, "profile");
+        if (findUser?.profileImageRef) {
+          const deleteImage = await awsS3.delete(
+            findUser?.profileImageRef,
+            "profile"
+          );
+        }
         if (!profileImage)
           throw new InternalServerError(userMessage.error.profileImage);
       }

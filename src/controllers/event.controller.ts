@@ -5,6 +5,7 @@ import { AwsS3Services } from "../services";
 import { eventMessage } from "../resultMessage";
 
 class EventController {
+  private dir = "event";
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
       const { eventName } = req.body;
@@ -13,10 +14,10 @@ class EventController {
       if (!eventName || !iconPicture || !imagePicture)
         throw new BadRequest(eventMessage.error.allFieldsRequired);
       const awsS3 = new AwsS3Services();
-      const iconImage = await awsS3.upload(iconPicture);
+      const iconImage = await awsS3.upload(iconPicture, "event");
       if (!iconImage)
         throw new NotAcceptable(eventMessage.error.iconImageUploadFail);
-      const imageImage = await awsS3.upload(imagePicture);
+      const imageImage = await awsS3.upload(imagePicture, "event");
       if (!imageImage)
         throw new NotAcceptable(eventMessage.error.imageImageUploadFail);
       //
@@ -76,18 +77,18 @@ class EventController {
       if (iconPicture) {
         const awsS3 = new AwsS3Services();
         const deleteOlder = findOneEvent?.iconFile
-          ? await awsS3.delete(findOneEvent?.iconFile)
+          ? await awsS3.delete(findOneEvent?.iconFile, "event")
           : "";
-        iconImage = await awsS3.upload(iconPicture);
+        iconImage = await awsS3.upload(iconPicture, "event");
         if (!iconImage)
           throw new NotAcceptable(eventMessage.error.iconImageUploadFail);
       }
       if (imagePicture) {
         const awsS3 = new AwsS3Services();
         const deleteOlder = findOneEvent?.imageFile
-          ? await awsS3.delete(findOneEvent?.imageFile)
+          ? await awsS3.delete(findOneEvent?.imageFile, "event")
           : "";
-        imageImage = await awsS3.upload(imagePicture);
+        imageImage = await awsS3.upload(imagePicture, "event");
         if (!imageImage)
           throw new NotAcceptable(eventMessage.error.iconImageUploadFail);
       }
@@ -123,10 +124,10 @@ class EventController {
       const awsS3 = new AwsS3Services();
       for (let item of findEvent) {
         const deleteOlder = item?.iconFile
-          ? await awsS3.delete(item.iconFile)
+          ? await awsS3.delete(item.iconFile, "event")
           : "";
         const deleteOlder2 = item?.imageFile
-          ? await awsS3.delete(item.imageFile)
+          ? await awsS3.delete(item.imageFile, "event")
           : "";
       }
       const deleteEvent = await EventSchema.deleteMany({ _id: { $in: ids } });

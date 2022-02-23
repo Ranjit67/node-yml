@@ -9,6 +9,7 @@ import {
 import { categoryMessage } from "../resultMessage";
 import { AwsS3Services } from "../services";
 class CategoryController {
+  private dir = "category";
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
       const { categoryName } = req.body;
@@ -17,8 +18,8 @@ class CategoryController {
       if (!categoryName || !iconPicture || !imagePicture)
         throw new BadRequest(categoryMessage.error.allField);
       const awsS3 = new AwsS3Services();
-      const iconImage = await awsS3.upload(iconPicture);
-      const image = await awsS3.upload(imagePicture);
+      const iconImage = await awsS3.upload(iconPicture, "category");
+      const image = await awsS3.upload(imagePicture, "category");
       if (!iconImage)
         throw new NotAcceptable(categoryMessage.error.iconImageUploadFail);
       const saveCategory = await CategorySchema.create({
@@ -92,14 +93,20 @@ class CategoryController {
       if (!findCategory) throw new NotFound(categoryMessage.error.dataNotFound);
       const awsS3 = new AwsS3Services();
       if (imagePicture) {
-        const deleteOlder = await awsS3.delete(findCategory?.imageFile);
-        imageData = await awsS3.upload(imagePicture);
+        const deleteOlder = await awsS3.delete(
+          findCategory?.imageFile,
+          "category"
+        );
+        imageData = await awsS3.upload(imagePicture, "category");
         if (!imageData)
           throw new NotAcceptable(categoryMessage.error.imageUploadFail);
       }
       if (iconPicture) {
-        const deleteOlder = await awsS3.delete(findCategory?.iconFile);
-        iconData = await awsS3.upload(iconPicture);
+        const deleteOlder = await awsS3.delete(
+          findCategory?.iconFile,
+          "category"
+        );
+        iconData = await awsS3.upload(iconPicture, "category");
         if (!iconData)
           throw new NotAcceptable(categoryMessage.error.iconImageUploadFail);
       }
@@ -147,7 +154,7 @@ class CategoryController {
         // genre delete
         for (let element of genreData) {
           const deleteGenreIcon = element?.iconFile
-            ? await awsS3.delete(element?.iconFile)
+            ? await awsS3.delete(element?.iconFile, "category")
             : "";
         }
         const deleteGenre = await GenresSchema.deleteMany({
@@ -156,7 +163,7 @@ class CategoryController {
         // subcategory delete
         for (let element of findSubcategories) {
           const deleteGenreIcon = element?.iconFile
-            ? await awsS3.delete(element?.iconFile)
+            ? await awsS3.delete(element?.iconFile, "category")
             : "";
         }
         const deleteSubCategory = await SubCategorySchema.deleteMany({
@@ -164,10 +171,10 @@ class CategoryController {
         });
         // category delete
         const deleteIcon = findCategory?.iconFile
-          ? await awsS3.delete(findCategory?.iconFile)
+          ? await awsS3.delete(findCategory?.iconFile, "category")
           : "";
         const deleteImage = findCategory?.imageFile
-          ? await awsS3.delete(findCategory?.imageFile)
+          ? await awsS3.delete(findCategory?.imageFile, "category")
           : "";
 
         const cleanUser = await UserSchema.updateMany(
@@ -183,10 +190,10 @@ class CategoryController {
       } else {
         // not have any subcategory
         const deleteIcon = findCategory?.iconFile
-          ? await awsS3.delete(findCategory?.iconFile)
+          ? await awsS3.delete(findCategory?.iconFile, "category")
           : "";
         const deleteImage = findCategory?.imageFile
-          ? await awsS3.delete(findCategory?.imageFile)
+          ? await awsS3.delete(findCategory?.imageFile, "category")
           : "";
 
         const cleanUser = await UserSchema.updateMany(

@@ -12,13 +12,13 @@ class AwsS3Services {
     });
   }
 
-  public async upload(file: any): Promise<any> {
+  public async upload(file: any, dir: string): Promise<any> {
     try {
       const fileSplit = file.name.split(".");
       const fileType = fileSplit[fileSplit.length - 1];
       const fileName = `${new Date().getTime()}.${fileType}`;
       const params = {
-        Bucket: BucketName,
+        Bucket: `${BucketName}/${dir}`,
         Key: fileName,
         Body: file?.data,
         ContentType: file.mimetype,
@@ -41,10 +41,10 @@ class AwsS3Services {
     return data;
   }
 
-  async delete(key: string): Promise<any> {
+  async delete(key: string, dir: string): Promise<any> {
     try {
       const params = {
-        Bucket: BucketName,
+        Bucket: `${BucketName}/${dir}`,
         Key: key,
       };
       const data = await this.s3.deleteObject(params).promise();
