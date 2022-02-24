@@ -982,13 +982,13 @@ class UserController extends DeleteOperation {
       const updateArtistLocation = await UserSchema.find({
         role: "artist",
         status: "active",
-      });
-      const getIds = updateArtistLocation.map((item: any) => ({
-        artist: item._id,
-      }));
-      const createMany = await ArtistBlockDateSchema.insertMany(getIds);
+      }).select("email -_id");
+      // const getIds = updateArtistLocation.map((item: any) => ({
+      //   artist: item._id,
+      // }));
+      // const createMany = await ArtistBlockDateSchema.insertMany(getIds);
 
-      res.json({ data: "success" });
+      res.json({ data: updateArtistLocation });
     } catch (error) {
       next(error);
     }
