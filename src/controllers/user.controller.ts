@@ -474,7 +474,10 @@ class UserController extends DeleteOperation {
           },
         });
       } else {
-        const findAllUser = await UserSchema.find({ isDeleted: false })
+        const findAllUser = await UserSchema.find({
+          role: "artist",
+          status: "active",
+        })
           .populate("category")
           .populate("subcategories")
           .populate("genres")
