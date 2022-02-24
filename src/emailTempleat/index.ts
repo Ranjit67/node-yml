@@ -258,7 +258,10 @@ module.exports = {
     </body>
   </html>
   `,
-  linkEmail: (content: string, link: string) => `
+  linkEmail: (
+    content: string
+    // link: string
+  ) => `
   <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -276,15 +279,7 @@ module.exports = {
         </tr>
         <tr>
           ${content}
-        </tr>
         
-           <tr>
-           <td  colspan="100%" align="center">
-           <a href =${`"` + link + `"`} class="btn-a" >CLICK</a>
-           </td>
-           
-          
-        </tr>
             
         
         

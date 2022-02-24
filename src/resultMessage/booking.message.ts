@@ -19,6 +19,9 @@ const bookingMessage = {
     paymentNotCreated: "Something went wrong, Payment is not created.",
     paymentNotUpdated:
       "Something went wrong, Payment is not updated in booking.",
+    bookingNotUpdated: "Something went wrong, Booking is not updated.",
+    noPaymentFound: "No payment found.",
+    oldData: "This is older data no payment id found.",
   },
   success: {
     artistBookingList: "Artist Booking List.",

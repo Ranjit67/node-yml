@@ -32,14 +32,17 @@ class EmailService {
   public LinkEmailSend(
     emails: string,
     subject: string,
-    message: string,
-    link: string
+    message: string
+    // link: string
   ): any {
     const emailCredentials = {
       from: "Skyrise <support@skyrisecelebrity.com>",
       to: emails,
       subject: subject,
-      html: template.linkEmail(message, link),
+      html: template.linkEmail(
+        message
+        // , link
+      ),
     };
     return new Promise((resolve, reject) => {
       const transport = nodemailer.createTransport({

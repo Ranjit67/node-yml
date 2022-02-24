@@ -298,8 +298,8 @@ class UserController extends DeleteOperation {
         const SendEmail = await new EmailService().LinkEmailSend(
           email,
           emailContent.subject,
-          emailContent.text,
-          emailContent.link
+          emailContent.text
+          // emailContent.link
         );
         return res.json({
           success: {
@@ -358,8 +358,8 @@ class UserController extends DeleteOperation {
         const SendEmail = await new EmailService().LinkEmailSend(
           userSave?.email,
           emailContent.subject,
-          emailContent.text,
-          emailContent.link
+          emailContent.text
+          // emailContent.link
         );
         res.json({
           success: {
@@ -408,8 +408,8 @@ class UserController extends DeleteOperation {
         const SendEmail = await new EmailService().LinkEmailSend(
           userSave?.email,
           emailContent.subject,
-          emailContent.text,
-          emailContent.link
+          emailContent.text
+          // emailContent.link
         );
         res.json({
           success: {
@@ -807,8 +807,8 @@ class UserController extends DeleteOperation {
         const SendEmail = await new EmailService().LinkEmailSend(
           email,
           emailContent.subject,
-          emailContent.text,
-          emailContent.link
+          emailContent.text
+          // emailContent.link
         );
         res.json({
           success: {

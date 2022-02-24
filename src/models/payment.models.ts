@@ -39,6 +39,9 @@ const paymentSchema = new Schema<PaymentModel>({
   cancelDate: {
     type: Date,
   },
+  refundDate: {
+    type: Date,
+  },
   paymentData: {
     type: Object,
   },

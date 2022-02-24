@@ -277,6 +277,7 @@ class BookingController extends BookingPayment {
         promoCodeId,
         paymentStatus,
         paymentData,
+        eventTime,
 
         address,
         lat,
@@ -307,11 +308,12 @@ class BookingController extends BookingPayment {
         artist: artistId,
         user: userId,
         personalizedMessage,
-        eventDuration,
+        eventDuration: parseInt(eventDuration),
         OtherDetails,
         eventType: eventId,
         personalizedMsgDate,
         timestamp: new Date(),
+        eventTime,
 
         bookingType: personalizedMessage ? "personalizedMessage" : "other",
 
@@ -733,7 +735,8 @@ class BookingController extends BookingPayment {
       const findBooking: any = await BookingSchema.findById(bookingId)
         .populate("artist")
         .populate("user");
-      if (!findBooking) throw new NotAcceptable("No booking found");
+      if (!findBooking)
+        throw new NotAcceptable(bookingMessage.error.noBookingFound);
       const updateRequest = await RequestSchema.updateOne(
         { booking: bookingId, status: "pending" },
         {
@@ -750,8 +753,9 @@ class BookingController extends BookingPayment {
         }
       );
       if (!updateBookingStatus)
-        throw new NotAcceptable("Booking is not updated.");
-      if (!findBooking?.payment) throw new NotAcceptable("No paymentId found");
+        throw new NotAcceptable(bookingMessage.error.bookingNotUpdated);
+      if (!findBooking?.payment)
+        throw new NotAcceptable(bookingMessage.error.noBookingFound);
       const updatePaymentStatus = await PaymentSchema.findByIdAndUpdate(
         findBooking?.payment.toString(),
         {
@@ -763,7 +767,7 @@ class BookingController extends BookingPayment {
         }
       );
       if (!updatePaymentStatus)
-        throw new NotAcceptable("This is older data no payment id found.");
+        throw new NotAcceptable(bookingMessage.error.oldData);
       if (walletRefund) {
         await super.WalletRefund(
           findBooking,
@@ -782,7 +786,9 @@ class BookingController extends BookingPayment {
       }
       res.json({
         success: {
-          message: bookingMessage.success.bookingCancelWallet,
+          message: bankRefund
+            ? bookingMessage.success.bookingCancel
+            : bookingMessage.success.bookingCancelWallet,
         },
       });
     } catch (error) {

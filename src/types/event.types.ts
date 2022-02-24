@@ -7,4 +7,5 @@ export interface EventModel extends Document {
   iconFile: string;
   imageUrl: string;
   imageFile: string;
+  eventTime: Date;
 }

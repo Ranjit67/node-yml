@@ -53,16 +53,21 @@ class UserContent {
     return {
       subject: `Email verification.`,
       text: `Thanks for registering with us. Kindly click on below link to verify your account and start using our platform.
-      The link validity is 15mins. `,
-      link: `${baseUrl}/password-reset/${token}`,
+      The link validity is 15mins. 
+      Link is 
+      ${baseUrl}/password-reset/${token}
+      `,
+      // link: `${baseUrl}/password-reset/${token}`,
     };
   }
   public emailForgetPassword(baseUrl: string, token: string) {
     return {
       subject: `Forget Password.`,
       text: `Kindly click on below link to set a new password for your account.
-      The link validity is 15mins.`,
-      link: `${baseUrl}/password-reset/${token}`,
+      The link validity is 15mins.
+      link is 
+      ${baseUrl}/password-reset/${token}`,
+      // link: `${baseUrl}/password-reset/${token}`,
     };
   }
 

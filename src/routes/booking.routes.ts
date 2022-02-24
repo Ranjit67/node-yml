@@ -35,6 +35,7 @@ class BookingRouter {
       "/booking-confirm",
       this.bookingController.bookingPaymentConfirm
     );
+
     this.router.put("/booking-fail", this.bookingController.bookingFail);
     this.router.post("/booking-test", this.bookingController.bookingTest);
   }

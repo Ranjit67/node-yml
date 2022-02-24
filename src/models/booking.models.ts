@@ -70,7 +70,7 @@ const bookingSchema = new Schema<BookingModels>({
     type: String,
   },
   eventDuration: {
-    type: String,
+    type: Number,
   },
   isComplete: {
     type: Boolean,
@@ -82,6 +82,9 @@ const bookingSchema = new Schema<BookingModels>({
   eventType: {
     type: Schema.Types.ObjectId,
     ref: "Event",
+  },
+  eventTime: {
+    type: Date,
   },
   timestamp: {
     type: Date,

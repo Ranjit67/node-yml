@@ -32,7 +32,7 @@ export interface BookingModels extends Document {
   };
   //   requestType: string;
   personalizedMessage: string;
-  eventDuration: string;
+  eventDuration: number;
   isComplete: Boolean;
   OtherDetails: string;
   eventType: ObjectId;
@@ -44,6 +44,7 @@ export interface BookingModels extends Document {
   artistCopy: ObjectId;
   reason: string;
   paymentStatus: paymentStatus;
+  eventTime: Date;
   // orderId: ObjectId;
   // orderId: String;
   // paymentId: String;
