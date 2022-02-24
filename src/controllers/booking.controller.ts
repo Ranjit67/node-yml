@@ -506,7 +506,7 @@ class BookingController extends BookingPayment {
 
         for (let index of [
           findBooking.artist._id.toString(),
-          superAdmin.map((item) => item._id),
+          ...superAdmin.map((item) => item._id),
         ]) {
           const title =
             index === findBooking.artist._id.toString()
@@ -669,7 +669,7 @@ class BookingController extends BookingPayment {
           for (let index of [
             findBooking.user._id.toString(),
             findBooking.artist._id.toString(),
-            findArtistManager.map((item) => item.manager),
+            ...findArtistManager.map((item) => item.manager),
           ]) {
             const title =
               index === findBooking.artist._id.toString()
@@ -742,7 +742,7 @@ class BookingController extends BookingPayment {
           for (let index of [
             // findBooking.user._id.toString(),
             findBooking.artist._id.toString(),
-            findArtistManager.map((item) => item.manager),
+            ...findArtistManager.map((item) => item.manager),
           ]) {
             const title = bookingContent.bookingCancelByUser(
               findBooking.artist
@@ -772,7 +772,7 @@ class BookingController extends BookingPayment {
           for (let index of [
             findBooking.user._id.toString(),
             findBooking.artist._id.toString(),
-            findArtistManager.map((item) => item.manager),
+            ...findArtistManager.map((item) => item.manager),
           ]) {
             const title =
               index === findBooking.artist._id.toString()
@@ -855,7 +855,7 @@ class BookingController extends BookingPayment {
       if (cancelBy === "user") {
         for (let index of [
           findBooking.artist._id.toString(),
-          findArtistManager.map((item) => item.manager),
+          ...findArtistManager.map((item) => item.manager),
         ]) {
           const title = bookingContent.bookingCancelByUser(
             findBooking.artist
@@ -885,7 +885,7 @@ class BookingController extends BookingPayment {
         for (let index of [
           findBooking.user._id.toString(),
           findBooking.artist._id.toString(),
-          findArtistManager.map((item) => item.manager),
+          ...findArtistManager.map((item) => item.manager),
         ]) {
           const title =
             index === findBooking.artist._id.toString()
