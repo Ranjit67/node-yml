@@ -24,14 +24,8 @@ class BookingRouter {
       "/booking-past-confirmation",
       this.bookingController.bookingPastConfirmation
     );
-    // this.router.post(
-    //   "/booking-cancel-wallet",
-    //   this.bookingController.bookingCancelWallet
-    // );
-    this.router.post(
-      "/booking-cancel-bank",
-      this.bookingController.bookingCancel
-    );
+
+    this.router.post("/booking-cancel", this.bookingController.bookingCancel);
     this.router.get(
       "/booking-details/:bookingId",
       this.bookingController.bookingDetails
