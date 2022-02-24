@@ -5,6 +5,7 @@ import { AwsS3Services } from "../services";
 import { serviceMessage } from "../resultMessage";
 
 class ServiceController {
+  private dir = "service";
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
       const { serviceName } = req.body;
@@ -13,11 +14,11 @@ class ServiceController {
       if (!serviceName || !iconPicture || !imagePicture)
         throw new BadRequest(serviceMessage.error.allFieldsRequired);
       const awsS3 = new AwsS3Services();
-      const iconImage = await awsS3.upload(iconPicture);
+      const iconImage = await awsS3.upload(iconPicture, "service");
       if (!iconImage)
         throw new NotAcceptable(serviceMessage.error.iconImageUploadFail);
 
-      const imageImage = await awsS3.upload(imagePicture);
+      const imageImage = await awsS3.upload(imagePicture, "service");
       if (!imageImage)
         throw new NotAcceptable(serviceMessage.error.imageImageUploadFail);
 
@@ -74,18 +75,18 @@ class ServiceController {
       if (iconPicture) {
         const awsS3 = new AwsS3Services();
         const deleteOlder = findOneService?.iconFile
-          ? await awsS3.delete(findOneService?.iconFile)
+          ? await awsS3.delete(findOneService?.iconFile, "service")
           : "";
-        iconImage = await awsS3.upload(iconPicture);
+        iconImage = await awsS3.upload(iconPicture, "service");
         if (!iconImage)
           throw new NotAcceptable(serviceMessage.error.iconImageUploadFail);
       }
       if (imagePicture) {
         const awsS3 = new AwsS3Services();
         const deleteOlder = findOneService?.imageFile
-          ? await awsS3.delete(findOneService?.imageFile)
+          ? await awsS3.delete(findOneService?.imageFile, "service")
           : "";
-        imageImage = await awsS3.upload(imagePicture);
+        imageImage = await awsS3.upload(imagePicture, "service");
         if (!imageImage)
           throw new NotAcceptable(serviceMessage.error.iconImageUploadFail);
       }
@@ -121,10 +122,10 @@ class ServiceController {
       const awsS3 = new AwsS3Services();
       for (let data of findAllService) {
         const deleteOlder = data?.iconFile
-          ? await awsS3.delete(data?.iconFile)
+          ? await awsS3.delete(data?.iconFile, "service")
           : "";
         const deleteOlder2 = data?.imageFile
-          ? await awsS3.delete(data?.imageFile)
+          ? await awsS3.delete(data?.imageFile, "service")
           : "";
       }
 

@@ -4,6 +4,7 @@ import { genresMessage } from "../resultMessage";
 import { GenresSchema, SubCategorySchema, UserSchema } from "../models";
 import { AwsS3Services } from "../services";
 class GenresController {
+  private dir = "genres";
   public async create(req: any, res: Response, next: NextFunction) {
     try {
       const { genresName, subCategoryId } = req.body;
@@ -12,7 +13,7 @@ class GenresController {
         throw new BadRequest(genresMessage.error.allField);
       // icon upload
       const awsS3 = new AwsS3Services();
-      const iconImage = await awsS3.upload(iconPicture);
+      const iconImage = await awsS3.upload(iconPicture, "genres");
       if (!iconImage)
         throw new InternalServerError(genresMessage.error.iconImageUploadFail);
       const saveGenres = await GenresSchema.create({
@@ -72,12 +73,15 @@ class GenresController {
       if (!findGenres) throw new NotAcceptable(genresMessage.error.genresError);
       if (iconPicture) {
         const awsS3 = new AwsS3Services();
-        const deletePreviousIcon = await awsS3.delete(findGenres?.iconFile);
+        const deletePreviousIcon = await awsS3.delete(
+          findGenres?.iconFile,
+          "genres"
+        );
         if (!deletePreviousIcon)
           throw new InternalServerError(
             genresMessage.error.iconImageDeleteFail
           );
-        const iconImage = await awsS3.upload(iconPicture);
+        const iconImage = await awsS3.upload(iconPicture, "genres");
         const updateGenres = await GenresSchema.findByIdAndUpdate(
           genresId,
           {
@@ -148,7 +152,7 @@ class GenresController {
       const aws3 = new AwsS3Services();
       for (let item of findGenres) {
         const deletePreviousIcon = item?.iconFile
-          ? await aws3.delete(item?.iconFile)
+          ? await aws3.delete(item?.iconFile, "genres")
           : "";
       }
       const removeSubcategory = await SubCategorySchema.updateMany(

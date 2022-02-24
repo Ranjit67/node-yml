@@ -11,6 +11,7 @@ import { AwsS3Services } from "../services";
 import { isDayjs } from "dayjs";
 
 class subCategoryController {
+  private dir = "subCategory";
   public async create(req: any, res: Response, next: NextFunction) {
     try {
       const { subCategory, categoryId } = req.body;
@@ -23,7 +24,7 @@ class subCategoryController {
         throw new NotAcceptable(subCategoryMessage.error.haveGenresInCategory);
       // icon upload
       const awsS3 = new AwsS3Services();
-      const iconImage = await awsS3.upload(iconPicture);
+      const iconImage = await awsS3.upload(iconPicture, "subCategory");
       if (!iconImage)
         throw new InternalServerError(
           subCategoryMessage.error.iconImageUploadFail
@@ -89,13 +90,14 @@ class subCategoryController {
       if (iconPicture) {
         const awsS3 = new AwsS3Services();
         const deletePreviousIcon = await awsS3.delete(
-          findSubCategory?.iconFile
+          findSubCategory?.iconFile,
+          "subCategory"
         );
         if (!deletePreviousIcon)
           throw new InternalServerError(
             subCategoryMessage.error.iconImageDeleteFail
           );
-        const iconImage = await awsS3.upload(iconPicture);
+        const iconImage = await awsS3.upload(iconPicture, "subCategory");
 
         const updateSubCategory = await SubCategorySchema.findByIdAndUpdate(
           subcategoryId,
@@ -148,7 +150,7 @@ class subCategoryController {
         });
         for (let item of findGenres) {
           const deleteGenre = item.iconFile
-            ? await awsS3.delete(item.iconFile)
+            ? await awsS3.delete(item.iconFile, "subCategory")
             : "";
         }
         const removeSubCategoryFromCategory = await CategorySchema.updateOne(
@@ -173,7 +175,10 @@ class subCategoryController {
           }
         );
         if (findSubCategories?.iconFile) {
-          const deleteIcon = await awsS3.delete(findSubCategories.iconFile);
+          const deleteIcon = await awsS3.delete(
+            findSubCategories.iconFile,
+            "subCategory"
+          );
         }
         const deleteSubCategory = await SubCategorySchema.findByIdAndDelete(
           ids
@@ -199,7 +204,10 @@ class subCategoryController {
           ids
         );
         if (findSubCategories?.iconFile) {
-          const deleteIcon = await awsS3.delete(findSubCategories.iconFile);
+          const deleteIcon = await awsS3.delete(
+            findSubCategories.iconFile,
+            "subCategory"
+          );
         }
         if (!deleteSubCategory)
           throw new NotAcceptable(subCategoryMessage.error.notDeleted);
