@@ -20,9 +20,24 @@ const paymentSchema = new Schema<PaymentModel>({
     type: Number,
     default: 0,
   },
+  bankRefundAmount: {
+    type: Number,
+  },
+  walletRefund: {
+    type: Boolean,
+    // default: false,
+  },
+  bankRefund: {
+    type: Boolean,
+    // default: false,
+  },
+
   bankAmount: {
     type: Number,
     default: 0,
+  },
+  cancelDate: {
+    type: Date,
   },
   paymentData: {
     type: Object,

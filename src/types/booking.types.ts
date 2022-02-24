@@ -39,6 +39,7 @@ export interface BookingModels extends Document {
   personalizedMsgDate: Date;
   isPayment: Boolean;
   cancelBy: cancelBy;
+  cancelDate: Date;
   userCopy: ObjectId;
   artistCopy: ObjectId;
   reason: string;

@@ -104,6 +104,9 @@ const bookingSchema = new Schema<BookingModels>({
     enum: ["artist", "user"],
     type: String,
   },
+  cancelDate: {
+    type: Date,
+  },
 
   reason: {
     type: String,

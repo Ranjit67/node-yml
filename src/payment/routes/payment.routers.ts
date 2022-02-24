@@ -10,7 +10,7 @@ class PaymentRoutes {
     this.routes();
   }
   routes() {
-    this.router.post("/check-out", this.paymentController.makePayment);
+    this.router.post("/refund", this.paymentController.refund);
   }
 }
 export default PaymentRoutes;

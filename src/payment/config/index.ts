@@ -1,7 +1,7 @@
 export {
-  paymentBaseUrl,
-  passphrase,
-  merchantID,
-  merchantKey,
-  version,
+  testSecretKey,
+  testPublicKey,
+  livePublicKey,
+  liveSecretKey,
+  baseUrl,
 } from "./payment.config";

@@ -7,7 +7,11 @@ export default interface PaymentModel extends Document {
   walletAmount: number;
   bankAmount: number;
   paymentData: Object;
+  walletRefund: Boolean;
+  bankRefund: Boolean;
   promoCode: Object;
+  bankRefundAmount: number;
   promoCodeDisCountAmount: number;
+  cancelDate: Date;
   timestamp: Date;
 }

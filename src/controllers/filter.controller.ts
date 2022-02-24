@@ -97,7 +97,8 @@ class FilterController {
         : distanceFilter;
 
       const priceFinalResult =
-        findPriceMinMax?.length === distanceFilter?.length
+        findPriceMinMax?.[0]?._id?.toString() ===
+        distanceFilter?.[0]?._id?.toString()
           ? findPriceMinMax
           : distanceFilter.filter((outer) =>
               findPriceMinMax.find(
