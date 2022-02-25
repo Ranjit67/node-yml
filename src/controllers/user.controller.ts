@@ -23,6 +23,9 @@ import {
   PricingSchema,
   ArtistBlockDateSchema,
   ArtistMediaSchema,
+  //
+  GenresSchema,
+  SubCategorySchema,
 } from "../models";
 import {
   EmailService,
@@ -477,18 +480,18 @@ class UserController extends DeleteOperation {
         const findAllUser = await UserSchema.find({
           role: "artist",
           status: "active",
-        })
-          .populate("category")
-          .populate("subcategories")
-          .populate("genres")
-          .populate("languages")
-          .populate("events")
-          .populate("services")
-          .populate({
-            path: "artistMedia",
-            select: "artistVideos artistPhotos youtubeVideos",
-          })
-          .select("-password -__v -fcmToken -profileImageRef");
+        });
+        // .populate("category")
+        // .populate("subcategories")
+        // .populate("genres")
+        // .populate("languages")
+        // .populate("events")
+        // .populate("services")
+        // .populate({
+        //   path: "artistMedia",
+        //   select: "artistVideos artistPhotos youtubeVideos",
+        // })
+        // .select("-password -__v -fcmToken -profileImageRef");
         res.json({
           success: {
             data: findAllUser,
@@ -988,16 +991,9 @@ class UserController extends DeleteOperation {
   // fake data update
   public async fakeDataUpdate(req: Request, res: Response, next: NextFunction) {
     try {
-      const updateArtistLocation = await UserSchema.find({
-        role: "artist",
-        status: "active",
-      }).select("email -_id");
-      // const getIds = updateArtistLocation.map((item: any) => ({
-      //   artist: item._id,
-      // }));
-      // const createMany = await ArtistBlockDateSchema.insertMany(getIds);
+      const genresSchema = await SubCategorySchema.find({});
 
-      res.json({ data: updateArtistLocation });
+      res.json({ data: genresSchema });
     } catch (error) {
       next(error);
     }

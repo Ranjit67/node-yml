@@ -1,4 +1,4 @@
-const port: number = Number(process.env.PORT) || 4000;
+const port: number = Number(process.env.PORT) || 5000;
 // const database: string =
 //   "mongodb://skyrise:skyrise@44.197.122.155:27017/SkyRiseDB";
 const database: string = `mongodb+srv://skyrisecelebrity:${"siPhzzqgvnCAbuUm"}@cluster0.gqqoe.mongodb.net/SkyRiseDB?retryWrites=true&w=majority`;

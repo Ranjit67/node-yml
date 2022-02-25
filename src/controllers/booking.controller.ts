@@ -308,7 +308,7 @@ class BookingController extends BookingPayment {
         artist: artistId,
         user: userId,
         personalizedMessage,
-        eventDuration: parseInt(eventDuration),
+        eventDuration: eventDuration ? parseInt(eventDuration) : 0,
         OtherDetails,
         eventType: eventId,
         personalizedMsgDate,
