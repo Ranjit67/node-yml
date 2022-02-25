@@ -291,8 +291,8 @@ class BookingController extends BookingPayment {
 
       const createBooking = await BookingSchema.create({
         eventDate: {
-          start: eventStartDate,
-          end: eventEndDate,
+          start: eventStartDate ?? null,
+          end: eventEndDate ?? null,
         },
 
         eventLocation: address,
