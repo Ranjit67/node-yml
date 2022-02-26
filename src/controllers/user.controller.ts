@@ -991,7 +991,15 @@ class UserController extends DeleteOperation {
   // fake data update
   public async fakeDataUpdate(req: Request, res: Response, next: NextFunction) {
     try {
-      const genresSchema = await SubCategorySchema.find({});
+      const dat = ["61eb047162fc8fd6c11f82a3", "61eec6c0083100ff93536b26"];
+      const genresSchema = await RequestSchema.deleteMany({
+        // senderUser: "61eb047162fc8fd6c11f82a3",
+        receiverUser: "61eb047162fc8fd6c11f82a3",
+      });
+      const booking = await BookingSchema.deleteMany({
+        // user: "61eb047162fc8fd6c11f82a3",
+        artist: "61eec6c0083100ff93536b26",
+      });
 
       res.json({ data: genresSchema });
     } catch (error) {
