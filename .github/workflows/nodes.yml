@@ -31,6 +31,5 @@ jobs:
       run: sudo npm install typescript@latest -g
     - name: check
       run: tsc --version
-    - name: install tsc
-      run: sudo tsc
+    
     
