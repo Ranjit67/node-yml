@@ -1,0 +1,1 @@
+{"version":3,"file":"walletHistory.message.js","sourceRoot":"","sources":["../../src/resultMessage/walletHistory.message.ts"],"names":[],"mappings":";;AAAA,IAAM,oBAAoB,GAAG;IAC3B,KAAK,EAAE;QACL,mBAAmB,EAAE,wBAAwB;QAC7C,QAAQ,EAAE,0BAA0B;KAIrC;IACD,OAAO,EAAE,EAGR;CACF,CAAC;AACF,kBAAe,oBAAoB,CAAC"}
