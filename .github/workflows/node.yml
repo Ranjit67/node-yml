@@ -23,7 +23,9 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm i
+    - run: sudo npm i
+    - name: type install
+      run: sudo npm install typescript@latest -g
     - name: Building Typescript
       uses: FuLagann/tsc-build-push@v1
       with:
