@@ -24,7 +24,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm i
-    - name: tsc
-      uses: icrawl/action-tsc@v1
+    - name: Building Typescript
+      uses: FuLagann/tsc-build-push@v1
     - run: npm run build --if-present
     
