@@ -1,1 +1,0 @@
-{"version":3,"file":"wallet.message.js","sourceRoot":"","sources":["../../src/resultMessage/wallet.message.ts"],"names":[],"mappings":";;AAAA,IAAM,aAAa,GAAG;IACpB,KAAK,EAAE;QACL,QAAQ,EAAE,0BAA0B;QACpC,UAAU,EAAE,wBAAwB;QACpC,eAAe,EAAE,gCAAgC;KAClD;IACD,OAAO,EAAE;QACP,OAAO,EAAE,8BAA8B;QACvC,OAAO,EAAE,8BAA8B;KACxC;CACF,CAAC;AACF,kBAAe,aAAa,CAAC"}

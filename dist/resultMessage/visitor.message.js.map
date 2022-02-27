@@ -1,1 +1,0 @@
-{"version":3,"file":"visitor.message.js","sourceRoot":"","sources":["../../src/resultMessage/visitor.message.ts"],"names":[],"mappings":";;AAAA,IAAM,cAAc,GAAG;IACrB,KAAK,EAAE;QACL,QAAQ,EAAE,0BAA0B;QACpC,UAAU,EAAE,uBAAuB;KACpC;IACD,OAAO,EAAE;QACP,YAAY,EAAE,gCAAgC;KAC/C;CACF,CAAC;AACF,kBAAe,cAAc,CAAC"}

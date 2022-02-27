@@ -1,1 +1,0 @@
-{"version":3,"file":"personalizeMessage.content.js","sourceRoot":"","sources":["../../src/emailContent/personalizeMessage.content.ts"],"names":[],"mappings":";;AAAA;IAAA;IAWA,CAAC;IAVQ,8DAA0B,GAAjC,UAAkC,IAAS;QACzC,OAAO;YACL,OAAO,EAAE,4BAA4B;YACrC,IAAI,EAAE,QAAM,IAAI,CAAC,SAAS,iLAInB;SACR,CAAC;IACJ,CAAC;IACH,gCAAC;AAAD,CAAC,AAXD,IAWC;AACD,kBAAe,yBAAyB,CAAC"}

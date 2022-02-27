@@ -27,10 +27,12 @@ jobs:
       run: sudo npm ci
     - name: install
       run: sudo npm i
-    - name: test
-      run: sudo npm install typescript@latest -g
-    - name: check
+    - name: check tsc version
       run: tsc --version
+    - name: Delete dist folder
+      run: sudo rm -rf /home/ubuntu/backend/_work/node-yml/node-yml/dist
+    - name: Build tsc
+      run: sudo tsc
     - name: aws cmd
       run: sudo systemctl restart backend
     

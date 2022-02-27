@@ -136,7 +136,7 @@ class BookingPayment {
           throw new NotAcceptable(bookingMessage.error.walletHistoryNotCreated);
       } else {
         const walletCreate = await WalletSchema.create({
-          user: findBooking.user_id.toString(),
+          user: findBooking.user._id.toString(),
           balance: +walletRefund,
           spent: 0,
         });
