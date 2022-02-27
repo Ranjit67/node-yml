@@ -33,7 +33,7 @@ jobs:
       run: sudo rm -rf /home/ubuntu/backend/_work/node-yml/node-yml/dist
     - name: Build tsc
       run: sudo tsc
-    - name: aws cmd
+    - name: aws cmd through ssh
       run: sudo systemctl restart backend
     
     
