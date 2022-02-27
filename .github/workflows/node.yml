@@ -26,5 +26,9 @@ jobs:
     - run: npm i
     - name: Building Typescript
       uses: FuLagann/tsc-build-push@v1
+      with:
+          user-name: "ubuntu"
+          message: "Automatically built unbuilt typescript"
+          directories: ./
     - run: npm run build --if-present
     
