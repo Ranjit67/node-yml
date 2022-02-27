@@ -23,10 +23,9 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - name: npm install   
     - run: npm i
-    - name: tsc configuration
-      uses: iCrawl/action-tsc@v1
-      with:
-        project: subdirectorywith_tsconfig
+    - name: tsc
+      uses: icrawl/action-tsc@v1
     - run: npm run build --if-present
     
