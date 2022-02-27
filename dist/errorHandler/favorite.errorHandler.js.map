@@ -1,1 +1,0 @@
-{"version":3,"file":"favorite.errorHandler.js","sourceRoot":"","sources":["../../src/errorHandler/favorite.errorHandler.ts"],"names":[],"mappings":";;AACA;IAAA;IAQA,CAAC;IAPQ,uCAAQ,GAAf,UAAgB,GAAa;QAC3B,OAAO,GAAG,CAAC,MAAM,CAAC,GAAG,CAAC,CAAC,IAAI,CAAC;YAC1B,OAAO,EAAE;gBACP,IAAI,EAAE,EAAE;aACT;SACF,CAAC,CAAC;IACL,CAAC;IACH,2BAAC;AAAD,CAAC,AARD,IAQC;AACD,kBAAe,oBAAoB,CAAC"}
